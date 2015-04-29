@@ -35,6 +35,9 @@ func parseAllProjects() []projects.Project {
 	fatal(err)
 	projectListing := []projects.Project{}
 	for _, info := range listing {
+		if info.IsDir() {
+			continue
+		}
 		content, err := ioutil.ReadFile(filepath.Join(projectFilesLocation, info.Name()))
 		fatal(err)
 		name := strings.TrimSuffix(info.Name(), filepath.Ext(info.Name()))
@@ -47,15 +50,17 @@ func parseAllProjects() []projects.Project {
 }
 func createContextListings(projectListing []projects.Project) {
 	for context, listing := range runway.GroupContextListings(projectListing) {
+		log.Println("Creating listing:", context)
 		location := makeDirectory(filepath.Join(runwayLocation, context))
 		for _, task := range listing {
+			log.Println("Creating task:", task.Text)
 			createFile(location, taskFilename(task))
 		}
 	}
 }
 func createCompletedTaskListing(projectListing []projects.Project) {
 	for _, task := range runway.IdentifyCompletedTasks(projectListing) {
-		createFile(completedTasksLocation, taskFilename(task))
+		createFile(processedTasksLocation, taskFilename(task))
 	}
 }
 func createStalledProjectListing(projectListing []projects.Project) {
@@ -70,16 +75,16 @@ func createFinishedProjectListing(projectListing []projects.Project) {
 }
 
 func makeDirectory(location string) string {
-	fatal(os.Mkdir(location, 0644))
+	fatal(os.Mkdir(location, 0700))
 	return location
 }
 
 func createFile(location, filename string) {
-	file, err := os.Create(filepath.Join(filename))
+	file, err := os.Create(filepath.Join(location, filename))
 	fatal(err)
 	defer file.Close()
 }
 
 func taskFilename(task projects.Task) string {
-	return fmt.Sprintf("%s_%d_%s", task.ParentProject, task.Index, task.Text) // TODO: remove unsafe characters
+	return fmt.Sprintf("%s__%d__%s", task.ParentProject, task.Index, task.Text) // TODO: remove unsafe characters
 }
