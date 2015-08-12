@@ -75,7 +75,7 @@ func createFinishedProjectListing(projectListing []projects.Project) {
 }
 
 func makeDirectory(location string) string {
-	fatal(os.Mkdir(location, 0700))
+	fatal(os.MkdirAll(location, 0700))
 	return location
 }
 

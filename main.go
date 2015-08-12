@@ -19,9 +19,11 @@ import (
 var running bool = true
 
 var (
-	root                     = "/Users/mike/Desktop/GTD"
-	runwayLocation           = filepath.Join(root, "0-Runway")
-	projectFilesLocation     = filepath.Join(root, "1-Projects")
+	root = "/Users/mike/Desktop/GTD"
+
+	runwayLocation       = filepath.Join(root, "0-Runway")
+	projectFilesLocation = filepath.Join(root, "1-Projects")
+
 	processedTasksLocation   = filepath.Join(runwayLocation, "complete-processed")
 	completedTasksLocation   = filepath.Join(runwayLocation, "complete")
 	stalledProjectsLocation  = filepath.Join(runwayLocation, "projects-stalled")
@@ -30,6 +32,9 @@ var (
 
 func init() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	if !exists(projectFilesLocation) {
+		makeDirectory(projectFilesLocation)
+	}
 }
 
 func main() {
@@ -97,7 +102,7 @@ func waitForInterrupt() {
 	<-cancellation
 	log.Println("Shutting down, generating runway once more...")
 	running = false
-	time.Sleep(time.Second)
+	time.Sleep(time.Second) // TODO: this is yucky, so fix it
 	generateRunway()
 }
 
