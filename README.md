@@ -1,30 +1,52 @@
+Weekly Review Procedures:
+
+1. Process Inbox - Create many new projects as necessary (active/someday/maybe)
+2. Synchronize Task Completion Status across context lists and projects
+3. Reject/Defer/Update/Complete Projects and Tasks (1 project at a time)
+4. Generate fresh task listings sorted by context
+
+-----------------------------------
+
 Weekly Review:
 
-	- Process Inbox:
-		- Create standalone tasks
-		- Create projects
-			- Create Project:
-				- Define outcome
-				- Define next action(s)
-	- Identify next actions across all projects and sort by context
+	gtd review
 
+Synchronize Task Completion Status across context lists and projects
 
-Sweep projects for next actions (log projects that don't have any next action):
+	gtd tasks sync
 
-	gtd tasks > tasks.md
+Generate fresh task listings sorted by context (log projects that don't have any next action):
+
+	gtd tasks sweep
 
 List all projects (display <h1> header, or filename if not present):
 
 	gtd project list
 
-Specify each relevant section from CLI:
+Review each project in turn in a REPL session combined w/ editor sessions:
+
+	gtd project list -review
+
+Create many projects in a REPL session:
+
+	gtd project create-many
+
+Specify each relevant section from CLI (only name is required):
 
 	gtd project create -name "Hi" -outcome "Something" -next-action "Something simple" -info "Even more stuff"
 
-Open editor with template as starting point (truncate existing matching project?):
-
-	gtd project create -name "Hi"
-
-Create blank, skip editing (not recommended):
+Create blank:
 
 	gtd project create -name "Hi" -blank
+
+Create project from CLI and skip editor session:
+
+	gtd project create -name "Hi" -static
+
+Renegotiate project status:
+
+	gtd project update -id 42 -someday
+	gtd project update -id 42 -maybe
+	gtd project update -id 42 -reject
+	gtd project update -id 42 -complete
+

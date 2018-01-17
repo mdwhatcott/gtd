@@ -18,3 +18,17 @@ func (this *CreateProjectCommand) Set(action string) error {
 	this.Actions = append(this.Actions, action)
 	return nil
 }
+
+type ProjectStatus int
+
+const (
+	ProjectActive   ProjectStatus = iota
+	ProjectComplete
+	ProjectSomeday
+	ProjectMaybe
+)
+
+type RenegotiateProjectStatusCommand struct {
+	ProjectID int
+	Result    ProjectStatus
+}

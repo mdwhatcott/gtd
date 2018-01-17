@@ -3,16 +3,31 @@ package gtd
 import (
 	"os"
 	"path/filepath"
+	"strconv"
 	"text/template"
+	"time"
 )
 
 var (
-	RootFolder    = filepath.Join(os.Getenv("HOME"), "Documents/gtd")
-	ActionsFolder = filepath.Join(RootFolder, "0-next-actions")
-	ProjectFolder = filepath.Join(RootFolder, "1-projects")
-	SomedayFolder = filepath.Join(RootFolder, "1-projects-someday")
-	MaybeFolder   = filepath.Join(RootFolder, "1-projects-tentative")
+	Now            = time.Now()
+	FolderRoot     = os.Getenv("GTDPATH")
+	FolderActions  = filepath.Join(FolderRoot, "0-next-actions")
+	FolderProjects = filepath.Join(FolderRoot, "1-projects")
+	FolderArchive  = filepath.Join(FolderRoot, "1-projects-archive", strconv.Itoa(Now.Year()))
+	FolderSomeday  = filepath.Join(FolderRoot, "1-projects-someday")
+	FolderTickler  = filepath.Join(FolderSomeday, "1-tickler")
+	FolderMaybe    = filepath.Join(FolderRoot, "1-projects-tentative")
+	FolderFocus    = filepath.Join(FolderRoot, "2-areas-of-focus-and-responsibility")
+	FolderGoals    = filepath.Join(FolderRoot, "3-goals")
+	FolderVision   = filepath.Join(FolderRoot, "4-vision")
+	FolderPurpose  = filepath.Join(FolderRoot, "5-purpose-and-core-values")
 )
+
+func init() {
+	if FolderRoot == "" {
+		FolderRoot = filepath.Join(os.Getenv("HOME"), "Documents", "gtd")
+	}
+}
 
 var ProjectTemplate = template.Must(template.New("project").Parse(`# {{.Name}}
 
