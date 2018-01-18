@@ -1,12 +1,14 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/mdwhatcott/gtd"
 )
 
 func init() {
+	log.SetFlags(log.Llongfile | log.Lmicroseconds)
 	//ensureRequiredDirectories() // TODO
 }
 func ensureRequiredDirectories() {
@@ -17,8 +19,4 @@ func ensureRequiredDirectories() {
 	os.MkdirAll(gtd.FolderSomeday, os.ModePerm)
 	os.MkdirAll(gtd.FolderTickler, os.ModePerm)
 	os.MkdirAll(gtd.FolderMaybe, os.ModePerm)
-	os.MkdirAll(gtd.FolderFocus, os.ModePerm)
-	os.MkdirAll(gtd.FolderGoals, os.ModePerm)
-	os.MkdirAll(gtd.FolderVision, os.ModePerm)
-	os.MkdirAll(gtd.FolderPurpose, os.ModePerm)
 }

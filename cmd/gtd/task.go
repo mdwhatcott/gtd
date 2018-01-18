@@ -1,8 +1,17 @@
 package main
 
-import "fmt"
-
 func parseTaskCLI(input []string) {
-	tasksFlags.Parse(input)
-	fmt.Println("Not implemented") // TODO
+	flag := flags(usageFlagsTasks)
+	flag.Parse(input)
+
+	first, remaining := firstAndRemaining(flag.Args())
+
+	switch first {
+	case "sync":
+		sweepTasks(remaining)
+	case "sweep":
+		syncTasks(remaining)
+	default:
+		exit(flag)
+	}
 }

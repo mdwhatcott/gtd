@@ -10,23 +10,20 @@ import (
 
 var (
 	Now            = time.Now()
-	FolderRoot     = os.Getenv("GTDPATH")
+	FolderRoot     = root(os.Getenv("GTDPATH"))
 	FolderActions  = filepath.Join(FolderRoot, "0-next-actions")
 	FolderProjects = filepath.Join(FolderRoot, "1-projects")
 	FolderArchive  = filepath.Join(FolderRoot, "1-projects-archive", strconv.Itoa(Now.Year()))
 	FolderSomeday  = filepath.Join(FolderRoot, "1-projects-someday")
 	FolderTickler  = filepath.Join(FolderSomeday, "1-tickler")
 	FolderMaybe    = filepath.Join(FolderRoot, "1-projects-tentative")
-	FolderFocus    = filepath.Join(FolderRoot, "2-areas-of-focus-and-responsibility")
-	FolderGoals    = filepath.Join(FolderRoot, "3-goals")
-	FolderVision   = filepath.Join(FolderRoot, "4-vision")
-	FolderPurpose  = filepath.Join(FolderRoot, "5-purpose-and-core-values")
 )
 
-func init() {
-	if FolderRoot == "" {
-		FolderRoot = filepath.Join(os.Getenv("HOME"), "Documents", "gtd")
+func root(proposed string) string {
+	if proposed != "" {
+		return proposed
 	}
+	return filepath.Join(os.Getenv("HOME"), "Documents", "gtd")
 }
 
 var ProjectTemplate = template.Must(template.New("project").Parse(`# {{.Name}}

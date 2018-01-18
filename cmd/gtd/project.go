@@ -1,19 +1,21 @@
 package main
 
 func parseProjectCLI(input []string) {
-	projectFlags.Parse(input)
+	flag := flags(usageFlagsProject)
+	flag.Parse(input)
 
-	args := projectFlags.Args()
-	switch args[0] {
+	first, remaining := firstAndRemaining(flag.Args())
+
+	switch first {
 	case "list":
-		listProjects(input[1:])
+		listProjects(remaining)
 	case "create":
-		createProject(input[1:])
+		createProject(remaining)
 	case "create-many":
-		createManyProjects(input[1:])
+		createManyProjects(remaining)
 	case "update":
-		updateProject(input[1:])
+		updateProject(remaining)
 	default:
-		projectFlags.Usage()
+		exit(flag)
 	}
 }

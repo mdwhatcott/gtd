@@ -1,18 +1,21 @@
 package main
 
-import "flag"
+import "os"
 
 func main() {
-	flag.Parse()
+	flag := flags(usageFlag)
+	flag.Parse(os.Args[1:])
 
-	switch args := append(flag.Args(), ""); args[0] {
+	first, remaining := firstAndRemaining(flag.Args())
+
+	switch first {
 	case "review":
-		weeklyReview(args[1:])
+		weeklyReview(remaining)
 	case "project":
-		parseProjectCLI(args[1:])
-	case "task":
-		parseTaskCLI(args[1:])
+		parseProjectCLI(remaining)
+	case "tasks":
+		parseTaskCLI(remaining)
 	default:
-		flag.Usage()
+		exit(flag)
 	}
 }

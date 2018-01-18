@@ -3,6 +3,6 @@ package main
 import "fmt"
 
 func weeklyReview(inputs []string) {
-	reviewFlags.Parse(inputs)
+	flags(usageFlagsReview).Parse(inputs)
 	fmt.Println("Not implemented") // TODO
 }
