@@ -6,20 +6,14 @@ import (
 	"unicode"
 
 	"github.com/mdwhatcott/gtd"
+	"github.com/mdwhatcott/gtd/external"
 )
 
-func createProject(inputs []string) {
-	command := parseCreateProjectCommand(inputs)
-	path := filepath.Join(gtd.FolderProjects, deriveFilename(command.Name))
-	create(path, prepareNewProjectContent(command))
-
-	if !command.Static {
-		edit(path)
-	}
+func createProjectCLI(inputs []string) {
+	createProject(parseCreateProjectCommand(inputs))
 }
-
 func parseCreateProjectCommand(inputs []string) (command gtd.CreateProjectCommand) {
-	flag := flags(usageFlagsCreateProject)
+	flag := external.Flags(usageFlagsCreateProject)
 	flag.BoolVar(&command.Blank, "blank", false, "When set, creates an empty file for the new project.")
 	flag.BoolVar(&command.Static, "static", false, "When set, skip editing the new project.")
 	flag.StringVar(&command.Name, "name", "", "The succinct, title-case name of the project (use action words).")
@@ -30,11 +24,20 @@ func parseCreateProjectCommand(inputs []string) (command gtd.CreateProjectComman
 	return command
 }
 
+func createProject(command gtd.CreateProjectCommand) {
+	path := filepath.Join(gtd.FolderProjects, deriveFilename(command.Name))
+	external.CreateFile(path, prepareNewProjectContent(command))
+
+	if !command.Static {
+		external.OpenTextEditor(path)
+	}
+}
+
 func prepareNewProjectContent(command gtd.CreateProjectCommand) string {
 	if command.Blank {
 		return ""
 	} else {
-		return executeTemplate(gtd.ProjectTemplate, command)
+		return external.ExecuteTemplate(gtd.ProjectTemplate, command)
 	}
 }
 

@@ -1,27 +1,24 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
+
+	"github.com/mdwhatcott/gtd"
+	"github.com/mdwhatcott/gtd/external"
 )
 
-func createManyProjects(inputs []string) {
-	flags(usageFlagsCreateManyProjects).Parse(inputs)
-
-	fmt.Println("(<CTRL>-C to exit)")
-	for {
-		var name string
-		for name == "" {
-			fmt.Print("Enter project name: ")
-			name = readLine()
-		}
-		createProject([]string{"-name", name})
-	}
+func createManyProjectsCLI(inputs []string) {
+	external.Flags(usageFlagsCreateManyProjects).Parse(inputs)
+	createManyProjects()
 }
 
-func readLine() string {
-	scanner := bufio.NewScanner(os.Stdin)
-	scanner.Scan()
-	return scanner.Text()
+func createManyProjects() {
+	for {
+		fmt.Print("Enter project name (<blank> to quit): ")
+		name := external.ReadLine()
+		if name == "" {
+			break
+		}
+		createProject(gtd.CreateProjectCommand{Name: name})
+	}
 }

@@ -36,7 +36,7 @@ Info
 
 ## Some tasks
 
-- [X] finished 1                      {{abc123}}
+- [X] finished 1 :a1b2c3d4:
 - [ ] unfinished 1 @HomeDepot
 
 - [ ] unfinished 2
@@ -50,32 +50,28 @@ I'm not - [ ] a task
 			Text:             "finished 1",
 			Completed:        true,
 			Project:          "Title",
-			previousChecksum: "abc123",
-			currentChecksum:  "7de3faab",
+			PreviousChecksum: "a1b2c3d4",
+			CurrentChecksum:  "3a63954a",
 		},
 		{
 			Text:            "unfinished 1 @HomeDepot",
 			Completed:       false,
 			Project:         "Title",
 			Contexts:        []string{"@HomeDepot"},
-			currentChecksum: "0bc4698f",
+			CurrentChecksum: "eae9c550",
 		},
 		{
 			Text:            "unfinished 2",
 			Completed:       false,
 			Project:         "Title",
-			currentChecksum: "27c078b1",
+			CurrentChecksum: "9e5fc0a4",
 		},
 		{
 			Text:            "finished 2 @@Person @Phone",
 			Completed:       true,
 			Project:         "Title",
 			Contexts:        []string{"@@Person", "@Phone"},
-			currentChecksum: "e6da3505",
+			CurrentChecksum: "6b9ebeb4",
 		},
 	})
-}
-
-func (this *ProjectFixture) TestTaskFormatting() {
-
 }

@@ -1,43 +1,39 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io/ioutil"
-	"log"
-	"path/filepath"
 
 	"github.com/mdwhatcott/gtd"
+	"github.com/mdwhatcott/gtd/external"
 )
 
-func listProjects(inputs []string) {
-	flag := flags(usageFlagsListProjects)
+func listProjectsCLI(inputs []string) {
+	flag := external.Flags(usageFlagsListProjects)
 	review := flag.Bool("review", false, "When set, review each project via a REPL and text editor sessions.")
 	flag.Parse(inputs)
+	projects := gtd.LoadProjects()
+	listProjects(projects, *review)
+}
 
-	projects := LoadProjects()
+func listProjects(projects []*gtd.Project, review bool) {
 	for _, project := range projects {
 		fmt.Println(project.Name())
-		if *review {
-			edit(project.Path())
-			// TODO: would you like to update the status of the project? (complete, defer, etc...)
+		if review {
+			external.OpenTextEditor(project.Path())
+			interactiveUpdateProjectStatus(project)
 		}
 	}
 }
 
-// TODO: move to top-level lib (mock out fs?)
-func LoadProjects() (projects []*gtd.Project) {
-	dir, err := ioutil.ReadDir(gtd.FolderProjects)
-	if err != nil {
-		log.Fatal(err)
-	}
-	for i, file := range dir {
-		path := filepath.Join(gtd.FolderProjects, file.Name())
-		content, err := ioutil.ReadFile(path)
-		if err != nil {
-			log.Fatal("Could not read project file:", err)
+func interactiveUpdateProjectStatus(project *gtd.Project) {
+	for {
+		fmt.Print("Enter new project status or <blank> to skip: (complete, someday, maybe, reject) ")
+		if line := external.ReadLine(); line == "" {
+			break
+		} else if updateProjectStatus(project, line) {
+			break
+		} else {
+			fmt.Println("Invalid status:", line)
 		}
-		projects = append(projects, gtd.ParseProject(i+1, path, bytes.NewReader(content)))
 	}
-	return projects
 }

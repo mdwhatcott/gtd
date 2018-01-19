@@ -1,20 +1,24 @@
 package main
 
-import "os"
+import (
+	"os"
+
+	"github.com/mdwhatcott/gtd/external"
+)
 
 func main() {
-	flag := flags(usageFlag)
+	flag := external.Flags(usageFlag)
 	flag.Parse(os.Args[1:])
 
 	first, remaining := firstAndRemaining(flag.Args())
 
 	switch first {
 	case "review":
-		weeklyReview(remaining)
+		reviewCLI(remaining)
 	case "project":
-		parseProjectCLI(remaining)
+		projectCLI(remaining)
 	case "tasks":
-		parseTaskCLI(remaining)
+		taskCLI(remaining)
 	default:
 		exit(flag)
 	}

@@ -2,21 +2,23 @@ package main
 
 import (
 	"log"
-	"os"
 
 	"github.com/mdwhatcott/gtd"
+	"github.com/mdwhatcott/gtd/external"
 )
 
 func init() {
-	log.SetFlags(log.Llongfile | log.Lmicroseconds)
-	//ensureRequiredDirectories() // TODO
+	log.SetFlags(log.Lshortfile)
+	ensureRequiredDirectories()
 }
+
 func ensureRequiredDirectories() {
-	os.MkdirAll(gtd.FolderRoot, os.ModePerm)
-	os.MkdirAll(gtd.FolderActions, os.ModePerm)
-	os.MkdirAll(gtd.FolderProjects, os.ModePerm)
-	os.MkdirAll(gtd.FolderArchive, os.ModePerm)
-	os.MkdirAll(gtd.FolderSomeday, os.ModePerm)
-	os.MkdirAll(gtd.FolderTickler, os.ModePerm)
-	os.MkdirAll(gtd.FolderMaybe, os.ModePerm)
+	external.MakeDirectory(gtd.FolderRoot)
+	external.MakeDirectory(gtd.FolderActions)
+	external.MakeDirectory(gtd.FolderProjects)
+	external.MakeDirectory(gtd.FolderComplete)
+	external.MakeDirectory(gtd.FolderSomeday)
+	external.MakeDirectory(gtd.FolderTickler)
+	external.MakeDirectory(gtd.FolderMaybe)
+	external.MakeDirectory(gtd.FolderRejected)
 }
