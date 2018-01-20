@@ -29,7 +29,7 @@ func createProject(command gtd.CreateProjectCommand) {
 	external.CreateFile(path, prepareNewProjectContent(command))
 
 	if !command.Static {
-		external.OpenTextEditor(path)
+		external.OpenTextEditorAndWait(path)
 	}
 }
 

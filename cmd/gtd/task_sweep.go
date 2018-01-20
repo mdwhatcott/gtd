@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"path/filepath"
 	"strings"
@@ -10,12 +11,34 @@ import (
 	"github.com/mdwhatcott/gtd/external"
 )
 
-func sweepTasksCLI(input []string) {
-	external.Flags(usageFlagsSweepTasks).Parse(input)
-	sweepTasks(gtd.LoadProjects())
+func syncTasks() {
+	projects := gtd.LoadProjects()
+	for _, item := range external.ListDirectory(gtd.FolderActions) {
+		scanner := external.ScanFile(filepath.Join(gtd.FolderActions, item.Name()))
+		for scanner.Scan() {
+			line := strings.TrimSpace(scanner.Text())
+			if line == "" {
+				continue
+			}
+			task := gtd.ParseTask(line)
+			if task.Completed {
+				for _, project := range projects {
+					for _, potentialMatch := range project.Tasks() {
+						if potentialMatch.PreviousChecksum == task.PreviousChecksum {
+							fmt.Println("Crossing off task:", task.Text, task.Project)
+							potentialMatch.Completed = true
+							external.CreateFile(project.Path(), project.String()) // Persist completed tasks..
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
-func sweepTasks(projects []*gtd.Project) {
+func sweepTasks() {
+	external.DeleteContents(gtd.FolderActions)
+	projects := gtd.LoadProjects()
 	for context, tasks := range sortTasksByContext(projects) {
 		writeTasksInContextToFile(context, tasks)
 	}
@@ -24,11 +47,10 @@ func sweepTasks(projects []*gtd.Project) {
 func sortTasksByContext(projects []*gtd.Project) map[string][]*gtd.Task {
 	contexts := make(map[string][]*gtd.Task)
 	for _, project := range projects {
-		tasks := project.Tasks()
-		if len(tasks) == 0 {
+		if len(project.UnfinishedTasks()) == 0 {
 			log.Println("[WARN] Project with no tasks:", project.Name())
 		}
-		for _, task := range tasks {
+		for _, task := range project.Tasks() {
 			if !task.Completed {
 				if len(task.Contexts) == 0 {
 					contexts["default"] = append(contexts["default"], task)

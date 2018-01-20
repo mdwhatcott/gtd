@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 
+	"github.com/mdwhatcott/gtd"
 	"github.com/mdwhatcott/gtd/external"
 )
 
@@ -18,8 +19,8 @@ func main() {
 	case "project":
 		projectCLI(remaining)
 	case "tasks":
-		taskCLI(remaining)
+		tasks(remaining)
 	default:
-		exit(flag)
+		external.OpenTextEditor(gtd.FolderRoot)
 	}
 }

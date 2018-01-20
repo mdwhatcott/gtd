@@ -43,7 +43,7 @@ func findProject(id int) *gtd.Project {
 	if 0 > id || id >= len(projects) {
 		return nil
 	}
-	return projects[id-1]
+	return projects[id]
 }
 
 var locations = map[string]string{

@@ -19,7 +19,7 @@ func listProjects(projects []*gtd.Project, review bool) {
 	for _, project := range projects {
 		fmt.Println(project.Name())
 		if review {
-			external.OpenTextEditor(project.Path())
+			external.OpenTextEditorAndWait(project.Path())
 			interactiveUpdateProjectStatus(project)
 		}
 	}

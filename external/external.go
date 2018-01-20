@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"text/template"
 	"time"
 )
@@ -55,8 +56,14 @@ func MoveFile(oldPath, newPath string) {
 	}
 }
 
-func OpenTextEditor(path string) {
+func OpenTextEditorAndWait(path string) {
 	if err := exec.Command("subl", "-wait", path).Run(); err != nil {
+		log.Fatalln("Could not edit file:", err)
+	}
+}
+
+func OpenTextEditor(path string) {
+	if err := exec.Command("subl", path).Run(); err != nil {
 		log.Fatalln("Could not edit file:", err)
 	}
 }
@@ -85,4 +92,14 @@ func Commit(path string) {
 	}
 	fmt.Print("<Enter> to continue...")
 	ReadLine()
+}
+
+func DeleteContents(folder string) {
+	for _, file := range ListDirectory(folder) {
+		path := filepath.Join(folder, file.Name())
+		if err := os.Remove(path); err != nil {
+			log.Fatalln("Could not remove specified path:", path, err)
+		}
+	}
+
 }
