@@ -2,8 +2,7 @@ package main
 
 import "github.com/mdwhatcott/gtd/external"
 
-func tasks(input []string) {
+func tasksCLI(input []string) {
 	external.Flags(usageFlagsTasks).Parse(input)
-	syncTasks()
-	sweepTasks()
+	regenerateTasks()
 }

@@ -19,7 +19,7 @@ func main() {
 	case "project":
 		projectCLI(remaining)
 	case "tasks":
-		tasks(remaining)
+		tasksCLI(remaining)
 	default:
 		external.OpenTextEditor(gtd.FolderRoot)
 	}

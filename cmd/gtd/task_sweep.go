@@ -11,6 +11,11 @@ import (
 	"github.com/mdwhatcott/gtd/external"
 )
 
+func regenerateTasks() {
+	syncTasks()
+	sweepTasks()
+}
+
 func syncTasks() {
 	projects := gtd.LoadProjects()
 	for _, item := range external.ListDirectory(gtd.FolderActions) {

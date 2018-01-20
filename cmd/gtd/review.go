@@ -17,7 +17,7 @@ func reviewCLI(inputs []string) {
 	createManyProjects()
 	external.Commit(gtd.FolderRoot)
 
-	fmt.Println("Step 2/4: Synchronize task completion status from context lists to project documents.")
+	fmt.Println("Step 2/4: Regenerate all task lists.")
 	syncTasks()
 	external.Commit(gtd.FolderRoot)
 
@@ -25,8 +25,8 @@ func reviewCLI(inputs []string) {
 	listProjects(gtd.LoadProjects(), true)
 	external.Commit(gtd.FolderRoot)
 
-	fmt.Println("Step 4/4: Regenerate contextualized task lists.")
-	sweepTasks()
+	fmt.Println("Step 4/4: Regenerate all task lists.")
+	regenerateTasks()
 	external.Commit(gtd.FolderRoot)
 
 	fmt.Println("Review procedure complete.")
