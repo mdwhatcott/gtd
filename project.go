@@ -76,6 +76,15 @@ func (this *Project) Tasks() []*Task {
 	return this.tasks
 }
 
+func (this *Project) UnfinishedTasks() (unfinished []*Task) {
+	for _, task := range this.Tasks() {
+		if !task.Completed {
+			unfinished = append(unfinished, task)
+		}
+	}
+	return unfinished
+}
+
 func (this *Project) String() string {
 	writer := new(bytes.Buffer)
 	taskIndex := 0
