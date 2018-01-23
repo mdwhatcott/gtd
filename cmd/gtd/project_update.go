@@ -1,8 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"path/filepath"
+	"time"
 
 	"github.com/mdwhatcott/gtd/external"
 	"github.com/mdwhatcott/gtd/gtd"
@@ -21,13 +23,30 @@ func updateProjectStatusCLI(inputs []string) {
 }
 
 func updateProjectStatus(project *gtd.Project, status string) bool {
-	destination, found := locations[status]
-	if !found || project == nil {
+	if project == nil {
 		return false
-	} else {
+	} else if destination, found := locations[status]; !found {
+		return false
+	} else if status != "complete" {
 		move(project.Path(), destination)
-		return true
+	} else if recurring := project.RecurringFrequency(); recurring == gtd.RecurringNever {
+		move(project.Path(), destination)
+	} else {
+		for _, task := range project.Tasks() {
+			task.Completed = false
+		}
+		external.CreateFile(project.Path(), project.String())
+		move(project.Path(), calculateDestination(recurring))
 	}
+	return true
+}
+func calculateDestination(recurring gtd.Recurring) string {
+	next := recurring.Next(time.Now())
+	return filepath.Join(
+		gtd.FolderTickler,
+		fmt.Sprint(next.Year()),
+		fmt.Sprintf("%02d", int(next.Month())),
+	)
 }
 
 func move(from, to string) {

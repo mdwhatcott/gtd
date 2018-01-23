@@ -12,11 +12,12 @@ import (
 )
 
 type Project struct {
-	id    int
-	path  string
-	name  string
-	tasks []*Task
-	lines []string
+	id        int
+	path      string
+	name      string
+	tasks     []*Task
+	lines     []string
+	recurring Recurring
 }
 
 func ParseProject(id int, path string, reader io.Reader) *Project {
@@ -31,9 +32,9 @@ func ParseProject(id int, path string, reader io.Reader) *Project {
 
 		if strings.HasPrefix(line, "# ") && project.name == "" {
 			project.name = line[2:]
-		}
-
-		if isTask(line) {
+		} else if strings.HasPrefix(strings.ToLower(line), "recurring:") {
+			project.recurring = RecurringFromString(strings.TrimSpace(line[len("recurring:"):]))
+		} else if isTask(line) {
 			project.tasks = append(project.tasks, &Task{
 				Text:             taskText(line),
 				Completed:        isCompletedTask(line),
@@ -55,8 +56,12 @@ func checksum(input string) string {
 	return hex.EncodeToString(sum)
 }
 
-func (p *Project) Path() string {
-	return p.path
+func (this *Project) RecurringFrequency() Recurring {
+	return this.recurring
+}
+
+func (this *Project) Path() string {
+	return this.path
 }
 func (this *Project) Name() string {
 	const listFormat = "%-4d%s"

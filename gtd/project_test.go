@@ -20,12 +20,20 @@ func (this *ProjectFixture) TestParseProjectName() {
 	content := strings.NewReader("# I am a project name\n\nWith important stuff\n# not a project name")
 	project := ParseProject(42, "path", content)
 	this.So(project.Name(), should.Equal, "42  I am a project name")
+	this.So(project.RecurringFrequency(), should.Equal, RecurringNever)
 }
 
 func (this *ProjectFixture) TestParseProjectNoName() {
 	content := strings.NewReader("I am a project name but I'm not marked as such (#)")
 	project := ParseProject(42, "/somewhere/path.md", content)
 	this.So(project.Name(), should.Equal, "42  path")
+	this.So(project.RecurringFrequency(), should.Equal, RecurringNever)
+}
+
+func (this *ProjectFixture) TestParseRecurringSchedule() {
+	content := strings.NewReader("# Project\n\nRecurring: monthly")
+	project := ParseProject(42, "/somewhere/path.md", content)
+	this.So(project.RecurringFrequency(), should.Equal, RecurringMonthly)
 }
 
 func (this *ProjectFixture) TestParseTasks() {
@@ -57,7 +65,7 @@ I'm not - [ ] a task
 			Text:            "unfinished 1 @HomeDepot",
 			Completed:       false,
 			Project:         "Title",
-			Contexts:        []string{"@HomeDepot"},
+			Contexts:        []string{"@homedepot"},
 			CurrentChecksum: "eae9c550",
 		},
 		{
@@ -70,7 +78,7 @@ I'm not - [ ] a task
 			Text:            "finished 2 @@Person @Phone",
 			Completed:       true,
 			Project:         "Title",
-			Contexts:        []string{"@@Person", "@Phone"},
+			Contexts:        []string{"@@person", "@phone"},
 			CurrentChecksum: "6b9ebeb4",
 		},
 	})
