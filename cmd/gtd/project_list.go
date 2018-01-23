@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/mdwhatcott/gtd"
 	"github.com/mdwhatcott/gtd/external"
+	"github.com/mdwhatcott/gtd/gtd"
 )
 
 func listProjectsCLI(inputs []string) {

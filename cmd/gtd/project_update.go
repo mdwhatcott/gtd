@@ -4,8 +4,8 @@ import (
 	"log"
 	"path/filepath"
 
-	"github.com/mdwhatcott/gtd"
 	"github.com/mdwhatcott/gtd/external"
+	"github.com/mdwhatcott/gtd/gtd"
 )
 
 func updateProjectStatusCLI(inputs []string) {

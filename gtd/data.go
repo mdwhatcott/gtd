@@ -31,6 +31,7 @@ var ProjectTemplate = template.Must(template.New("project").Parse(`# {{.Name}}
 
 Desired Outcome: {{.Outcome}}
 
+RECURRING: ???
 
 ## Info
 

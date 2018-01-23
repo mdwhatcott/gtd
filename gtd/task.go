@@ -60,7 +60,7 @@ func taskText(line string) string {
 func filterOnPrefix(fields []string, prefix string) (filtered []string) {
 	for _, field := range fields {
 		if strings.HasPrefix(field, prefix) {
-			filtered = append(filtered, field)
+			filtered = append(filtered, strings.ToLower(field))
 		}
 	}
 	return filtered

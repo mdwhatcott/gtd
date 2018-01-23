@@ -2,13 +2,12 @@ package main
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"path/filepath"
 	"strings"
 
-	"github.com/mdwhatcott/gtd"
 	"github.com/mdwhatcott/gtd/external"
+	"github.com/mdwhatcott/gtd/gtd"
 )
 
 func regenerateTasks() {
@@ -30,7 +29,7 @@ func syncTasks() {
 				for _, project := range projects {
 					for _, potentialMatch := range project.Tasks() {
 						if potentialMatch.PreviousChecksum == task.PreviousChecksum {
-							fmt.Println("Crossing off task:", task.Text, task.Project)
+							log.Printf("Crossing off: %s (from: %s)\n", task.Text, strings.TrimSpace(task.Project))
 							potentialMatch.Completed = true
 							external.CreateFile(project.Path(), project.String()) // Persist completed tasks..
 						}
@@ -70,6 +69,7 @@ func sortTasksByContext(projects []*gtd.Project) map[string][]*gtd.Task {
 	return contexts
 }
 func writeTasksInContextToFile(context string, tasks []*gtd.Task) {
+	log.Printf("%-15s %d tasks\n", context, len(tasks))
 	maxProjectNameLength := 0
 	for _, task := range tasks {
 		if len(task.Project) > maxProjectNameLength {
