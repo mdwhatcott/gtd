@@ -67,21 +67,21 @@ func filterOnPrefix(fields []string, prefix string) (filtered []string) {
 }
 
 func (this *Task) ProjectString() string {
-	writer := new(bytes.Buffer)
-	writer.WriteString("- [")
+	builder := new(strings.Builder)
+	builder.WriteString("- [")
 	if this.Completed {
-		writer.WriteString("X")
+		builder.WriteString("X")
 	} else {
-		writer.WriteString(" ")
+		builder.WriteString(" ")
 	}
-	writer.WriteString("] ")
-	writer.WriteString(this.Text)
+	builder.WriteString("] ")
+	builder.WriteString(this.Text)
 	if !this.Completed {
-		writer.WriteString(" :")
-		writer.WriteString(this.CurrentChecksum)
-		writer.WriteString(":")
+		builder.WriteString(" :")
+		builder.WriteString(this.CurrentChecksum)
+		builder.WriteString(":")
 	}
-	return writer.String()
+	return builder.String()
 }
 
 func (this *Task) ContextString(projectNameLength int) string {

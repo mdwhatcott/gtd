@@ -2,7 +2,6 @@ package gtd
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/hex"
 	"fmt"
 	"hash/fnv"
@@ -91,16 +90,16 @@ func (this *Project) UnfinishedTasks() (unfinished []*Task) {
 }
 
 func (this *Project) String() string {
-	writer := new(bytes.Buffer)
+	builder := new(strings.Builder)
 	taskIndex := 0
 	for _, line := range this.lines {
 		if isTask(line) {
-			writer.WriteString(this.tasks[taskIndex].ProjectString())
+			builder.WriteString(this.tasks[taskIndex].ProjectString())
 			taskIndex++
 		} else {
-			writer.WriteString(line)
+			builder.WriteString(line)
 		}
-		writer.WriteString("\n")
+		builder.WriteString("\n")
 	}
-	return writer.String()
+	return builder.String()
 }

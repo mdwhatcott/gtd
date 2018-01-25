@@ -76,11 +76,11 @@ func writeTasksInContextToFile(context string, tasks []*gtd.Task) {
 			maxProjectNameLength = len(task.Project)
 		}
 	}
-	buffer := new(bytes.Buffer)
+	builder := new(strings.Builder)
 	for _, task := range tasks {
-		buffer.WriteString(task.ContextString(maxProjectNameLength) + "\n")
+		builder.WriteString(task.ContextString(maxProjectNameLength) + "\n")
 	}
 
 	path := filepath.Join(gtd.FolderActions, strings.ToLower(strings.Trim(context, "@"))+".md")
-	external.CreateFile(path, buffer.String())
+	external.CreateFile(path, builder.String())
 }
