@@ -1,7 +1,6 @@
 package gtd
 
 import (
-	"bytes"
 	"fmt"
 	"regexp"
 	"strings"

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"log"
 	"path/filepath"
 	"strings"
