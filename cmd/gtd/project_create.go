@@ -49,18 +49,37 @@ func deriveFilename(name string) string {
 	name = strings.Trim(name, "-")
 	return name + ".md"
 }
-func toLowerASCII(r rune) rune {
-	if unicode.IsSpace(r) {
-		return '-'
-	} else if r < unicode.MaxLatin1 && unicode.IsLetter(r) {
-		return unicode.ToLower(r)
-	} else {
-		return -1 // discard
-	}
-}
 func replace(input, old, new string) string {
 	for strings.Contains(input, old) {
 		input = strings.Replace(input, old, new, -1)
 	}
 	return input
 }
+func toLowerASCII(r rune) rune {
+	switch {
+	case isDigit(r):
+		return r
+	case separators[r]:
+		return '-'
+	case isLowercase(r):
+		return r
+	case isUppercase(r):
+		return unicode.ToLower(r)
+	default:
+		return discardRune
+	}
+}
+
+func isDigit(r rune) bool     { return '0' <= r && r <= '9' }
+func isLowercase(r rune) bool { return 'a' <= r && r <= 'z' }
+func isUppercase(r rune) bool { return 'A' <= r && r <= 'Z' }
+
+var separators = map[rune]bool{
+	'-':  true,
+	'_':  true,
+	' ':  true,
+	'\t': true,
+	'\n': true,
+}
+
+const discardRune = -1
