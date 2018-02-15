@@ -2,7 +2,6 @@ package storage
 
 import "time"
 
-
 type Recurring int
 
 const (
@@ -65,4 +64,3 @@ var recurringMap = map[interface{}]interface{}{
 	RecurringAnnually:     "annually",
 	RecurringBiennially:   "biennially",
 }
-
