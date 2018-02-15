@@ -9,14 +9,14 @@ func projectCLI(input []string) {
 	first, remaining := firstAndRemaining(flag.Args())
 
 	switch first {
-	case "list":
-		listProjectsCLI(remaining)
+	case "":
+		createManyProjectsCLI(remaining)
 	case "create":
 		createProjectCLI(remaining)
-	case "create-many":
-		createManyProjectsCLI(remaining)
 	case "update":
 		updateProjectStatusCLI(remaining)
+	case "list":
+		listProjectsCLI(remaining)
 	default:
 		exit(flag)
 	}
