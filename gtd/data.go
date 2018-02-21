@@ -4,7 +4,6 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
-	"text/template"
 	"time"
 )
 
@@ -26,27 +25,3 @@ func root(proposed string) string {
 	}
 	return filepath.Join(os.Getenv("HOME"), "Documents", "gtd")
 }
-
-var ProjectTemplate = template.Must(template.New("project").Parse(`# {{.Name}}
-
-Desired Outcome: {{.Outcome}}
-
-RECURRING: ???
-
-## Info
-
-{{.Info}}
-
-
-## Tasks:
-
-{{range .Actions}}
-- [ ] {{.}}{{end}}
-
-
-## Activity Log:
-
-
-### 2018-01-15
-
-- What happened today?`))

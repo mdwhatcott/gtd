@@ -51,13 +51,13 @@ What follows are several use cases and the corresponding commands.
 
     gtd review
 
-### Synchronize Task Completion Status across context lists and projects
+### Synchronize and Generate Tasks organized by context.
 
-    gtd tasks sync
+    gtd tasks
 
-### Generate fresh task listings sorted by context (log projects that don't have any next action):
+### Create many projects in a REPL session:
 
-    gtd tasks sweep
+    gtd projects
 
 ### List all projects (display <h1> header, or filename if not present):
 
@@ -66,22 +66,6 @@ What follows are several use cases and the corresponding commands.
 ### Review each project in turn in a REPL session combined w/ editor sessions:
 
     gtd project list -review
-
-### Create many projects in a REPL session:
-
-    gtd project create-many
-
-### Create Project and specify each relevant section from CLI (only name is required):
-
-    gtd project create -name "Hi" -outcome "Something" -next-action "Something simple" -info "Even more stuff"
-
-### Create blank project:
-
-    gtd project create -name "Hi" -blank
-
-### Create project from CLI and skip editor session:
-
-    gtd project create -name "Hi" -static
 
 ### Renegotiate project status:
 
@@ -110,32 +94,9 @@ This action is:
 	usageFlagsTasks = `
 Usage of command 'gtd tasks':
 
-  Available subcommands:
-    - gtd tasks sync
-    - gtd tasks sweep
-
-Invoke any of the above commands with '-help' for additional information.
-`
-
-	usageFlagsSyncTasks = `
-Usage of subcommand 'gtd tasks sync':
-
 This subcommand scans all tasks found in contextual lists and,
 if completed, ensures they are marked as such in the corresponding
-project document.
-
-This action is:
-
-- non-interactive
-- destructive (consider committing all changes to source control before execution)
-
-Flags:
-`
-
-	usageFlagsSweepTasks = `
-Usage of subcommand 'gtd tasks sweep':
-
-This subcommand scans all active project files for unfinished 
+project document. Then it scans all active project files for unfinished 
 tasks (lines beginning with '- [ ]') and sorts them by context
 into separate files.
 
@@ -151,10 +112,15 @@ Flags:
 	usageFlagsProject = `
 Usage of command 'gtd project':
 
+  You will be prompted to enter a project name.
+  Upon having done so, an editor will open, allowing you to clarify the project.
+  The above procedures will repeat until the user submits a blank line.
+
+- interactive unless invoked with -static
+- destructive (consider committing all changes to source control before execution)
+
   Available subcommands:
     - gtd project list
-    - gtd project create
-    - gtd project create-many
     - gtd project update
 
 Invoke any of the above commands with '-help' for additional information. 
@@ -182,32 +148,6 @@ Usage of subcommand 'gtd project update':
 This action is:
 
 - non-interactive
-- destructive (consider committing all changes to source control before execution)
-
-Flags:
-`
-
-	usageFlagsCreateProject = `
-Usage of subcommand 'gtd project create':
-
-  Create a new file for a project and (by default) open a text editor to allow deeper clarification.
-
-This action is:
-
-- interactive unless invoked with -static
-- destructive (consider committing all changes to source control before execution)
-
-Flags:
-`
-
-	usageFlagsCreateManyProjects = `
-Usage of subcommand 'gtd project create-many':
-
-  You will be prompted to enter a project name.
-  Upon having done so, an editor will open, allowing you to clarify the project.
-  The above procedures will repeat until the user submits a blank line.
-
-- interactive unless invoked with -static
 - destructive (consider committing all changes to source control before execution)
 
 Flags:

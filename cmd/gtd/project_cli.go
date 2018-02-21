@@ -10,9 +10,7 @@ func projectCLI(input []string) {
 
 	switch first {
 	case "":
-		createManyProjectsCLI(remaining)
-	case "create":
-		createProjectCLI(remaining)
+		createProjects()
 	case "update":
 		updateProjectStatusCLI(remaining)
 	case "list":

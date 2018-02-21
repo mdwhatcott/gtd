@@ -1,30 +1,49 @@
 package main
 
 import (
+	"fmt"
 	"path/filepath"
 	"strings"
+	"text/template"
 	"unicode"
 
 	"github.com/mdwhatcott/gtd/external"
 	"github.com/mdwhatcott/gtd/gtd"
 )
 
-func createProjectCLI(inputs []string) {
-	createProject(parseCreateProjectCommand(inputs))
-}
-func parseCreateProjectCommand(inputs []string) (command gtd.CreateProjectCommand) {
-	flag := external.Flags(usageFlagsCreateProject)
-	flag.BoolVar(&command.Blank, "blank", false, "When set, creates an empty file for the new project.")
-	flag.BoolVar(&command.Static, "static", false, "When set, skip editing the new project.")
-	flag.StringVar(&command.Name, "name", "", "The succinct, title-case name of the project (use action words).")
-	flag.StringVar(&command.Outcome, "outcome", "", "What must become true for this project to be complete?")
-	flag.StringVar(&command.Info, "info", "", "What information would you like to record?")
-	flag.Var(&command, "action", "What are the next physical action steps to move this project forward?")
-	flag.Parse(inputs)
-	return command
+type NewProjectInfo struct {
+	Blank   bool
+	Static  bool
+	Name    string
+	Outcome string
+	Info    string
+	Actions []string
 }
 
-func createProject(command gtd.CreateProjectCommand) {
+func (this *NewProjectInfo) String() string {
+	return fmt.Sprintf("%#v", this)
+}
+func (this *NewProjectInfo) Set(action string) error {
+	this.Actions = append(this.Actions, action)
+	return nil
+}
+
+func createProjects() {
+	createManyProjects()
+}
+
+func createManyProjects() {
+	for {
+		fmt.Print("Enter project name (<blank> to quit): ")
+		name := external.ReadLine()
+		if name == "" {
+			break
+		}
+		createProject(NewProjectInfo{Name: name})
+	}
+}
+
+func createProject(command NewProjectInfo) {
 	path := filepath.Join(gtd.FolderProjects, deriveFilename(command.Name))
 	external.CreateFile(path, prepareNewProjectContent(command))
 
@@ -33,11 +52,11 @@ func createProject(command gtd.CreateProjectCommand) {
 	}
 }
 
-func prepareNewProjectContent(command gtd.CreateProjectCommand) string {
+func prepareNewProjectContent(command NewProjectInfo) string {
 	if command.Blank {
 		return ""
 	} else {
-		return external.ExecuteTemplate(gtd.ProjectTemplate, command)
+		return external.ExecuteTemplate(ProjectTemplate, command)
 	}
 }
 
@@ -83,3 +102,27 @@ var separators = map[rune]bool{
 }
 
 const discardRune = -1
+
+var ProjectTemplate = template.Must(template.New("project").Parse(`# {{.Name}}
+
+Desired Outcome: {{.Outcome}}
+
+RECURRING: ???
+
+## Info
+
+{{.Info}}
+
+
+## Tasks:
+
+{{range .Actions}}
+- [ ] {{.}}{{end}}
+
+
+## Activity Log:
+
+
+### 2018-01-15
+
+- What happened today?`))
