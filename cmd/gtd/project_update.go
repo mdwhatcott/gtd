@@ -16,8 +16,7 @@ func updateProjectStatusCLI(inputs []string) {
 	status := flags.String("status", "", "The new status of the project (one of: 'complete', 'maybe', 'someday', 'rejected').")
 	flags.Parse(inputs)
 
-	project := findProject(*id)
-	if !updateProjectStatus(project, *status) {
+	if !updateProjectStatus(findProject(*id), *status) {
 		exit(flags)
 	}
 }
@@ -32,13 +31,16 @@ func updateProjectStatus(project *gtd.Project, status string) bool {
 	} else if recurring := project.RecurringFrequency(); recurring == gtd.RecurringNever {
 		move(project.Path(), destination)
 	} else {
-		for _, task := range project.Tasks() {
-			task.Completed = false
-		}
-		external.CreateFile(project.Path(), project.String())
-		move(project.Path(), calculateDestination(recurring))
+		prepareForNextOccurrence(project)
 	}
 	return true
+}
+func prepareForNextOccurrence(recurring *gtd.Project) {
+	for _, task := range recurring.Tasks() {
+		task.Completed = false
+	}
+	external.CreateFile(recurring.Path(), recurring.String())
+	move(recurring.Path(), calculateDestination(recurring.RecurringFrequency()))
 }
 func calculateDestination(recurring gtd.Recurring) string {
 	next := recurring.Next(time.Now())

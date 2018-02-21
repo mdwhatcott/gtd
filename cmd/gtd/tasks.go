@@ -9,6 +9,11 @@ import (
 	"github.com/mdwhatcott/gtd/gtd"
 )
 
+func tasksCLI(input []string) {
+	external.Flags(usageFlagsTasks).Parse(input)
+	regenerateTasks()
+}
+
 func regenerateTasks() {
 	syncTasks()
 	sweepTasks()
