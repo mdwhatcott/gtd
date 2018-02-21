@@ -11,7 +11,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"text/template"
-	"time"
 )
 
 func ReadLine() string {
@@ -85,8 +84,7 @@ func ScanFile(path string) *bufio.Scanner {
 }
 
 func Commit(path string) {
-	fmt.Println("Please review and commit any changes before proceeding. (SourceTree window will open...)")
-	time.Sleep(time.Second * 3)
+	fmt.Println("Opening SourceTree window...")
 	if err := exec.Command("stree", path).Run(); err != nil {
 		log.Fatalln("Could not open source tree:", err)
 	}

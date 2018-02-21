@@ -29,12 +29,8 @@ func (this *NewProjectInfo) Set(action string) error {
 }
 
 func createProjects() {
-	createManyProjects()
-}
-
-func createManyProjects() {
 	for {
-		fmt.Print("Enter project name (<blank> to quit): ")
+		fmt.Print("Enter new project name (<blank> to quit): ")
 		name := external.ReadLine()
 		if name == "" {
 			break

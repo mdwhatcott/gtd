@@ -65,7 +65,7 @@ What follows are several use cases and the corresponding commands.
 
 ### Review each project in turn in a REPL session combined w/ editor sessions:
 
-    gtd project list -review
+    gtd project review
 
 ### Renegotiate project status:
 
@@ -80,8 +80,8 @@ Usage of command 'gtd review':
 
 Procedures:
 
-1. Process Inbox - Create many new projects as necessary
-2. Synchronize Task Completion Status across context lists and projects
+1. Synchronize Task Completion Status across context lists and projects
+2. Process Inbox - Create many new projects as necessary
 3. Reject/Defer/Update/Complete Projects and Tasks
 4. Generate fresh task listings sorted by context
 
@@ -121,23 +121,11 @@ Usage of command 'gtd project':
 
   Available subcommands:
     - gtd project list
+    - gtd project review
     - gtd project update
 
 Invoke any of the above commands with '-help' for additional information. 
 
-`
-
-	usageFlagsListProjects = `
-Usage of subcommand 'gtd project list':
-
-  When invoked with no other flags, print a listing of all projects and exit.
-
-This action is:
-
-- interactive when invoked with -review
-- non-destructive
-
-Flags:
 `
 
 	usageFlagsUpdateProjects = `

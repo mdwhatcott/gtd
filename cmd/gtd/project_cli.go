@@ -14,7 +14,9 @@ func projectCLI(input []string) {
 	case "update":
 		updateProjectStatusCLI(remaining)
 	case "list":
-		listProjectsCLI(remaining)
+		listProjects()
+	case "review":
+		reviewProjects()
 	default:
 		exit(flag)
 	}
