@@ -85,6 +85,7 @@ Usage of command 'gtd review':
 
 Procedures:
 
+0. Scan tickler folder for projects that are due
 1. Synchronize Task Completion Status across context lists and projects
 2. Process Inbox - Create many new projects as necessary
 3. Reject/Defer/Update/Complete Projects and Tasks

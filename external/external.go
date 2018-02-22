@@ -99,5 +99,4 @@ func DeleteContents(folder string) {
 			log.Fatalln("Could not remove specified path:", path, err)
 		}
 	}
-
 }
