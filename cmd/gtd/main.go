@@ -20,6 +20,8 @@ func main() {
 		projectCLI(remaining)
 	case "tasks":
 		tasksCLI()
+	case "tickler":
+		scanTickler()
 	default:
 		external.OpenTextEditor(gtd.FolderRoot)
 	}

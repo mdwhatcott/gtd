@@ -10,6 +10,7 @@ import (
 func review() {
 	external.Flags(usageFlagsReview).Parse(nil)
 	external.Commit(gtd.FolderRoot)
+	scanTickler()
 	regenerateTasks()
 	createProjects()
 	reviewProjects()

@@ -43,6 +43,7 @@ and a willingness to accept the variation on that process adopted herein.
 - gtd project
 - gtd tasks
 - gtd review
+- gtd tickler
 
 Invoke any of the above commands with '-help' for additional information. 
 What follows are several use cases and the corresponding commands.
@@ -73,6 +74,10 @@ What follows are several use cases and the corresponding commands.
     gtd project update -id 42 -status someday
     gtd project update -id 42 -status maybe
     gtd project update -id 42 -status reject
+
+### Scan Tickler folder for projects that are now due:
+
+    gtd tickler
 `
 
 	usageFlagsReview = `
