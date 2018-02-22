@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"path/filepath"
 	"time"
@@ -43,12 +42,7 @@ func prepareForNextOccurrence(recurring *gtd.Project) {
 	move(recurring.Path(), calculateDestination(recurring.RecurringFrequency()))
 }
 func calculateDestination(recurring gtd.Recurring) string {
-	next := recurring.Next(time.Now())
-	return filepath.Join(
-		gtd.FolderTickler,
-		fmt.Sprint(next.Year()),
-		fmt.Sprintf("%02d", int(next.Month())),
-	)
+	return ticklerFolder(recurring.Next(time.Now()))
 }
 
 func move(from, to string) {

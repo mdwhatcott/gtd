@@ -13,8 +13,7 @@ import (
 )
 
 func scanTickler() {
-	now := time.Now()
-	ticklerMonth := filepath.Join(gtd.FolderTickler, fmt.Sprint(now.Year()), fmt.Sprintf("%02d", int(now.Month())))
+	ticklerMonth := ticklerFolder(time.Now())
 	files, err := ioutil.ReadDir(ticklerMonth)
 	if err != nil {
 		log.Fatalln(err)
@@ -28,4 +27,12 @@ func scanTickler() {
 			external.MoveFile(source, target)
 		}
 	}
+}
+
+func ticklerFolder(monthYear time.Time) string {
+	return filepath.Join(
+		gtd.FolderTickler,
+		fmt.Sprint(monthYear.Year()),
+		fmt.Sprintf("%02d", int(monthYear.Month())),
+	)
 }
