@@ -7,8 +7,8 @@ import (
 	"github.com/mdwhatcott/gtd/gtd"
 )
 
-func reviewCLI(inputs []string) {
-	external.Flags(usageFlagsReview).Parse(inputs)
+func review() {
+	external.Flags(usageFlagsReview).Parse(nil)
 	external.Commit(gtd.FolderRoot)
 	regenerateTasks()
 	createProjects()

@@ -15,11 +15,11 @@ func main() {
 
 	switch first {
 	case "review":
-		reviewCLI(remaining)
+		review()
 	case "project":
 		projectCLI(remaining)
 	case "tasks":
-		tasksCLI(remaining)
+		tasksCLI()
 	default:
 		external.OpenTextEditor(gtd.FolderRoot)
 	}
