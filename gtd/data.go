@@ -9,6 +9,7 @@ import (
 
 var (
 	Now            = time.Now()
+	NotesRoot      = os.Getenv("NOTESPATH")
 	FolderRoot     = root(os.Getenv("GTDPATH"))
 	FolderActions  = filepath.Join(FolderRoot, "0-next-actions")
 	FolderProjects = filepath.Join(FolderRoot, "1-projects")

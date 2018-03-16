@@ -22,6 +22,8 @@ func main() {
 		tasksCLI()
 	case "tickler":
 		scanTickler()
+	case "notes":
+		external.OpenTextEditor(gtd.NotesRoot)
 	default:
 		external.OpenTextEditor(gtd.FolderRoot)
 	}
