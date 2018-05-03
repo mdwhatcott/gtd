@@ -59,8 +59,8 @@ func prepareNewProjectContent(command NewProjectInfo) string {
 func deriveFilename(name string) string {
 	name = replace(name, "  ", " ")
 	name = strings.TrimSpace(name)
+	name = replace(name, ":", "-")
 	name = strings.Map(toLowerASCII, name)
-	name = replace(name, "--", "-")
 	name = strings.Trim(name, "-")
 	return name + ".md"
 }
