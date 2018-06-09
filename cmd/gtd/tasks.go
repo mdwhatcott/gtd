@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"path/filepath"
 	"strings"
@@ -85,6 +86,9 @@ func writeTasksInContextToFile(context string, tasks []*gtd.Task) {
 		builder.WriteString(task.ContextString(maxProjectNameLength) + "\n")
 	}
 
-	path := filepath.Join(gtd.FolderActions, strings.ToLower(strings.Trim(context, "@"))+".md")
+	contextName := strings.Trim(context, "@")
+	contextName = strings.ToLower(contextName)
+	filename := fmt.Sprintf("%s.md", contextName)
+	path := filepath.Join(gtd.FolderActions, filename)
 	external.CreateFile(path, builder.String())
 }
