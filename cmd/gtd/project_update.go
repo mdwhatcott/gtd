@@ -38,8 +38,10 @@ func prepareForNextOccurrence(recurring *gtd.Project) {
 	for _, task := range recurring.Tasks() {
 		task.Completed = false
 	}
-	external.CreateFile(recurring.Path(), recurring.String())
-	move(recurring.Path(), calculateDestination(recurring.RecurringFrequency()))
+	source := recurring.Path()
+	external.CreateFile(source, recurring.String())
+	destination := calculateDestination(recurring.RecurringFrequency())
+	move(source, destination)
 }
 func calculateDestination(recurring gtd.Recurring) string {
 	return ticklerFolder(recurring.Next(time.Now()))
