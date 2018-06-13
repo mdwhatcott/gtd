@@ -13,6 +13,12 @@ import (
 	"text/template"
 )
 
+func Prompt(message string) string {
+	fmt.Print(message)
+	fmt.Print(" ")
+	return ReadLine()
+}
+
 func ReadLine() string {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
@@ -84,12 +90,10 @@ func ScanFile(path string) *bufio.Scanner {
 }
 
 func Commit(path string) {
-	fmt.Println("Opening SourceTree window...")
 	if err := exec.Command("stree", path).Run(); err != nil {
 		log.Fatalln("Could not open source tree:", err)
 	}
-	fmt.Print("<Enter> to continue...")
-	ReadLine()
+	Prompt("<Enter> to continue...")
 }
 
 func DeleteContents(folder string) {
@@ -98,5 +102,11 @@ func DeleteContents(folder string) {
 		if err := os.Remove(path); err != nil {
 			log.Fatalln("Could not remove specified path:", path, err)
 		}
+	}
+}
+
+func Navigate(address string) {
+	if err := exec.Command("open", address).Run(); err != nil {
+		log.Fatalln("Could not open browser:", err)
 	}
 }

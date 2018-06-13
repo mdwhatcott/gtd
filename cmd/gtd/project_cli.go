@@ -11,12 +11,15 @@ func projectCLI(input []string) {
 	switch first {
 	case "":
 		createProjects()
+		regenerateTasks()
 	case "update":
 		updateProjectStatusCLI(remaining)
+		regenerateTasks()
 	case "list":
 		listProjects()
 	case "review":
 		reviewProjects()
+		regenerateTasks()
 	default:
 		exit(flag)
 	}

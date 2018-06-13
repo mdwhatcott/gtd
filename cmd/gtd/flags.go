@@ -111,8 +111,20 @@ This action is:
 - non-interactive
 - destructive (consider committing all changes to source control before execution)
 
-Flags:
+Available subcommands:
+	- gtd tasks review
 
+`
+
+	usageFlagsTasksReview = `
+Usage of subcommand 'gtd tasks review':
+	
+	Opens each context list in turn in a text editor for review.
+	
+this action is:
+	
+	- interactive (close each file after reviewing it to proceed)
+	- non-destructive
 `
 
 	usageFlagsProject = `

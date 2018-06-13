@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"path/filepath"
 	"strings"
@@ -10,11 +11,21 @@ import (
 	"github.com/mdwhatcott/gtd/gtd"
 )
 
-func tasksCLI() {
-	external.Flags(usageFlagsTasks).Parse(nil)
-	regenerateTasks()
-}
+func tasksCLI(input []string) {
+	flag := external.Flags(usageFlagsTasks)
+	flag.Parse(input)
 
+	first, _ := firstAndRemaining(flag.Args())
+
+	switch first {
+	case "":
+		regenerateTasks()
+	case "review":
+		reviewTasks()
+	default:
+		exit(flag)
+	}
+}
 func regenerateTasks() {
 	syncTasks()
 	sweepTasks()
@@ -73,8 +84,8 @@ func sortTasksByContext(projects []*gtd.Project) map[string][]*gtd.Task {
 	}
 	return contexts
 }
+
 func writeTasksInContextToFile(context string, tasks []*gtd.Task) {
-	log.Printf("%-15s %d tasks\n", context, len(tasks))
 	maxProjectNameLength := 0
 	for _, task := range tasks {
 		if len(task.Project) > maxProjectNameLength {
@@ -91,4 +102,20 @@ func writeTasksInContextToFile(context string, tasks []*gtd.Task) {
 	filename := fmt.Sprintf("%s.md", contextName)
 	path := filepath.Join(gtd.FolderActions, filename)
 	external.CreateFile(path, builder.String())
+}
+
+func reviewTasks() {
+	files, err := ioutil.ReadDir(gtd.FolderActions)
+	if err != nil {
+		log.Fatalln("Could not read actions folder.")
+	}
+
+	for _, info := range files {
+		if !strings.HasSuffix(info.Name(), ".md") {
+			continue
+		}
+
+		fmt.Println("Now reviewing", info.Name())
+		external.OpenTextEditorAndWait(filepath.Join(gtd.FolderActions, info.Name()))
+	}
 }

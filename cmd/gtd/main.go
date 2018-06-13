@@ -19,7 +19,7 @@ func main() {
 	case "project":
 		projectCLI(remaining)
 	case "tasks":
-		tasksCLI()
+		tasksCLI(remaining)
 	case "tickler":
 		scanTickler()
 	case "notes":
