@@ -50,7 +50,7 @@ func ParseProject(id int, path string, reader io.Reader) *Project {
 
 func checksum(input string) string {
 	hash := fnv.New32a()
-	hash.Write([]byte(input))
+	_, _ = hash.Write([]byte(input))
 	sum := hash.Sum(nil)
 	return hex.EncodeToString(sum)
 }

@@ -4,7 +4,7 @@ import "github.com/mdwhatcott/gtd/external"
 
 func projectCLI(input []string) {
 	flag := external.Flags(usageFlagsProject)
-	flag.Parse(input)
+	_ = flag.Parse(input)
 
 	first, remaining := firstAndRemaining(flag.Args())
 

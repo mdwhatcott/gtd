@@ -13,7 +13,7 @@ func updateProjectStatusCLI(inputs []string) {
 	flags := external.Flags(usageFlagsUpdateProjects)
 	id := flags.Int("id", 0, "The numeric project id (matching output of the last 'gtd project list').")
 	status := flags.String("status", "", "The new status of the project (one of: 'complete', 'maybe', 'someday', 'rejected').")
-	flags.Parse(inputs)
+	_ = flags.Parse(inputs)
 
 	if !updateProjectStatus(findProject(*id), *status) {
 		exit(flags)

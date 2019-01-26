@@ -13,7 +13,7 @@ import (
 
 func tasksCLI(input []string) {
 	flag := external.Flags(usageFlagsTasks)
-	flag.Parse(input)
+	_ = flag.Parse(input)
 
 	first, _ := firstAndRemaining(flag.Args())
 

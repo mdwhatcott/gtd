@@ -9,7 +9,7 @@ import (
 
 func main() {
 	flag := external.Flags(usageFlag)
-	flag.Parse(os.Args[1:])
+	_ = flag.Parse(os.Args[1:])
 
 	first, remaining := firstAndRemaining(flag.Args())
 

@@ -10,7 +10,7 @@ import (
 )
 
 func review() {
-	external.Flags(usageFlagsReview).Parse(nil)
+	_ = external.Flags(usageFlagsReview).Parse(nil)
 
 	getClear()
 	getCurrent()
@@ -25,12 +25,12 @@ func getClear() {
 }
 func getCurrent() {
 	fmt.Println("Part 2: 'Get Current'")
-	tickler()
-	tasks()
+	importTickler()
+	generateTasks()
 	taskReview()
-	tasks()
+	generateTasks()
 	projectReview()
-	tasks()
+	generateTasks()
 	commit()
 }
 func getCreative() {
@@ -74,12 +74,12 @@ func inboxZero() {
 	external.Prompt("All inboxes should be empty at this point. <ENTER> to continue...")
 }
 
-func tickler() {
+func importTickler() {
 	fmt.Println("Scanning tickler for projects now due...")
 	scanTickler()
 }
 
-func tasks() {
+func generateTasks() {
 	fmt.Println("Regenerating task lists...")
 	regenerateTasks()
 }
