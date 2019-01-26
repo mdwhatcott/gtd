@@ -90,8 +90,8 @@ func ScanFile(path string) *bufio.Scanner {
 }
 
 func Commit(path string) {
-	if err := exec.Command("stree", path).Run(); err != nil {
-		log.Fatalln("Could not open source tree:", err)
+	if err := exec.Command("smerge", path).Run(); err != nil {
+		log.Fatalln("Could not open sublime merge:", err)
 	}
 	Prompt("<Enter> to continue...")
 }

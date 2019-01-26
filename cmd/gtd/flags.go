@@ -33,7 +33,7 @@ const (
 ## Prerequisites:
 
 - [Git](https://git-scm.com/) revision control installed.
-- [Atlassian Source Tree](https://www.sourcetreeapp.com/) w/ command line tools installed ('stree').
+- [Sublime Merge](https://www.sublimemerge.com/) w/ command line tools installed ('smerge').
 - [Sublime Text](https://www.sublimetext.com/) w/ command line tools installed ('subl').
 - Understanding of [GTD®](https://gettingthingsdone.com/), the GTD® Weekly Review process, 
 and a willingness to accept the variation on that process adopted herein.
