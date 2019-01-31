@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"path/filepath"
 	"strings"
 	"text/template"
 	"unicode"
@@ -40,7 +39,7 @@ func createProjects() {
 }
 
 func createProject(command NewProjectInfo) {
-	path := filepath.Join(gtd.FolderProjects, deriveFilename(command.Name))
+	path := join(gtd.FolderProjects, deriveFilename(command.Name))
 	external.CreateFile(path, prepareNewProjectContent(command))
 
 	if !command.Static {

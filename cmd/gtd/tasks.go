@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"path/filepath"
 	"strings"
 
 	"github.com/mdwhatcott/gtd/external"
@@ -34,7 +33,7 @@ func regenerateTasks() {
 func syncTasks() {
 	projects := gtd.LoadProjects()
 	for _, item := range external.ListDirectory(gtd.FolderActions) {
-		scanner := external.ScanFile(filepath.Join(gtd.FolderActions, item.Name()))
+		scanner := external.ScanFile(join(gtd.FolderActions, item.Name()))
 		for scanner.Scan() {
 			line := strings.TrimSpace(scanner.Text())
 			if line == "" {
@@ -100,7 +99,7 @@ func writeTasksInContextToFile(context string, tasks []*gtd.Task) {
 	contextName := strings.Trim(context, "@")
 	contextName = strings.ToLower(contextName)
 	filename := fmt.Sprintf("%s.md", contextName)
-	path := filepath.Join(gtd.FolderActions, filename)
+	path := join(gtd.FolderActions, filename)
 	external.CreateFile(path, builder.String())
 }
 
@@ -116,6 +115,6 @@ func reviewTasks() {
 		}
 
 		fmt.Println("Now reviewing", info.Name())
-		external.OpenTextEditorAndWait(filepath.Join(gtd.FolderActions, info.Name()))
+		external.OpenTextEditorAndWait(join(gtd.FolderActions, info.Name()))
 	}
 }

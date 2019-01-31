@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"io/ioutil"
 	"log"
-	"path/filepath"
 )
 
 func LoadProjects() (projects []*Project) {
@@ -13,7 +12,7 @@ func LoadProjects() (projects []*Project) {
 		log.Fatal(err)
 	}
 	for i, file := range dir {
-		path := filepath.Join(FolderProjects, file.Name())
+		path := join(FolderProjects, file.Name())
 		content, err := ioutil.ReadFile(path)
 		if err != nil {
 			log.Fatal("Could not read project file:", err)

@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"path/filepath"
 
 	"github.com/mdwhatcott/gtd/external"
 	"github.com/mdwhatcott/gtd/gtd"
@@ -22,3 +23,5 @@ func ensureRequiredDirectories() {
 	external.MakeDirectory(gtd.FolderMaybe)
 	external.MakeDirectory(gtd.FolderRejected)
 }
+
+var join = filepath.Join

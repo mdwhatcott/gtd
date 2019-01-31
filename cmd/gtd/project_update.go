@@ -49,7 +49,7 @@ func calculateDestination(recurring gtd.Recurring) string {
 
 func move(from, to string) {
 	filename := filepath.Base(from)
-	destination := filepath.Join(to, filename)
+	destination := join(to, filename)
 	external.MoveFile(from, destination)
 	log.Println("Moved:", destination)
 }
