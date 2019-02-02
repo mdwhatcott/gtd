@@ -1,6 +1,9 @@
 package gtd
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type Recurring int
 
@@ -26,6 +29,18 @@ const (
 	RecurringNovember
 	RecurringDecember
 )
+
+func FormatAllRecurringValues() string {
+	var all []string
+	for recurring := RecurringNever + 1; ; recurring++ {
+		value := recurring.String()
+		if strings.Contains(value, "invalid") {
+			break
+		}
+		all = append(all, value)
+	}
+	return strings.Join(all, "|")
+}
 
 func (this Recurring) Next(now time.Time) time.Time {
 	switch this {

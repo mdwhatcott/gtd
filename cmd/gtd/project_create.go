@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 	"text/template"
+	"time"
 	"unicode"
 
 	"github.com/mdwhatcott/gtd/external"
@@ -98,11 +99,15 @@ var separators = map[rune]bool{
 
 const discardRune = -1
 
-var ProjectTemplate = template.Must(template.New("project").Parse(`# {{.Name}}
+var ProjectTemplate = template.Must(template.New("project").Parse(formattedTemplate))
+
+var formattedTemplate = fmt.Sprintf(rawTemplate, gtd.FormatAllRecurringValues(), time.Now().Format("2006-01-02"))
+
+const rawTemplate = `# {{.Name}}
 
 Desired Outcome: {{.Outcome}}
 
-RECURRING: monthly|bimonthly|quarterly|semiannually|annually|biennially|January|February|March|April|May|June|July|August|September|October|November|December
+RECURRING: %s
 
 ## Info
 
@@ -118,6 +123,6 @@ RECURRING: monthly|bimonthly|quarterly|semiannually|annually|biennially|January|
 ## Activity Log:
 
 
-### 2018-01-15
+### %s
 
-- What happened today?`))
+- What happened today?`
