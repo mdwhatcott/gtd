@@ -102,7 +102,7 @@ var ProjectTemplate = template.Must(template.New("project").Parse(`# {{.Name}}
 
 Desired Outcome: {{.Outcome}}
 
-RECURRING: ???
+RECURRING: monthly|bimonthly|quarterly|semiannually|annually|biennially|January|February|March|April|May|June|July|August|September|October|November|December
 
 ## Info
 
