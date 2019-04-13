@@ -43,7 +43,10 @@ func commit() {
 }
 
 func mindSweep() {
-	answer := external.Prompt("What has your attention? Enter duration of mind sweep:")
+	answer := external.Prompt("What has your attention? Enter duration of mind sweep (or <ENTER> to continue):")
+	if len(answer) == 0 {
+		return
+	}
 	for {
 		duration, err := time.ParseDuration(answer)
 		if err != nil {
@@ -58,18 +61,18 @@ func mindSweep() {
 
 func inboxZero() {
 	fmt.Println(`Get "In" to Zero:
-				
+
 1. Gather all physical inputs into in-basket.
 2. Process all items in Google Keep.
 3. Process all emails.
-4. Review previous and upcoming 2 weeks in calendar.
-			
-(Browser tabs and project creation prompt will appear shortly...)`)
+4. Review previous and upcoming 2 weeks in calendar.`)
 
-	time.Sleep(time.Second * 5)
-	external.Navigate("https://keep.google.com")
-	external.Navigate("https://mail.google.com")
-	external.Navigate("https://calendar.google.com")
+	response := external.Prompt("Would you like to open browser tabs for email, calendar, and the inbox? [y/N] ")
+	if response == "" || response[0] == 'y' || response[0] == 'Y' {
+		external.Navigate("https://mail.google.com")
+		external.Navigate("https://keep.google.com")
+		external.Navigate("https://calendar.google.com")
+	}
 	createProjects()
 	external.Prompt("All inboxes should be empty at this point. <ENTER> to continue...")
 }
