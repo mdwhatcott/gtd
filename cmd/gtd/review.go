@@ -26,7 +26,7 @@ func getClear() {
 }
 
 func openTextEditor() {
-	if external.PromptNo("Would you like to open $GTDPATH in a text editor? [y/N]") {
+	if !external.PromptNo("Would you like to open $GTDPATH in a text editor? [y/N]") {
 		external.OpenTextEditor(gtd.FolderRoot)
 	}
 }
@@ -73,7 +73,7 @@ func inboxZero() {
 3. Process all emails.
 4. Review previous and upcoming 2 weeks in calendar.`)
 
-	if external.PromptNo("Would you like to open browser tabs for email, calendar, and the inbox? [y/N]") {
+	if !external.PromptNo("Would you like to open browser tabs for email, calendar, and the inbox? [y/N]") {
 		external.Navigate("https://mail.google.com")
 		external.Navigate("https://keep.google.com")
 		external.Navigate("https://calendar.google.com")
