@@ -19,9 +19,16 @@ func review() {
 
 func getClear() {
 	fmt.Println("Part 1: 'Get Clear'")
+	openTextEditor()
 	commit()
 	mindSweep()
 	inboxZero()
+}
+
+func openTextEditor() {
+	if external.PromptNo("Would you like to open $GTDPATH in a text editor? [y/N]") {
+		external.OpenTextEditor(gtd.FolderRoot)
+	}
 }
 func getCurrent() {
 	fmt.Println("Part 2: 'Get Current'")
@@ -43,14 +50,13 @@ func commit() {
 }
 
 func mindSweep() {
-	answer := external.Prompt("What has your attention? Enter duration of mind sweep (or <ENTER> to continue):")
-	if len(answer) == 0 {
-		return
-	}
+	const durationPrompt = "What has your attention? Enter duration of mind sweep (or <ENTER> to continue):"
+	answer := external.Prompt(durationPrompt)
 	for {
-		duration, err := time.ParseDuration(answer)
-		if err != nil {
-			answer = external.Prompt("What has your attention? Enter duration of mind sweep:")
+		if len(answer) == 0 {
+			break
+		} else if duration, err := time.ParseDuration(answer); err != nil {
+			answer = external.Prompt(durationPrompt)
 			continue
 		} else {
 			tomato.SetTimer(duration).Start()
@@ -67,8 +73,7 @@ func inboxZero() {
 3. Process all emails.
 4. Review previous and upcoming 2 weeks in calendar.`)
 
-	response := external.Prompt("Would you like to open browser tabs for email, calendar, and the inbox? [y/N] ")
-	if response == "" || response[0] == 'y' || response[0] == 'Y' {
+	if external.PromptNo("Would you like to open browser tabs for email, calendar, and the inbox? [y/N]") {
 		external.Navigate("https://mail.google.com")
 		external.Navigate("https://keep.google.com")
 		external.Navigate("https://calendar.google.com")

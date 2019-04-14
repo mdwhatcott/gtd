@@ -13,6 +13,14 @@ import (
 	"text/template"
 )
 
+func PromptYes(question string) bool {
+	response := Prompt(question)
+	return response == "" || response[0] == 'y' || response[0] == 'Y'
+}
+func PromptNo(question string) bool {
+	response := Prompt(question)
+	return response == "" || response[0] == 'n' || response[0] == 'N'
+}
 func Prompt(message string) string {
 	fmt.Print(message)
 	fmt.Print(" ")
