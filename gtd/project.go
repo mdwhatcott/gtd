@@ -63,8 +63,7 @@ func (this *Project) Path() string {
 	return this.path
 }
 func (this *Project) Name() string {
-	const listFormat = "%-4d%s"
-	return fmt.Sprintf(listFormat, this.id, this.listingName())
+	return fmt.Sprintf("%-5s%s", fmt.Sprintf("%d.", this.id), this.listingName())
 }
 
 func (this *Project) listingName() string {

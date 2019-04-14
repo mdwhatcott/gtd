@@ -19,14 +19,14 @@ type ProjectFixture struct {
 func (this *ProjectFixture) TestParseProjectName() {
 	content := strings.NewReader("# I am a project name\n\nWith important stuff\n# not a project name")
 	project := ParseProject(42, "path", content)
-	this.So(project.Name(), should.Equal, "42  I am a project name")
+	this.So(project.Name(), should.Equal, "42.  I am a project name")
 	this.So(project.RecurringFrequency(), should.Equal, RecurringNever)
 }
 
 func (this *ProjectFixture) TestParseProjectNoName() {
 	content := strings.NewReader("I am a project name but I'm not marked as such (#)")
 	project := ParseProject(42, "/somewhere/path.md", content)
-	this.So(project.Name(), should.Equal, "42  path")
+	this.So(project.Name(), should.Equal, "42.  path")
 	this.So(project.RecurringFrequency(), should.Equal, RecurringNever)
 }
 
