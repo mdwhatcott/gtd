@@ -10,17 +10,36 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
-func PromptYes(question string) bool {
+type YesNoResponse int
+
+const (
+	NO YesNoResponse = iota
+	YES
+)
+
+func PromptYesNo(assumed YesNoResponse, question string) YesNoResponse {
+	if assumed == YES {
+		question += " [Y/n] "
+	} else if assumed == NO {
+		question += " [y/N] "
+	}
 	response := Prompt(question)
-	return response == "" || response[0] == 'y' || response[0] == 'Y'
+	response = strings.TrimSpace(response)
+	response = strings.ToUpper(response)
+
+	if response == "Y" {
+		return YES
+	} else if response == "N" {
+		return NO
+	} else {
+		return assumed
+	}
 }
-func PromptNo(question string) bool {
-	response := Prompt(question)
-	return response == "" || response[0] == 'n' || response[0] == 'N'
-}
+
 func Prompt(message string) string {
 	fmt.Print(message)
 	fmt.Print(" ")
