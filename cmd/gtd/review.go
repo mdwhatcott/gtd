@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/mdwhatcott/tomato"
+
 	"github.com/mdwhatcott/gtd/external"
 	"github.com/mdwhatcott/gtd/gtd"
-	"github.com/mdwhatcott/tomato"
 )
 
 func review() {
