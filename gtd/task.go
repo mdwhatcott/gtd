@@ -27,30 +27,27 @@ func ParseTask(line string) *Task {
 }
 
 func extractProjectAndTaskText(contextLine string) (project, task string) {
-	pattern := regexp.MustCompile(`:([a-f0-9]{8}):`)
-	results := pattern.Split(contextLine, 5)
+	results := taskChecksumExtractionPattern.Split(contextLine, 5)
 	return results[0][len("- [ ]"):], results[1]
 }
 
 func extractPreviousChecksum(line string) string {
-	pattern := regexp.MustCompile(`:([a-f0-9]{8}):`)
-	matches := pattern.FindStringSubmatch(line)
+	matches := taskChecksumExtractionPattern.FindStringSubmatch(line)
 	if len(matches) > 1 {
 		return matches[1]
 	}
 	return ""
 }
+
 func isTask(line string) bool {
-	matched, _ := regexp.MatchString(`^- \[[xX ]] .+`, line)
-	return matched
+	return isTaskPattern.MatchString(line)
 }
 func isCompletedTask(line string) bool {
-	matched, _ := regexp.MatchString(`^- \[x|X] .+`, line)
-	return matched
+	return isCompletedTaskPattern.MatchString(line)
 }
+
 func taskText(line string) string {
-	pattern := regexp.MustCompile(` :[a-f0-9]{8}:`)
-	index := pattern.FindStringIndex(line)
+	index := taskChecksumPattern.FindStringIndex(line)
 	if index == nil {
 		return line[len("- [ ] "):]
 	}
@@ -87,3 +84,10 @@ func (this *Task) ContextString(projectNameLength int) string {
 	format := fmt.Sprintf("- [ ] %%-%ds :%%s: %%s", projectNameLength)
 	return fmt.Sprintf(format, this.Project, this.CurrentChecksum, this.Text)
 }
+
+var (
+	isTaskPattern                 = regexp.MustCompile(`^- \[[xX ]] .+`)
+	isCompletedTaskPattern        = regexp.MustCompile(`^- \[x|X] .+`)
+	taskChecksumExtractionPattern = regexp.MustCompile(`:([a-f0-9]{8}):`)
+	taskChecksumPattern           = regexp.MustCompile(` :[a-f0-9]{8}:`)
+)
