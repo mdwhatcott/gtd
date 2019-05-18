@@ -71,7 +71,7 @@ func MoveFile(oldPath, newPath string) {
 
 func OpenTextEditorAndWait(path string) {
 	if err := exec.Command("subl", "-wait", path).Run(); err != nil {
-		log.Fatalln("Could not edit file:", err)
+		log.Fatalln("Could not open Sublime Text:", err)
 	}
 }
 
