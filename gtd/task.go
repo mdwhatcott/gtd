@@ -80,6 +80,22 @@ func (this *Task) ProjectString() string {
 	return builder.String()
 }
 
+func (this *Task) PrintableString() string {
+	builder := new(strings.Builder)
+	builder.WriteString("- [")
+	if this.Completed {
+		builder.WriteString("X")
+	} else {
+		builder.WriteString(" ")
+	}
+	builder.WriteString("] ")
+	builder.WriteString(this.Text)
+	builder.WriteString(" (")
+	builder.WriteString(this.Project)
+	builder.WriteString(")")
+	return builder.String()
+}
+
 func (this *Task) ContextString(projectNameLength int) string {
 	format := fmt.Sprintf("- [ ] %%-%ds :%%s: %%s", projectNameLength)
 	return fmt.Sprintf(format, this.Project, this.CurrentChecksum, this.Text)
