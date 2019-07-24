@@ -14,7 +14,7 @@ func main() {
 		fmt.Println("## " + context)
 		fmt.Println()
 		for _, task := range tasks {
-			fmt.Println(task.PrintableMarkdownString())
+			fmt.Println(task.PrintableString())
 		}
 		fmt.Println()
 	}

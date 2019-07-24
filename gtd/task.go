@@ -80,7 +80,7 @@ func (this *Task) ProjectString() string {
 	return builder.String()
 }
 
-func (this *Task) PrintableString() string {
+func (this *Task) PrintableMarkdownString() string {
 	builder := new(strings.Builder)
 	builder.WriteString("- [")
 	if this.Completed {
@@ -89,6 +89,15 @@ func (this *Task) PrintableString() string {
 		builder.WriteString(" ")
 	}
 	builder.WriteString("] ")
+	builder.WriteString(this.Text)
+	builder.WriteString(" (")
+	builder.WriteString(this.Project)
+	builder.WriteString(")")
+	return builder.String()
+}
+
+func (this *Task) PrintableString() string {
+	builder := new(strings.Builder)
 	builder.WriteString(this.Text)
 	builder.WriteString(" (")
 	builder.WriteString(this.Project)
