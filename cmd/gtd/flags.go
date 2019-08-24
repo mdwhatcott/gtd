@@ -51,11 +51,11 @@ What follows are several use cases and the corresponding commands.
 
 ### Get Inbox to Zero
 
-	gtd inbox
+    gtd inbox
 
 ### Mind Sweep
 
-	gtd sweep
+    gtd sweep
 
 ### Weekly Review Procedures: (very comprehensive, includes many other instructions)
 
