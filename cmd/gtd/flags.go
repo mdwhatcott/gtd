@@ -40,6 +40,7 @@ and a willingness to accept the variation on that process adopted herein.
 
 ## Basic Commands (some of which have their own subcommands):
 
+- gtd inbox
 - gtd project
 - gtd tasks
 - gtd review
@@ -48,7 +49,15 @@ and a willingness to accept the variation on that process adopted herein.
 Invoke any of the above commands with '-help' for additional information. 
 What follows are several use cases and the corresponding commands.
 
-### Weekly Review Procedures:
+### Get Inbox to Zero
+
+	gtd inbox
+
+### Mind Sweep
+
+	gtd sweep
+
+### Weekly Review Procedures: (very comprehensive, includes many other instructions)
 
     gtd review
 

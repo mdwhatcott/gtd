@@ -14,10 +14,10 @@ func main() {
 	first, remaining := firstAndRemaining(flag.Args())
 
 	switch first {
-	case "inbox": // TODO: document
+	case "inbox":
 		inboxZero()
 	case "sweep":
-		mindSweep() // TODO: document
+		mindSweep()
 	case "review":
 		review()
 	case "project":
