@@ -45,6 +45,7 @@ func commit() {
 	external.Commit(gtd.FolderRoot)
 }
 
+// TODO: promote this to a CLI action
 func mindSweep() {
 	const durationPrompt = "What has your attention? Enter duration of mind sweep (or <ENTER> to continue):"
 	answer := external.Prompt(durationPrompt)
@@ -84,7 +85,6 @@ func calendar() {
 	createProjects()
 }
 
-// TODO: should this happen any time we 'generateTasks'?
 func importTickler() {
 	fmt.Println("Scanning tickler for projects now due...")
 	scanTickler()
