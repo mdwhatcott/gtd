@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"os"
 
 	"github.com/mdwhatcott/gtd/external"
@@ -29,6 +30,10 @@ func main() {
 	case "notes":
 		external.OpenTextEditor(gtd.NotesRoot)
 	default:
+		log.Println("Unknown args:", flag.Args())
+	}
+
+	if remaining == nil {
 		external.OpenTextEditor(gtd.FolderRoot)
 	}
 }
