@@ -19,20 +19,15 @@ func review() {
 }
 
 func getClear() {
-	fmt.Println("Part 1: 'Get Clear'")
-	openTextEditor()
+	fmt.Println("Part 1: Get Clear")
 	commit()
 	mindSweep()
 	inboxZero()
+	calendar()
 }
 
-func openTextEditor() {
-	if external.PromptYesNo(external.NO, "Would you like to open $GTDPATH in a text editor?") == external.YES {
-		external.OpenTextEditor(gtd.FolderRoot)
-	}
-}
 func getCurrent() {
-	fmt.Println("Part 2: 'Get Current'")
+	fmt.Println("Part 2: Get Current")
 	importTickler()
 	generateTasks()
 	taskReview()
@@ -66,23 +61,30 @@ func mindSweep() {
 	}
 }
 
+const enterToContinue = " <ENTER> to continue..."
+
+// TODO: promote this to a CLI action
 func inboxZero() {
-	fmt.Println(`Get "In" to Zero:
-
-1. Gather all physical inputs into in-basket.
-2. Process all items in Google Keep.
-3. Process all emails.
-4. Review previous and upcoming 2 weeks in calendar.`)
-
-	if external.PromptYesNo(external.NO, "Would you like to open browser tabs for email, calendar, and the inbox?") == external.YES {
-		external.Navigate("https://mail.google.com")
-		external.Navigate("https://keep.google.com")
-		external.Navigate("https://calendar.google.com")
-	}
+	fmt.Println(`Get "In" to Zero!`)
+	external.Prompt("1. Clear desk, moving 'stuff' to the in-tray." + enterToContinue)
+	external.Prompt("2. Unload stuff from messenger bag to the in-tray." + enterToContinue)
+	external.Prompt("3. Process in-tray." + enterToContinue)
 	createProjects()
-	external.Prompt("All inboxes should be empty at this point. <ENTER> to continue...")
+	external.Prompt("4. Process ~/Desktop." + enterToContinue)
+	createProjects()
+	external.Prompt("5. Process Google Keep." + enterToContinue)
+	createProjects()
+	external.Prompt("6. Process e-mail." + enterToContinue)
+	createProjects()
+	external.Prompt("All in-boxes should be empty at this point. <ENTER> to continue...")
 }
 
+func calendar() {
+	external.Prompt("Review previous and upcoming 2 weeks in calendar." + enterToContinue)
+	createProjects()
+}
+
+// TODO: should this happen any time we 'generateTasks'?
 func importTickler() {
 	fmt.Println("Scanning tickler for projects now due...")
 	scanTickler()
