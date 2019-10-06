@@ -29,11 +29,11 @@ func main() {
 		scanTickler()
 	case "notes":
 		external.OpenTextEditor(gtd.NotesRoot)
+	case "":
+		external.OpenTextEditor(gtd.FolderRoot)
 	default:
 		log.Println("Unknown args:", flag.Args())
-	}
-
-	if remaining == nil {
-		external.OpenTextEditor(gtd.FolderRoot)
+		flag.Usage()
+		os.Exit(1)
 	}
 }
