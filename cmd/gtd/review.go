@@ -28,14 +28,26 @@ func getClear() {
 
 func getCurrent() {
 	fmt.Println("Part 2: Get Current")
+	reviewEmailTags()
 	importTickler()
 	generateTasks()
 	taskReview()
 	generateTasks()
 	projectReview()
 	generateTasks()
+	reviewProjectList()
 	commit()
 }
+
+func reviewEmailTags() {
+	external.Prompt("Review email tags (needs reply, read later, project support, waiting for response)." + enterToContinue)
+}
+
+func reviewProjectList() {
+	fmt.Println("Here is the projects list for one final review:")
+	listProjects()
+}
+
 func getCreative() {
 	fmt.Println("Part 3: Get Creative! (review someday/maybe, upper horizons of focus, etc...)")
 }
