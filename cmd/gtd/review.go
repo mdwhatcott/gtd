@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/mdwhatcott/tomato"
 
@@ -25,18 +24,9 @@ func getClear() {
 	commit()
 }
 func mindSweep() {
-	const durationPrompt = "What has your attention? Enter duration of mind sweep (or <ENTER> to continue):"
-	answer := external.Prompt(durationPrompt)
-	for {
-		if len(answer) == 0 {
-			break
-		} else if duration, err := time.ParseDuration(answer); err != nil {
-			answer = external.Prompt(durationPrompt)
-			continue
-		} else {
-			tomato.SetTimer(duration).Start()
-			break
-		}
+	duration := external.PromptDuration(durationPrompt)
+	if duration > 0 {
+		tomato.SetTimer(duration).Start()
 	}
 }
 func inboxZero() {
@@ -123,3 +113,4 @@ func commit() {
 }
 
 const enterToContinue = " <ENTER> to continue..."
+const durationPrompt = "What has your attention? Enter duration of mind sweep (or <ENTER> to continue):"

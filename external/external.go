@@ -12,6 +12,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 )
 
 type YesNoResponse int
@@ -44,6 +45,18 @@ func Prompt(message string) string {
 	fmt.Print(message)
 	fmt.Print(" ")
 	return ReadLine()
+}
+
+func PromptDuration(prompt string) time.Duration {
+	answer := "invalid"
+	for len(answer) > 0 {
+		duration, err := time.ParseDuration(answer)
+		if err == nil {
+			return duration
+		}
+		answer = Prompt(prompt)
+	}
+	return 0
 }
 
 func ReadLine() string {
