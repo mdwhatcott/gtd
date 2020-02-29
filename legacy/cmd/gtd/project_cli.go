@@ -1,6 +1,6 @@
 package main
 
-import "github.com/mdwhatcott/gtd/external"
+import "github.com/mdwhatcott/gtd/legacy/external"
 
 func projectCLI(input []string) {
 	flag := external.Flags(usageFlagsProject)

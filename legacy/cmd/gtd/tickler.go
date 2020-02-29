@@ -7,8 +7,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mdwhatcott/gtd/external"
-	"github.com/mdwhatcott/gtd/gtd"
+	"github.com/mdwhatcott/gtd/legacy/external"
+	"github.com/mdwhatcott/gtd/legacy/gtd"
 )
 
 func scanTickler() {
