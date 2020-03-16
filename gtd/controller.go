@@ -1,18 +1,11 @@
 package gtd
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
-	"io"
 	"reflect"
+
+	"github.com/mdwhatcott/gtd/gtd/storage"
 )
-
-type Handler interface {
-	Handle(interface{})
-}
-
-/////////////////////////////////////////////////////////
 
 type Controller struct {
 	handler Handler
@@ -23,7 +16,7 @@ func NewController(handler Handler) *Controller {
 }
 
 func (this *Controller) ListProjects(input *ListProjectsInputModel) {
-	query := new(ListStoredProjectsQuery)
+	query := new(storage.ListStoredProjectsQuery)
 	this.handler.Handle(query)
 	for _, project := range query.Result {
 		input.Results.Projects = append(input.Results.Projects, ProjectForCLI{
@@ -64,73 +57,6 @@ func (this ProjectForCLI) String() string {
 
 /////////////////////////////////////////////////////////
 
-type Renderer interface {
-	io.Writer
-	String(fmt.Stringer)
-	JSON(interface{})
-}
-
-/////////////////////////////////////////////////////////
-
-type CLIResult struct {
-	Stdout io.Writer
-	Stderr io.Writer
-	Exit   int
-}
-
-type RecordingCLIResult struct {
-	*CLIResult
-	Stdout *bytes.Buffer
-	Stderr *bytes.Buffer
-}
-
-func NewRecordingCLIResult() *RecordingCLIResult {
-	out := new(bytes.Buffer)
-	err := new(bytes.Buffer)
-	return &RecordingCLIResult{
-		CLIResult: NewCLIResult(out, err),
-		Stdout:    out,
-		Stderr:    err,
-	}
-}
-
-func NewCLIResult(out, err io.Writer) *CLIResult {
-	return &CLIResult{Stdout: out, Stderr: err}
-}
-
-func (this *CLIResult) String(s fmt.Stringer) {
-	_, _ = io.WriteString(this, s.String())
-}
-
-func (this *CLIResult) JSON(v interface{}) {
-	encoder := json.NewEncoder(this)
-	encoder.SetIndent("", "  ")
-	_ = encoder.Encode(v)
-}
-
-func (this *CLIResult) Write(v []byte) (int, error) {
-	n, err := this.Stdout.Write(v)
-	if err != nil {
-		this.Exit++
-		_, _ = fmt.Fprintf(this.Stderr, "Write err: %v", err)
-	}
-	return n, err
-}
-
-///////////////////////////////////////////////////
-
-type ListStoredProjectsQuery struct {
-	Result []StoredProject
-}
-
-type StoredProject struct {
-	ID      string
-	Name    string
-	Outcome string
-}
-
-////////////////////////////////////////////////////
-
 type TotallyFakeQueryHandler struct{}
 
 func NewTotallyFakeQueryHandler() *TotallyFakeQueryHandler {
@@ -139,11 +65,11 @@ func NewTotallyFakeQueryHandler() *TotallyFakeQueryHandler {
 
 func (this *TotallyFakeQueryHandler) Handle(c interface{}) {
 	switch context := c.(type) {
-	case *ListStoredProjectsQuery:
+	case *storage.ListStoredProjectsQuery:
 		context.Result = append(context.Result,
-			StoredProject{"1", "name1", "outcome1"},
-			StoredProject{"2", "name2", "outcome2"},
-			StoredProject{"3", "name3", "outcome3"},
+			storage.StoredProject{ID: "1", Name: "name1", Outcome: "outcome1"},
+			storage.StoredProject{ID: "2", Name: "name2", Outcome: "outcome2"},
+			storage.StoredProject{ID: "3", Name: "name3", Outcome: "outcome3"},
 		)
 	default:
 		panic(fmt.Sprintf("unknown type: %v", reflect.TypeOf(c)))
