@@ -1,4 +1,4 @@
-package gtd
+package rNd
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ type Handler interface {
 
 type Renderer interface {
 	io.Writer
-	String(fmt.Stringer)
-	JSON(interface{})
+	RenderStringer(fmt.Stringer)
+	RenderJSON(interface{})
 }
 

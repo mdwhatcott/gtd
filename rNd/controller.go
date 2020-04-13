@@ -1,10 +1,10 @@
-package gtd
+package rNd
 
 import (
 	"fmt"
 	"reflect"
 
-	"github.com/mdwhatcott/gtd/gtd/storage"
+	"github.com/mdwhatcott/gtd/rNd/storage"
 )
 
 type Controller struct {
@@ -41,7 +41,7 @@ func NewListProjectsInputModel() *ListProjectsInputModel {
 
 func (this *ListProjectsInputModel) Render(result Renderer) {
 	for _, project := range this.Results.Projects {
-		result.String(project)
+		result.RenderStringer(project)
 	}
 }
 

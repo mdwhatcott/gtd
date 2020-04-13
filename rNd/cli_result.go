@@ -1,4 +1,4 @@
-package gtd
+package rNd
 
 import (
 	"encoding/json"
@@ -16,11 +16,11 @@ func NewCLIResult(out, err io.Writer) *CLIResult {
 	return &CLIResult{Stdout: out, Stderr: err}
 }
 
-func (this *CLIResult) String(s fmt.Stringer) {
+func (this *CLIResult) RenderStringer(s fmt.Stringer) {
 	_, _ = io.WriteString(this, s.String())
 }
 
-func (this *CLIResult) JSON(v interface{}) {
+func (this *CLIResult) RenderJSON(v interface{}) {
 	encoder := json.NewEncoder(this)
 	encoder.SetIndent("", "  ")
 	_ = encoder.Encode(v)
