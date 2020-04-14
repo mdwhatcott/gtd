@@ -1,11 +1,12 @@
-package outcomes
+package domain
 
 import (
 	"testing"
 
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
-	"github.com/smartystreets/joyride"
+
+	"github.com/mdwhatcott/gtd/gtd/storage/queries"
 )
 
 func TestFixture(t *testing.T) {
@@ -15,13 +16,11 @@ func TestFixture(t *testing.T) {
 type Fixture struct {
 	*gunit.Fixture
 
-	shell  *FakeShell
-	runner joyride.Runner
+	shell *FakeShell
 }
 
 func (this *Fixture) Setup() {
 	this.shell = NewFakeShell(this.Fixture)
-	this.runner = joyride.NewRunner(this.shell, this.shell, this.shell)
 }
 
 func (this *Fixture) Test() {
@@ -33,7 +32,7 @@ type FakeShell struct {
 	*gunit.Fixture
 	writes   []interface{}
 	messages []interface{}
-	reads    map[string][]interface{} // not really sure about this
+	reads    map[string][]interface{} // map[user-id][]event
 }
 
 func NewFakeShell(fixture *gunit.Fixture) *FakeShell {
@@ -53,14 +52,25 @@ func (this *FakeShell) Write(values ...interface{}) {
 
 func (this *FakeShell) Read(values ...interface{}) {
 	for _, value := range values {
-		switch value.(type) {
-		// TODO: fill out results based on type of value
+		switch query := value.(type) {
+		case *queries.EventStream:
+			query.Result.Stream = load(this.reads[query.UserID])
 		}
 	}
 }
+func load(events []interface{}) chan interface{} {
+	stream := make(chan interface{})
+	go populate(events, stream)
+	return stream
+}
+func populate(events []interface{}, stream chan interface{}) {
+	for _, event := range events {
+		stream <- event
+	}
+}
 
-func (this *FakeShell) PrepareReadResults(results ...interface{}) {
-	// TODO: populate reads...
+func (this *FakeShell) PrepareReadResults(user string, results ...interface{}) {
+	this.reads[user] = append(this.reads[user], results)
 }
 
 func (this *FakeShell) AssertOutput(expected ...interface{}) {
