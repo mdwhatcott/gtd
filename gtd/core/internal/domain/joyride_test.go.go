@@ -9,6 +9,7 @@ import (
 
 type FakeShell struct {
 	*gunit.Fixture
+
 	writes   []interface{}
 	messages []interface{}
 	reads    map[string][]interface{} // map[user-id][]event

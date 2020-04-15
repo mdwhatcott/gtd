@@ -9,6 +9,7 @@ import (
 
 type Handler struct {
 	*joyride.Handler
+
 	clock *clock.Clock
 	tasks map[string]*Task
 }
