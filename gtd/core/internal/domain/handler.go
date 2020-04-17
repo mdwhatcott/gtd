@@ -21,9 +21,8 @@ func NewHandler(runner joyride.Runner, id func() string) *Handler {
 }
 
 func (this *Handler) HandleMessage(message interface{}) bool {
-	switch message := message.(type) {
+	switch message.(type) {
 	case *commands.TrackOutcome:
-		this.Add(NewTask(this.clock, this.nextID, message))
 	case *commands.RedefineOutcome:
 	case *commands.DescribeOutcome:
 	case *commands.DeleteOutcome:
@@ -34,7 +33,7 @@ func (this *Handler) HandleMessage(message interface{}) bool {
 	case *commands.DeclareOutcomeUncertain:
 	case *commands.TrackAction:
 	case *commands.ResequencedAction:
-	case *commands.RedefinedAction:
+	case *commands.RedefineAction:
 	case *commands.AddContextToAction:
 	case *commands.RemoveContextFromAction:
 	case *commands.MarkActionComplete:
@@ -43,5 +42,6 @@ func (this *Handler) HandleMessage(message interface{}) bool {
 	default:
 		return false
 	}
+	this.Add(NewTask(this.clock.UTCNow(), this.nextID, message))
 	return true
 }

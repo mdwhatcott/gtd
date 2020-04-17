@@ -110,7 +110,7 @@ type ResequencedAction struct {
 	}
 }
 
-type RedefinedAction struct {
+type RedefineAction struct {
 	UserID        string
 	OutcomeID     string
 	ActionID      string

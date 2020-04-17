@@ -1,7 +1,8 @@
 package domain
 
 import (
-	"github.com/smartystreets/clock"
+	"time"
+
 	"github.com/smartystreets/joyride/v2"
 
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
@@ -11,15 +12,15 @@ import (
 type Task struct {
 	*joyride.Base
 
-	clock   *clock.Clock
+	now     time.Time
 	nextID  func() string
 	command interface{}
 }
 
-func NewTask(clock *clock.Clock, nextID func() string, command interface{}) *Task {
+func NewTask(now time.Time, nextID func() string, command interface{}) *Task {
 	return &Task{
 		Base:    joyride.New(),
-		clock:   clock,
+		now:     now,
 		nextID:  nextID,
 		command: command,
 	}
@@ -40,14 +41,29 @@ func (this *Task) processCommand() {
 	switch command := this.command.(type) {
 	case *commands.TrackOutcome:
 		this.trackOutcome(command)
+	case *commands.RedefineOutcome:
+		this.redefineOutcome(command)
 	}
 }
 
 func (this *Task) trackOutcome(command *commands.TrackOutcome) {
 	command.Result.OutcomeID = this.nextID()
-	this.AddPendingWrites(events.OutcomeFixedV1{
-		Timestamp: this.clock.UTCNow(),
-		UserID:    command.UserID,
-		OutcomeID: command.Result.OutcomeID,
-	})
+	this.AddPendingWrites(
+		events.OutcomeIdentifiedV1{
+			Timestamp: this.now,
+			UserID:    command.UserID,
+			OutcomeID: command.Result.OutcomeID,
+		},
+	)
+}
+
+func (this *Task) redefineOutcome(command *commands.RedefineOutcome) {
+	this.AddPendingWrites(
+		events.OutcomeRedefinedV1{
+			Timestamp:     this.now,
+			UserID:        command.UserID,
+			OutcomeID:     command.OutcomeID,
+			NewDefinition: command.NewDefinition,
+		},
+	)
 }

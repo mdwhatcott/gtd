@@ -3,27 +3,17 @@ package domain
 import (
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
-
-	"github.com/mdwhatcott/gtd/gtd/storage/queries"
 )
 
 type FakeShell struct {
 	*gunit.Fixture
 
 	writes   []interface{}
-	messages []interface{}
-	reads    map[string][]interface{} // map[user-id][]event
+	reads    []interface{}
 }
 
 func NewFakeShell(fixture *gunit.Fixture) *FakeShell {
-	return &FakeShell{
-		Fixture: fixture,
-		reads:   make(map[string][]interface{}),
-	}
-}
-
-func (this *FakeShell) Dispatch(values ...interface{}) {
-	this.messages = append(this.messages, values...)
+	return &FakeShell{Fixture: fixture}
 }
 
 func (this *FakeShell) Write(values ...interface{}) {
@@ -31,12 +21,12 @@ func (this *FakeShell) Write(values ...interface{}) {
 }
 
 func (this *FakeShell) Read(values ...interface{}) {
-	for _, value := range values {
-		switch query := value.(type) {
-		case *queries.EventStream:
-			query.Result.Stream = load(this.reads[query.UserID])
-		}
-	}
+	//for _, value := range values {
+		//switch query := value.(type) {
+		//case *queries.EventStream:
+		//	query.Result.Stream = load(this.reads)
+		//}
+	//}
 }
 func load(events []interface{}) chan interface{} {
 	stream := make(chan interface{})
@@ -49,12 +39,10 @@ func populate(events []interface{}, stream chan interface{}) {
 	}
 }
 
-func (this *FakeShell) PrepareReadResults(user string, results ...interface{}) {
-	this.reads[user] = append(this.reads[user], results)
+func (this *FakeShell) PrepareReadResults(results ...interface{}) {
+	this.reads = append(this.reads, results)
 }
-
 
 func (this *FakeShell) AssertOutput(expected ...interface{}) {
 	this.So(this.writes, should.Resemble, expected)
-	this.So(this.messages, should.BeEmpty)
 }

@@ -37,7 +37,6 @@ func (this *Fixture) handle(commands ...interface{}) {
 		joyride.NewRunner(
 			joyride.WithStorageReader(this.shell),
 			joyride.WithStorageWriter(this.shell),
-			joyride.WithMessageDispatcher(this.shell),
 		),
 		this.generateID,
 	)
@@ -55,7 +54,7 @@ func (this *Fixture) TestHandlerPanicsOnUnrecognizedMessageTypes() {
 	this.So(func() { this.handle(true) }, should.PanicWith, joyride.ErrUnknownType)
 }
 func (this *Fixture) TestHandlerAcceptsKnownMessageType() {
-	this.So(func() { this.handle(&commands.AddContextToAction{})}, should.NotPanic)
+	this.So(func() { this.handle(&commands.AddContextToAction{}) }, should.NotPanic)
 	this.So(func() { this.handle(&commands.RedefineOutcome{}) }, should.NotPanic)
 	this.So(func() { this.handle(&commands.DescribeOutcome{}) }, should.NotPanic)
 	this.So(func() { this.handle(&commands.DeleteOutcome{}) }, should.NotPanic)
@@ -66,7 +65,7 @@ func (this *Fixture) TestHandlerAcceptsKnownMessageType() {
 	this.So(func() { this.handle(&commands.DeclareOutcomeUncertain{}) }, should.NotPanic)
 	this.So(func() { this.handle(&commands.TrackAction{}) }, should.NotPanic)
 	this.So(func() { this.handle(&commands.ResequencedAction{}) }, should.NotPanic)
-	this.So(func() { this.handle(&commands.RedefinedAction{}) }, should.NotPanic)
+	this.So(func() { this.handle(&commands.RedefineAction{}) }, should.NotPanic)
 	this.So(func() { this.handle(&commands.AddContextToAction{}) }, should.NotPanic)
 	this.So(func() { this.handle(&commands.RemoveContextFromAction{}) }, should.NotPanic)
 	this.So(func() { this.handle(&commands.MarkActionComplete{}) }, should.NotPanic)
@@ -83,9 +82,39 @@ func (this *Fixture) TestTrackOutcome() {
 	this.handle(command)
 
 	this.So(command.Result.OutcomeID, should.Equal, "1")
-	this.shell.AssertOutput(events.OutcomeFixedV1{
-		Timestamp: this.now,
-		UserID:    "UserID",
-		OutcomeID: "1",
-	})
+	this.shell.AssertOutput(
+		events.OutcomeIdentifiedV1{
+			Timestamp: this.now,
+			UserID:    "UserID",
+			OutcomeID: "1",
+		},
+	)
+}
+
+func (this *Fixture) TestOutcomeRedefined() {
+	command := &commands.RedefineOutcome{
+		UserID:        "User",
+		OutcomeID:     "Outcome",
+		NewDefinition: "NewDefinition",
+	}
+
+	this.handle(command)
+
+	this.So(command.Result.Error, should.BeNil)
+	this.shell.AssertOutput(
+		events.OutcomeRedefinedV1{
+			Timestamp:     this.now,
+			UserID:        command.UserID,
+			OutcomeID:     command.OutcomeID,
+			NewDefinition: command.NewDefinition,
+		},
+	)
+}
+
+func (this *Fixture) TestRedefineOutcome_NoChangeToDefinition_NoEventPublished() {
+
+}
+
+func (this *Fixture) TestRedefineOutcome_UnrecognizedOutcomeID_ErrorReturnedOnCommand() {
+
 }
