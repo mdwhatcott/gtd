@@ -53,16 +53,8 @@ func (this *FakeShell) PrepareReadResults(user string, results ...interface{}) {
 	this.reads[user] = append(this.reads[user], results)
 }
 
+
 func (this *FakeShell) AssertOutput(expected ...interface{}) {
-	if !this.So(len(this.writes), should.Equal, len(expected)) {
-		return
-	}
-	var failed bool
-	for _, e := range expected {
-		failed = failed || !this.So(this.writes, should.Contain, e)
-	}
-	if failed {
-		return
-	}
-	this.So(this.writes, should.Resemble, this.messages)
+	this.So(this.writes, should.Resemble, expected)
+	this.So(this.messages, should.BeEmpty)
 }

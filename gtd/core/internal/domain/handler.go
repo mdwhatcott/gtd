@@ -10,28 +10,20 @@ import (
 type Handler struct {
 	*joyride.Handler
 
-	clock *clock.Clock
-	tasks map[string]*Task
+	clock  *clock.Clock
+	nextID func() string
 }
 
-func NewHandler(runner joyride.Runner) *Handler {
-	this := &Handler{tasks: make(map[string]*Task)}
+func NewHandler(runner joyride.Runner, id func() string) *Handler {
+	this := &Handler{nextID: id}
 	this.Handler = joyride.NewHandler(this, runner)
 	return this
 }
 
-func (this *Handler) loadTask(userID string) *Task {
-	task, found := this.tasks[userID]
-	if !found {
-		task = NewTask(userID)
-		this.tasks[userID] = task
-	}
-	return task
-}
-
 func (this *Handler) HandleMessage(message interface{}) bool {
-	switch message.(type) {
+	switch message := message.(type) {
 	case *commands.TrackOutcome:
+		this.Add(NewTask(this.clock, this.nextID, message))
 	case *commands.RedefineOutcome:
 	case *commands.DescribeOutcome:
 	case *commands.DeleteOutcome:

@@ -1,18 +1,18 @@
 package commands
 
 type TrackOutcome struct {
-	UserID     GUID
+	UserID     string
 	Definition string
 
 	Result struct {
 		Error     error
-		OutcomeID GUID
+		OutcomeID string
 	}
 }
 
 type RedefineOutcome struct {
-	UserID        GUID
-	OutcomeID     GUID
+	UserID        string
+	OutcomeID     string
 	NewDefinition string
 
 	Result struct {
@@ -21,8 +21,8 @@ type RedefineOutcome struct {
 }
 
 type DescribeOutcome struct {
-	UserID      GUID
-	OutcomeID   GUID
+	UserID      string
+	OutcomeID   string
 	Description string
 
 	Result struct {
@@ -31,8 +31,8 @@ type DescribeOutcome struct {
 }
 
 type DeleteOutcome struct {
-	UserID    GUID
-	OutcomeID GUID
+	UserID    string
+	OutcomeID string
 
 	Result struct {
 		Error error
@@ -40,8 +40,8 @@ type DeleteOutcome struct {
 }
 
 type DeclareOutcomeFixed struct {
-	UserID    GUID
-	OutcomeID GUID
+	UserID    string
+	OutcomeID string
 
 	Result struct {
 		Error error
@@ -49,8 +49,8 @@ type DeclareOutcomeFixed struct {
 }
 
 type DeclareOutcomeRealized struct {
-	UserID    GUID
-	OutcomeID GUID
+	UserID    string
+	OutcomeID string
 
 	Result struct {
 		Error error
@@ -58,8 +58,8 @@ type DeclareOutcomeRealized struct {
 }
 
 type DeclareOutcomeAbandoned struct {
-	UserID    GUID
-	OutcomeID GUID
+	UserID    string
+	OutcomeID string
 	Reason    string
 
 	Result struct {
@@ -68,8 +68,8 @@ type DeclareOutcomeAbandoned struct {
 }
 
 type DeclareOutcomeDeferred struct {
-	UserID    GUID
-	OutcomeID GUID
+	UserID    string
+	OutcomeID string
 
 	Result struct {
 		Error error
@@ -77,8 +77,8 @@ type DeclareOutcomeDeferred struct {
 }
 
 type DeclareOutcomeUncertain struct {
-	UserID    GUID
-	OutcomeID GUID
+	UserID    string
+	OutcomeID string
 
 	Result struct {
 		Error error
@@ -86,8 +86,8 @@ type DeclareOutcomeUncertain struct {
 }
 
 type TrackAction struct {
-	UserID     GUID
-	OutcomeID  GUID
+	UserID     string
+	OutcomeID  string
 	Definition string
 	Contexts   []string
 	IsComplete bool
@@ -95,14 +95,14 @@ type TrackAction struct {
 
 	Result struct {
 		Error    error
-		ActionID GUID
+		ActionID string
 	}
 }
 
 type ResequencedAction struct {
-	UserID      GUID
-	OutcomeID   GUID
-	ActionID    GUID
+	UserID      string
+	OutcomeID   string
+	ActionID    string
 	NewSequence float64
 
 	Result struct {
@@ -111,9 +111,9 @@ type ResequencedAction struct {
 }
 
 type RedefinedAction struct {
-	UserID        GUID
-	OutcomeID     GUID
-	ActionID      GUID
+	UserID        string
+	OutcomeID     string
+	ActionID      string
 	NewDefinition string
 
 	Result struct {
@@ -122,9 +122,9 @@ type RedefinedAction struct {
 }
 
 type AddContextToAction struct {
-	UserID     GUID
-	OutcomeID  GUID
-	ActionID   GUID
+	UserID     string
+	OutcomeID  string
+	ActionID   string
 	NewContext string
 
 	Result struct {
@@ -133,9 +133,9 @@ type AddContextToAction struct {
 }
 
 type RemoveContextFromAction struct {
-	UserID         GUID
-	OutcomeID      GUID
-	ActionID       GUID
+	UserID         string
+	OutcomeID      string
+	ActionID       string
 	RemovedContext string
 
 	Result struct {
@@ -144,9 +144,9 @@ type RemoveContextFromAction struct {
 }
 
 type MarkActionComplete struct {
-	UserID    GUID
-	OutcomeID GUID
-	ActionID  GUID
+	UserID    string
+	OutcomeID string
+	ActionID  string
 
 	Result struct {
 		Error error
@@ -154,9 +154,9 @@ type MarkActionComplete struct {
 }
 
 type MarkActionNotComplete struct {
-	UserID    GUID
-	OutcomeID GUID
-	ActionID  GUID
+	UserID    string
+	OutcomeID string
+	ActionID  string
 
 	Result struct {
 		Error error
@@ -164,9 +164,9 @@ type MarkActionNotComplete struct {
 }
 
 type DeleteAction struct {
-	UserID    GUID
-	OutcomeID GUID
-	ActionID  GUID
+	UserID    string
+	OutcomeID string
+	ActionID  string
 
 	Result struct {
 		Error error
