@@ -1,5 +1,14 @@
 package commands
 
+type TrackOutcome struct {
+	Title string
+
+	Result struct {
+		Error     error
+		OutcomeID string
+	}
+}
+
 type DefineOutcome struct {
 	Definition string
 
@@ -77,11 +86,8 @@ type DeclareOutcomeUncertain struct {
 }
 
 type TrackAction struct {
-	OutcomeID  string
-	Definition string
-	Contexts   []string
-	IsComplete bool
-	Sequence   float64
+	OutcomeID   string
+	Description string
 
 	Result struct {
 		Error    error
@@ -89,47 +95,27 @@ type TrackAction struct {
 	}
 }
 
-type ResequencedAction struct {
-	OutcomeID   string
-	ActionID    string
-	NewSequence float64
+type ReorderAction struct {
+	OutcomeID string
+	ActionID  string
+	NewOrder  float64
 
 	Result struct {
 		Error error
 	}
 }
 
-type RedefineAction struct {
-	OutcomeID     string
-	ActionID      string
-	NewDefinition string
-
-	Result struct {
-		Error error
-	}
-}
-
-type AddContextToAction struct {
-	OutcomeID  string
-	ActionID   string
-	NewContext string
-
-	Result struct {
-		Error error
-	}
-}
-
-type RemoveContextFromAction struct {
+type UpdateActionDescription struct {
 	OutcomeID      string
 	ActionID       string
-	RemovedContext string
+	NewDescription string
 
 	Result struct {
 		Error error
 	}
 }
 
-type MarkActionComplete struct {
+type MarkActionStatusLatent struct {
 	OutcomeID string
 	ActionID  string
 
@@ -138,7 +124,34 @@ type MarkActionComplete struct {
 	}
 }
 
-type MarkActionNotComplete struct {
+type MarkActionStatusIncomplete struct {
+	OutcomeID string
+	ActionID  string
+
+	Result struct {
+		Error error
+	}
+}
+
+type MarkActionStatusComplete struct {
+	OutcomeID string
+	ActionID  string
+
+	Result struct {
+		Error error
+	}
+}
+
+type MarkActionStrategySequential struct {
+	OutcomeID string
+	ActionID  string
+
+	Result struct {
+		Error error
+	}
+}
+
+type MarkActionStrategyConcurrent struct {
 	OutcomeID string
 	ActionID  string
 

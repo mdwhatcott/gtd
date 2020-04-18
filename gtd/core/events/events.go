@@ -1,5 +1,11 @@
 package events
 
+type OutcomeTrackedV1 struct {
+	Timestamp Time   `json:"timestamp"`
+	OutcomeID string `json:"outcome_id"`
+	Title     string `json:"definition"`
+}
+
 type OutcomeDefinedV1 struct {
 	Timestamp  Time   `json:"timestamp"`
 	OutcomeID  string `json:"outcome_id"`
@@ -49,51 +55,55 @@ type OutcomeUncertainV1 struct {
 	OutcomeID string `json:"outcome_id"`
 }
 
-type ActionIdentifiedV1 struct {
-	Timestamp  Time     `json:"timestamp"`
-	OutcomeID  string   `json:"outcome_id"`
-	ActionID   string   `json:"action_id"`
-	Definition string   `json:"definition"`
-	Contexts   []string `json:"contexts"`
-	IsComplete bool     `json:"is_complete"`
-	Sequence   float64  `json:"sequence"`
+type ActionTrackedV1 struct {
+	Timestamp   Time     `json:"timestamp"`
+	OutcomeID   string   `json:"outcome_id"`
+	ActionID    string   `json:"action_id"`
+	Description string   `json:"definition"`
+	Contexts    []string `json:"contexts"`
+	IsComplete  bool     `json:"is_complete"`
+	Sequence    float64  `json:"sequence"`
 }
 
-type ActionResequencedV1 struct {
+type ActionReorderedV1 struct {
 	Timestamp   Time    `json:"timestamp"`
 	OutcomeID   string  `json:"outcome_id"`
 	ActionID    string  `json:"action_id"`
 	NewSequence float64 `json:"new_definition"`
 }
 
-type ActionRedefinedV1 struct {
+type ActionDescriptionUpdatedV1 struct {
 	Timestamp     Time   `json:"timestamp"`
 	OutcomeID     string `json:"outcome_id"`
 	ActionID      string `json:"action_id"`
 	NewDefinition string `json:"new_definition"`
 }
 
-type ActionContextAddedV1 struct {
-	Timestamp  Time   `json:"timestamp"`
-	OutcomeID  string `json:"outcome_id"`
-	ActionID   string `json:"action_id"`
-	NewContext string `json:"new_context"`
-}
-
-type ActionContextRemovedV1 struct {
-	Timestamp      Time   `json:"timestamp"`
-	OutcomeID      string `json:"outcome_id"`
-	ActionID       string `json:"action_id"`
-	RemovedContext string `json:"removed_context"`
-}
-
-type ActionMarkedCompleteV1 struct {
+type ActionStatusMarkedLatentV1 struct {
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
 	ActionID  string `json:"action_id"`
 }
 
-type ActionMarkedNotCompleteV1 struct {
+type ActionStatusMarkedIncompleteV1 struct {
+	Timestamp Time   `json:"timestamp"`
+	OutcomeID string `json:"outcome_id"`
+	ActionID  string `json:"action_id"`
+}
+
+type ActionStatusMarkedCompleteV1 struct {
+	Timestamp Time   `json:"timestamp"`
+	OutcomeID string `json:"outcome_id"`
+	ActionID  string `json:"action_id"`
+}
+
+type ActionStrategyMarkedSequential struct {
+	Timestamp Time   `json:"timestamp"`
+	OutcomeID string `json:"outcome_id"`
+	ActionID  string `json:"action_id"`
+}
+
+type ActionStrategyMarkedConcurrent struct {
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
 	ActionID  string `json:"action_id"`

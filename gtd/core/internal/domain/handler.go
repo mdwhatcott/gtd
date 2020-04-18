@@ -24,21 +24,6 @@ func (this *Handler) HandleMessage(message interface{}) bool {
 		this.task.DefineOutcome(message)
 	case *commands.RedefineOutcome:
 		this.task.RedefineOutcome(message)
-	case *commands.DescribeOutcome:
-	case *commands.DeleteOutcome:
-	case *commands.DeclareOutcomeFixed:
-	case *commands.DeclareOutcomeRealized:
-	case *commands.DeclareOutcomeAbandoned:
-	case *commands.DeclareOutcomeDeferred:
-	case *commands.DeclareOutcomeUncertain:
-	case *commands.TrackAction:
-	case *commands.ResequencedAction:
-	case *commands.RedefineAction:
-	case *commands.AddContextToAction:
-	case *commands.RemoveContextFromAction:
-	case *commands.MarkActionComplete:
-	case *commands.MarkActionNotComplete:
-	case *commands.DeleteAction:
 	default:
 		return false
 	}
