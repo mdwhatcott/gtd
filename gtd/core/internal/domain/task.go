@@ -44,7 +44,6 @@ func (this *Task) RedefineOutcome(message *commands.RedefineOutcome) {
 	this.instructions = append(this.instructions, message)
 	this.registerOutcomeEventStreamQuery(message.OutcomeID)
 }
-
 func (this *Task) registerOutcomeEventStreamQuery(id string) {
 	query, found := this.queries[id]
 	if found {

@@ -9,4 +9,3 @@ type StoredProject struct {
 	Name    string
 	Outcome string
 }
-

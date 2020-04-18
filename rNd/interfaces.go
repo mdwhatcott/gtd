@@ -14,4 +14,3 @@ type Renderer interface {
 	RenderStringer(fmt.Stringer)
 	RenderJSON(interface{})
 }
-

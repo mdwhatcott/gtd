@@ -34,4 +34,3 @@ func (this *CLIResult) Write(v []byte) (int, error) {
 	}
 	return n, err
 }
-
