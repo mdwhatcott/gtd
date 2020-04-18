@@ -66,10 +66,7 @@ func (this *Fixture) TestTrackOutcome_PublishOutcomeTracked_ReturnOutcomeID() {
 
 	this.handle(command)
 
-	this.So(command.Result, should.Resemble, commands.CreateResult{
-		ID:    "1",
-		Error: nil,
-	})
+	this.So(command.Result, should.Resemble, commands.CreateResult{ID: "1"})
 	this.shell.AssertOutput(
 		events.OutcomeTrackedV1{
 			Timestamp: this.now,
