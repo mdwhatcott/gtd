@@ -75,7 +75,6 @@ func (this *Fixture) TestHandlerAcceptsKnownMessageType() {
 
 func (this *Fixture) TestTrackOutcome() {
 	command := &commands.TrackOutcome{
-		UserID:     "UserID",
 		Definition: "The inertial dampers are fixed",
 	}
 
@@ -83,17 +82,18 @@ func (this *Fixture) TestTrackOutcome() {
 
 	this.So(command.Result.OutcomeID, should.Equal, "1")
 	this.shell.AssertOutput(
-		events.OutcomeIdentifiedV1{
+		events.OutcomeDefinedV1{
 			Timestamp: this.now,
-			UserID:    "UserID",
 			OutcomeID: "1",
 		},
 	)
 }
 
 func (this *Fixture) TestOutcomeRedefined() {
+	this.shell.PrepareReadResults(
+		events.OutcomeDefinedV1{},
+	)
 	command := &commands.RedefineOutcome{
-		UserID:        "User",
 		OutcomeID:     "Outcome",
 		NewDefinition: "NewDefinition",
 	}
@@ -104,7 +104,6 @@ func (this *Fixture) TestOutcomeRedefined() {
 	this.shell.AssertOutput(
 		events.OutcomeRedefinedV1{
 			Timestamp:     this.now,
-			UserID:        command.UserID,
 			OutcomeID:     command.OutcomeID,
 			NewDefinition: command.NewDefinition,
 		},

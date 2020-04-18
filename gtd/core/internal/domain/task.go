@@ -49,9 +49,8 @@ func (this *Task) processCommand() {
 func (this *Task) trackOutcome(command *commands.TrackOutcome) {
 	command.Result.OutcomeID = this.nextID()
 	this.AddPendingWrites(
-		events.OutcomeIdentifiedV1{
+		events.OutcomeDefinedV1{
 			Timestamp: this.now,
-			UserID:    command.UserID,
 			OutcomeID: command.Result.OutcomeID,
 		},
 	)
@@ -61,7 +60,6 @@ func (this *Task) redefineOutcome(command *commands.RedefineOutcome) {
 	this.AddPendingWrites(
 		events.OutcomeRedefinedV1{
 			Timestamp:     this.now,
-			UserID:        command.UserID,
 			OutcomeID:     command.OutcomeID,
 			NewDefinition: command.NewDefinition,
 		},

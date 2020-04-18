@@ -1,7 +1,6 @@
 package commands
 
 type TrackOutcome struct {
-	UserID     string
 	Definition string
 
 	Result struct {
@@ -11,7 +10,6 @@ type TrackOutcome struct {
 }
 
 type RedefineOutcome struct {
-	UserID        string
 	OutcomeID     string
 	NewDefinition string
 
@@ -21,7 +19,6 @@ type RedefineOutcome struct {
 }
 
 type DescribeOutcome struct {
-	UserID      string
 	OutcomeID   string
 	Description string
 
@@ -31,7 +28,6 @@ type DescribeOutcome struct {
 }
 
 type DeleteOutcome struct {
-	UserID    string
 	OutcomeID string
 
 	Result struct {
@@ -40,7 +36,6 @@ type DeleteOutcome struct {
 }
 
 type DeclareOutcomeFixed struct {
-	UserID    string
 	OutcomeID string
 
 	Result struct {
@@ -49,7 +44,6 @@ type DeclareOutcomeFixed struct {
 }
 
 type DeclareOutcomeRealized struct {
-	UserID    string
 	OutcomeID string
 
 	Result struct {
@@ -58,7 +52,6 @@ type DeclareOutcomeRealized struct {
 }
 
 type DeclareOutcomeAbandoned struct {
-	UserID    string
 	OutcomeID string
 	Reason    string
 
@@ -68,7 +61,6 @@ type DeclareOutcomeAbandoned struct {
 }
 
 type DeclareOutcomeDeferred struct {
-	UserID    string
 	OutcomeID string
 
 	Result struct {
@@ -77,7 +69,6 @@ type DeclareOutcomeDeferred struct {
 }
 
 type DeclareOutcomeUncertain struct {
-	UserID    string
 	OutcomeID string
 
 	Result struct {
@@ -86,7 +77,6 @@ type DeclareOutcomeUncertain struct {
 }
 
 type TrackAction struct {
-	UserID     string
 	OutcomeID  string
 	Definition string
 	Contexts   []string
@@ -100,7 +90,6 @@ type TrackAction struct {
 }
 
 type ResequencedAction struct {
-	UserID      string
 	OutcomeID   string
 	ActionID    string
 	NewSequence float64
@@ -111,7 +100,6 @@ type ResequencedAction struct {
 }
 
 type RedefineAction struct {
-	UserID        string
 	OutcomeID     string
 	ActionID      string
 	NewDefinition string
@@ -122,7 +110,6 @@ type RedefineAction struct {
 }
 
 type AddContextToAction struct {
-	UserID     string
 	OutcomeID  string
 	ActionID   string
 	NewContext string
@@ -133,7 +120,6 @@ type AddContextToAction struct {
 }
 
 type RemoveContextFromAction struct {
-	UserID         string
 	OutcomeID      string
 	ActionID       string
 	RemovedContext string
@@ -144,7 +130,6 @@ type RemoveContextFromAction struct {
 }
 
 type MarkActionComplete struct {
-	UserID    string
 	OutcomeID string
 	ActionID  string
 
@@ -154,7 +139,6 @@ type MarkActionComplete struct {
 }
 
 type MarkActionNotComplete struct {
-	UserID    string
 	OutcomeID string
 	ActionID  string
 
@@ -164,7 +148,6 @@ type MarkActionNotComplete struct {
 }
 
 type DeleteAction struct {
-	UserID    string
 	OutcomeID string
 	ActionID  string
 

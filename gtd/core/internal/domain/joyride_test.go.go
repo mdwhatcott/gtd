@@ -3,6 +3,8 @@ package domain
 import (
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
+
+	"github.com/mdwhatcott/gtd/gtd/storage/queries"
 )
 
 type FakeShell struct {
@@ -21,12 +23,12 @@ func (this *FakeShell) Write(values ...interface{}) {
 }
 
 func (this *FakeShell) Read(values ...interface{}) {
-	//for _, value := range values {
-		//switch query := value.(type) {
-		//case *queries.EventStream:
-		//	query.Result.Stream = load(this.reads)
-		//}
-	//}
+	for _, value := range values {
+		switch query := value.(type) {
+		case *queries.EventStream:
+			query.Result.Stream = load(this.reads)
+		}
+	}
 }
 func load(events []interface{}) chan interface{} {
 	stream := make(chan interface{})
