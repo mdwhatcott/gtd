@@ -50,8 +50,8 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 func (this *Task) TrackOutcome(command *commands.TrackOutcome) {
 	id := this.nextID()
 	aggregate := this.aggregate(id)
-	aggregate.TrackOutcome(id, command.Title)
-	command.Result.OutcomeID = id
+	command.Result.ID = id
+	command.Result.Error = aggregate.TrackOutcome(id, command.Title)
 }
 func (this *Task) Execute() joyride.TaskResult {
 	this.replayEvents()
@@ -73,7 +73,7 @@ func (this *Task) processInstructions() {
 func (this *Task) trackOutcome(command *commands.TrackOutcome) {
 	outcomeID := this.nextID()
 	aggregate := this.aggregate(outcomeID)
-	command.Result.OutcomeID = outcomeID
+	command.Result.ID = outcomeID
 	command.Result.Error = aggregate.TrackOutcome(outcomeID, command.Title)
 }
 func (this *Task) publishResults() {

@@ -3,77 +3,57 @@ package commands
 type TrackOutcome struct {
 	Title string
 
-	Result struct {
-		Error     error
-		OutcomeID string
-	}
+	Result CreateResult
 }
 
 type ProvideOutcomeExplanation struct {
 	Explanation string
 
-	Result struct {
-		Error     error
-		OutcomeID string
-	}
+	Result Result
 }
 
 type UpdateOutcomeDescription struct {
 	OutcomeID          string
 	UpdatedDescription string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type DeleteOutcome struct {
 	OutcomeID string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type DeclareOutcomeFixed struct {
 	OutcomeID string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type DeclareOutcomeRealized struct {
 	OutcomeID string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type DeclareOutcomeAbandoned struct {
 	OutcomeID string
 	Reason    string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type DeclareOutcomeDeferred struct {
 	OutcomeID string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type DeclareOutcomeUncertain struct {
 	OutcomeID string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type TrackAction struct {
@@ -91,9 +71,7 @@ type ReorderAction struct {
 	ActionID  string
 	NewOrder  float64
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type UpdateActionDescription struct {
@@ -101,61 +79,47 @@ type UpdateActionDescription struct {
 	ActionID       string
 	NewDescription string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type MarkActionStatusLatent struct {
 	OutcomeID string
 	ActionID  string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type MarkActionStatusIncomplete struct {
 	OutcomeID string
 	ActionID  string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type MarkActionStatusComplete struct {
 	OutcomeID string
 	ActionID  string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type MarkActionStrategySequential struct {
 	OutcomeID string
 	ActionID  string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type MarkActionStrategyConcurrent struct {
 	OutcomeID string
 	ActionID  string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }
 
 type DeleteAction struct {
 	OutcomeID string
 	ActionID  string
 
-	Result struct {
-		Error error
-	}
+	Result Result
 }

@@ -63,8 +63,13 @@ func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
 }
 func (this *Fixture) TestTrackOutcome_PublishOutcomeTracked_ReturnOutcomeID() {
 	command := &commands.TrackOutcome{Title: "title"}
+
 	this.handle(command)
-	this.So(command.Result.OutcomeID, should.Equal, "1")
+
+	this.So(command.Result, should.Resemble, commands.CreateResult{
+		ID:    "1",
+		Error: nil,
+	})
 	this.shell.AssertOutput(
 		events.OutcomeTrackedV1{
 			Timestamp: this.now,

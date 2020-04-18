@@ -27,17 +27,12 @@ func (this *Aggregate) TrackOutcome(outcomeID, title string) error {
 }
 func (this *Aggregate) raise(event interface{}) error {
 	this.results = append(this.results, event)
+	this.apply(event)
 	return nil
 }
 func (this *Aggregate) apply(event interface{}) {
-	switch event := event.(type) {
-	case events.OutcomeTrackedV1:
-		this.applyOutcomeDefined(event)
+	switch event.(type) {
 	}
-}
-func (this *Aggregate) applyOutcomeDefined(event events.OutcomeTrackedV1) {
-	this.id = event.OutcomeID
-	this.title = event.Title
 }
 func (this *Aggregate) Replay(stream chan interface{}) {
 	for event := range stream {
