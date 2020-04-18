@@ -7,4 +7,5 @@ require (
 	github.com/smartystreets/clock v1.0.2
 	github.com/smartystreets/gunit v1.3.2
 	github.com/smartystreets/joyride/v2 v2.0.1
+	github.com/smartystreets/logging v1.1.0
 )

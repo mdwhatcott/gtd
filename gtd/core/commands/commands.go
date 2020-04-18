@@ -1,6 +1,6 @@
 package commands
 
-type TrackOutcome struct {
+type DefineOutcome struct {
 	Definition string
 
 	Result struct {

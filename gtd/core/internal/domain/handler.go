@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"github.com/smartystreets/clock"
 	"github.com/smartystreets/joyride/v2"
 
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
@@ -10,20 +9,21 @@ import (
 type Handler struct {
 	*joyride.Handler
 
-	clock  *clock.Clock
-	nextID func() string
+	task *Task
 }
 
-func NewHandler(runner joyride.Runner, id func() string) *Handler {
-	this := &Handler{nextID: id}
+func NewHandler(runner joyride.Runner, task *Task) *Handler {
+	this := &Handler{task: task}
 	this.Handler = joyride.NewHandler(this, runner)
+	this.Handler.Add(this.task)
 	return this
 }
-
 func (this *Handler) HandleMessage(message interface{}) bool {
-	switch message.(type) {
-	case *commands.TrackOutcome:
+	switch message := message.(type) {
+	case *commands.DefineOutcome:
+		this.task.DefineOutcome(message)
 	case *commands.RedefineOutcome:
+		this.task.RedefineOutcome(message)
 	case *commands.DescribeOutcome:
 	case *commands.DeleteOutcome:
 	case *commands.DeclareOutcomeFixed:
@@ -42,6 +42,5 @@ func (this *Handler) HandleMessage(message interface{}) bool {
 	default:
 		return false
 	}
-	this.Add(NewTask(this.clock.UTCNow(), this.nextID, message))
 	return true
 }

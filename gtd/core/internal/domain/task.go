@@ -1,67 +1,92 @@
 package domain
 
 import (
-	"time"
-
+	"github.com/smartystreets/clock"
 	"github.com/smartystreets/joyride/v2"
+	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
-	"github.com/mdwhatcott/gtd/gtd/core/events"
+	"github.com/mdwhatcott/gtd/gtd/storage"
 )
 
 type Task struct {
 	*joyride.Base
 
-	now     time.Time
-	nextID  func() string
-	command interface{}
+	log    *logging.Logger
+	clock  *clock.Clock
+	nextID func() string
+
+	queries      map[string]*storage.OutcomeEventStream
+	instructions []interface{}
+	aggregates   map[string]*Aggregate
 }
 
-func NewTask(now time.Time, nextID func() string, command interface{}) *Task {
+func NewTask(nextID func() string) *Task {
 	return &Task{
-		Base:    joyride.New(),
-		now:     now,
-		nextID:  nextID,
-		command: command,
+		Base:       joyride.New(),
+		nextID:     nextID,
+		queries:    make(map[string]*storage.OutcomeEventStream),
+		aggregates: make(map[string]*Aggregate),
 	}
 }
-
-func (this *Task) RequiredReads() []interface{} {
-	switch this.command.(type) {
+func (this *Task) aggregate(id string) *Aggregate {
+	aggregate, found := this.aggregates[id]
+	if !found {
+		aggregate = NewAggregate(id, this.clock.UTCNow())
+		this.aggregates[id] = aggregate
 	}
-	return this.Base.RequiredReads()
+	return aggregate
+}
+func (this *Task) DefineOutcome(message *commands.DefineOutcome) {
+	this.instructions = append(this.instructions, message)
+}
+func (this *Task) RedefineOutcome(message *commands.RedefineOutcome) {
+	this.instructions = append(this.instructions, message)
+	this.registerOutcomeEventStreamQuery(message.OutcomeID)
 }
 
+func (this *Task) registerOutcomeEventStreamQuery(id string) {
+	query, found := this.queries[id]
+	if found {
+		return
+	}
+	query = &storage.OutcomeEventStream{OutcomeID: id}
+	query.Result.Stream = make(chan interface{})
+	this.queries[id] = query
+	this.AddRequiredReads(query)
+}
 func (this *Task) Execute() joyride.TaskResult {
-	this.processCommand()
+	this.replayEvents()
+	this.processInstructions()
+	this.publishResults()
 	return this
 }
-
-func (this *Task) processCommand() {
-	switch command := this.command.(type) {
-	case *commands.TrackOutcome:
-		this.trackOutcome(command)
-	case *commands.RedefineOutcome:
-		this.redefineOutcome(command)
+func (this *Task) replayEvents() {
+	for id, query := range this.queries {
+		aggregate := this.aggregate(id)
+		//this.log.Printf("About to replay %d events for outcome %s...", len(query.Result.Stream), id)
+		aggregate.Replay(query.Result.Stream)
 	}
 }
-
-func (this *Task) trackOutcome(command *commands.TrackOutcome) {
-	command.Result.OutcomeID = this.nextID()
-	this.AddPendingWrites(
-		events.OutcomeDefinedV1{
-			Timestamp: this.now,
-			OutcomeID: command.Result.OutcomeID,
-		},
-	)
+func (this *Task) processInstructions() {
+	for _, message := range this.instructions {
+		switch message := message.(type) {
+		case *commands.DefineOutcome:
+			this.trackOutcome(message)
+		case *commands.RedefineOutcome:
+			this.redefineOutcome(message)
+		}
+	}
 }
-
+func (this *Task) trackOutcome(command *commands.DefineOutcome) {
+	command.Result.OutcomeID = this.nextID()
+	this.aggregate(command.Result.OutcomeID).DefineOutcome(command.Definition)
+}
 func (this *Task) redefineOutcome(command *commands.RedefineOutcome) {
-	this.AddPendingWrites(
-		events.OutcomeRedefinedV1{
-			Timestamp:     this.now,
-			OutcomeID:     command.OutcomeID,
-			NewDefinition: command.NewDefinition,
-		},
-	)
+	command.Result.Error = this.aggregate(command.OutcomeID).RedefineOutcome(command.NewDefinition)
+}
+func (this *Task) publishResults() {
+	for _, aggregate := range this.aggregates {
+		this.AddPendingWrites(aggregate.TransferResults()...)
+	}
 }
