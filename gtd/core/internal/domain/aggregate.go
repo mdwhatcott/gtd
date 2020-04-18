@@ -1,9 +1,9 @@
 package domain
 
 import (
-	"errors"
 	"time"
 
+	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/events"
 )
 
@@ -16,19 +16,22 @@ type Aggregate struct {
 	results []interface{}
 }
 
-func NewAggregate(id string, now time.Time) *Aggregate {
-	return &Aggregate{id: id, now: now}
+func NewAggregate(now time.Time) *Aggregate {
+	return &Aggregate{now: now}
 }
-func (this *Aggregate) DefineOutcome(definition string) {
-	_ = this.raise(events.OutcomeDefinedV1{
+func (this *Aggregate) DefineOutcome(outcomeID, definition string) error {
+	return this.raise(events.OutcomeDefinedV1{
 		Timestamp:  this.now,
-		OutcomeID:  this.id,
+		OutcomeID:  outcomeID,
 		Definition: definition,
 	})
 }
 func (this *Aggregate) RedefineOutcome(definition string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
 	if definition == this.definition {
-		return errors.New("HI") // TODO: more specific, application/contractual value
+		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeRedefinedV1{
 		Timestamp:     this.now,
@@ -56,5 +59,7 @@ func (this *Aggregate) Replay(stream chan interface{}) {
 	}
 }
 func (this *Aggregate) TransferResults() []interface{} {
-	return this.results // TODO: clear out this.results
+	results := this.results
+	this.results = nil
+	return results
 }

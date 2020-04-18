@@ -32,7 +32,7 @@ func NewTask(nextID func() string) *Task {
 func (this *Task) aggregate(id string) *Aggregate {
 	aggregate, found := this.aggregates[id]
 	if !found {
-		aggregate = NewAggregate(id, this.clock.UTCNow())
+		aggregate = NewAggregate(this.clock.UTCNow())
 		this.aggregates[id] = aggregate
 	}
 	return aggregate
@@ -63,9 +63,7 @@ func (this *Task) Execute() joyride.TaskResult {
 }
 func (this *Task) replayEvents() {
 	for id, query := range this.queries {
-		aggregate := this.aggregate(id)
-		//this.log.Printf("About to replay %d events for outcome %s...", len(query.Result.Stream), id)
-		aggregate.Replay(query.Result.Stream)
+		this.aggregate(id).Replay(query.Result.Stream)
 	}
 }
 func (this *Task) processInstructions() {
@@ -79,11 +77,14 @@ func (this *Task) processInstructions() {
 	}
 }
 func (this *Task) trackOutcome(command *commands.DefineOutcome) {
-	command.Result.OutcomeID = this.nextID()
-	this.aggregate(command.Result.OutcomeID).DefineOutcome(command.Definition)
+	outcomeID := this.nextID()
+	aggregate := this.aggregate(outcomeID)
+	command.Result.OutcomeID = outcomeID
+	command.Result.Error = aggregate.DefineOutcome(outcomeID, command.Definition)
 }
 func (this *Task) redefineOutcome(command *commands.RedefineOutcome) {
-	command.Result.Error = this.aggregate(command.OutcomeID).RedefineOutcome(command.NewDefinition)
+	aggregate := this.aggregate(command.OutcomeID)
+	command.Result.Error = aggregate.RedefineOutcome(command.NewDefinition)
 }
 func (this *Task) publishResults() {
 	for _, aggregate := range this.aggregates {

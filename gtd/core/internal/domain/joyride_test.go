@@ -40,6 +40,9 @@ func (this *FakeShell) populate(id string, stream chan interface{}) {
 func (this *FakeShell) PrepareReadResults(id string, results ...interface{}) {
 	this.reads[id] = append(this.reads[id], results...)
 }
+func (this *FakeShell) AssertNoOutput() {
+	this.AssertOutput()
+}
 func (this *FakeShell) AssertOutput(expected ...interface{}) {
 	this.So(this.writes, should.Resemble, expected)
 }
