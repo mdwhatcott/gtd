@@ -47,6 +47,12 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 	this.queries[id] = query
 	this.AddRequiredReads(query)
 }
+func (this *Task) TrackOutcome(command *commands.TrackOutcome) {
+	id := this.nextID()
+	aggregate := this.aggregate(id)
+	aggregate.TrackOutcome(id, command.Title)
+	command.Result.OutcomeID = id
+}
 func (this *Task) Execute() joyride.TaskResult {
 	this.replayEvents()
 	this.processInstructions()

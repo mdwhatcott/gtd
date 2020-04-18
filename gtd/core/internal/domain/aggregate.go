@@ -19,10 +19,10 @@ func NewAggregate(now time.Time) *Aggregate {
 	return &Aggregate{now: now}
 }
 func (this *Aggregate) TrackOutcome(outcomeID, title string) error {
-	return this.raise(events.OutcomeExplanationProvidedV1{
-		Timestamp:   this.now,
-		OutcomeID:   outcomeID,
-		Explanation: title,
+	return this.raise(events.OutcomeTrackedV1{
+		Timestamp: this.now,
+		OutcomeID: outcomeID,
+		Title:     title,
 	})
 }
 func (this *Aggregate) raise(event interface{}) error {

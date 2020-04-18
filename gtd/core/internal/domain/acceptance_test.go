@@ -10,6 +10,9 @@ import (
 	"github.com/smartystreets/gunit"
 	"github.com/smartystreets/joyride/v2"
 	"github.com/smartystreets/logging"
+
+	"github.com/mdwhatcott/gtd/gtd/core/commands"
+	"github.com/mdwhatcott/gtd/gtd/core/events"
 )
 
 func TestFixture(t *testing.T) {
@@ -58,5 +61,15 @@ func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
 	this.So(func() { this.handle(42) }, should.PanicWith, joyride.ErrUnknownType)
 	this.So(func() { this.handle(true) }, should.PanicWith, joyride.ErrUnknownType)
 }
-
-// TODO: restore tests
+func (this *Fixture) TestTrackOutcome_PublishOutcomeTracked_ReturnOutcomeID() {
+	command := &commands.TrackOutcome{Title: "title"}
+	this.handle(command)
+	this.So(command.Result.OutcomeID, should.Equal, "1")
+	this.shell.AssertOutput(
+		events.OutcomeTrackedV1{
+			Timestamp: this.now,
+			OutcomeID: "1",
+			Title:     "title",
+		},
+	)
+}

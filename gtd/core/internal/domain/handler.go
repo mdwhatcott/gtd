@@ -2,6 +2,8 @@ package domain
 
 import (
 	"github.com/smartystreets/joyride/v2"
+
+	"github.com/mdwhatcott/gtd/gtd/core/commands"
 )
 
 type Handler struct {
@@ -17,7 +19,9 @@ func NewHandler(runner joyride.Runner, task *Task) *Handler {
 	return this
 }
 func (this *Handler) HandleMessage(message interface{}) bool {
-	switch message.(type) {
+	switch message := message.(type) {
+	case *commands.TrackOutcome:
+		this.task.TrackOutcome(message)
 	default:
 		return false
 	}
