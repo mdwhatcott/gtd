@@ -58,3 +58,5 @@ func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
 	this.So(func() { this.handle(42) }, should.PanicWith, joyride.ErrUnknownType)
 	this.So(func() { this.handle(true) }, should.PanicWith, joyride.ErrUnknownType)
 }
+
+// TODO: restore tests
