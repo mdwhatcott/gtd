@@ -6,22 +6,16 @@ type OutcomeTrackedV1 struct {
 	Title     string `json:"definition"`
 }
 
-type OutcomeDefinedV1 struct {
-	Timestamp  Time   `json:"timestamp"`
-	OutcomeID  string `json:"outcome_id"`
-	Definition string `json:"definition"`
-}
-
-type OutcomeRedefinedV1 struct {
-	Timestamp     Time   `json:"timestamp"`
-	OutcomeID     string `json:"outcome_id"`
-	NewDefinition string `json:"new_definition"`
-}
-
-type OutcomeDescribedV1 struct {
+type OutcomeExplanationProvidedV1 struct {
 	Timestamp   Time   `json:"timestamp"`
 	OutcomeID   string `json:"outcome_id"`
-	Description string `json:"description"`
+	Explanation string `json:"explanation"`
+}
+
+type OutcomeDescriptionUpdatedV1 struct {
+	Timestamp      Time   `json:"timestamp"`
+	OutcomeID      string `json:"outcome_id"`
+	NewDescription string `json:"description"`
 }
 
 type OutcomeDeletedV1 struct {
@@ -97,13 +91,13 @@ type ActionStatusMarkedCompleteV1 struct {
 	ActionID  string `json:"action_id"`
 }
 
-type ActionStrategyMarkedSequential struct {
+type ActionStrategyMarkedSequentialV1 struct {
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
 	ActionID  string `json:"action_id"`
 }
 
-type ActionStrategyMarkedConcurrent struct {
+type ActionStrategyMarkedConcurrentV1 struct {
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
 	ActionID  string `json:"action_id"`

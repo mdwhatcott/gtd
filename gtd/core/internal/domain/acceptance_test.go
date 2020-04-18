@@ -10,10 +10,6 @@ import (
 	"github.com/smartystreets/gunit"
 	"github.com/smartystreets/joyride/v2"
 	"github.com/smartystreets/logging"
-
-	"github.com/mdwhatcott/gtd/gtd/core"
-	"github.com/mdwhatcott/gtd/gtd/core/commands"
-	"github.com/mdwhatcott/gtd/gtd/core/events"
 )
 
 func TestFixture(t *testing.T) {
@@ -61,71 +57,4 @@ func (this *Fixture) generateID() string {
 func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
 	this.So(func() { this.handle(42) }, should.PanicWith, joyride.ErrUnknownType)
 	this.So(func() { this.handle(true) }, should.PanicWith, joyride.ErrUnknownType)
-}
-func (this *Fixture) TestDefineOutcome_PublishOutcomeDefined() {
-	command := &commands.DefineOutcome{
-		Definition: "The inertial dampers are fixed",
-	}
-
-	this.handle(command)
-
-	this.So(command.Result.OutcomeID, should.Equal, "1")
-	this.shell.AssertOutput(
-		events.OutcomeDefinedV1{
-			Timestamp:  this.now,
-			OutcomeID:  "1",
-			Definition: "The inertial dampers are fixed",
-		},
-	)
-}
-func (this *Fixture) TestRedefineOutcome_PublishOutcomeRedefined() {
-	this.shell.PrepareReadResults("1",
-		events.OutcomeDefinedV1{
-			OutcomeID:  "1",
-			Definition: "old",
-		},
-	)
-	command := &commands.RedefineOutcome{
-		OutcomeID:     "1",
-		NewDefinition: "new",
-	}
-
-	this.handle(command)
-
-	this.So(command.Result.Error, should.BeNil)
-	this.shell.AssertOutput(
-		events.OutcomeRedefinedV1{
-			Timestamp:     this.now,
-			OutcomeID:     "1",
-			NewDefinition: "new",
-		},
-	)
-}
-func (this *Fixture) TestRedefineOutcome_UnrecognizedOutcomeID_ReturnErrorOutcomeNotFound() {
-	command := &commands.RedefineOutcome{
-		OutcomeID:     "not-there",
-		NewDefinition: "new-definition",
-	}
-
-	this.handle(command)
-
-	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
-	this.shell.AssertNoOutput()
-}
-func (this *Fixture) TestRedefineOutcome_NoChangeToDefinition_ReturnErrOutcomeUnchanged() {
-	this.shell.PrepareReadResults("1",
-		events.OutcomeDefinedV1{
-			OutcomeID:  "1",
-			Definition: "old",
-		},
-	)
-	command := &commands.RedefineOutcome{
-		OutcomeID:     "1",
-		NewDefinition: "old",
-	}
-
-	this.handle(command)
-
-	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
-	this.shell.AssertNoOutput()
 }

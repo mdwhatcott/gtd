@@ -37,7 +37,7 @@ func (this *Task) aggregate(id string) *Aggregate {
 	}
 	return aggregate
 }
-func (this *Task) DefineOutcome(message *commands.DefineOutcome) {
+func (this *Task) DefineOutcome(message *commands.ProvideOutcomeExplanation) {
 	this.instructions = append(this.instructions, message)
 }
 func (this *Task) RedefineOutcome(message *commands.RedefineOutcome) {
@@ -68,18 +68,18 @@ func (this *Task) replayEvents() {
 func (this *Task) processInstructions() {
 	for _, message := range this.instructions {
 		switch message := message.(type) {
-		case *commands.DefineOutcome:
+		case *commands.ProvideOutcomeExplanation:
 			this.trackOutcome(message)
 		case *commands.RedefineOutcome:
 			this.redefineOutcome(message)
 		}
 	}
 }
-func (this *Task) trackOutcome(command *commands.DefineOutcome) {
+func (this *Task) trackOutcome(command *commands.ProvideOutcomeExplanation) {
 	outcomeID := this.nextID()
 	aggregate := this.aggregate(outcomeID)
 	command.Result.OutcomeID = outcomeID
-	command.Result.Error = aggregate.DefineOutcome(outcomeID, command.Definition)
+	command.Result.Error = aggregate.DefineOutcome(outcomeID, command.Explanation)
 }
 func (this *Task) redefineOutcome(command *commands.RedefineOutcome) {
 	aggregate := this.aggregate(command.OutcomeID)

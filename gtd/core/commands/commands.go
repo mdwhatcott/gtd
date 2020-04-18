@@ -9,8 +9,8 @@ type TrackOutcome struct {
 	}
 }
 
-type DefineOutcome struct {
-	Definition string
+type ProvideOutcomeExplanation struct {
+	Explanation string
 
 	Result struct {
 		Error     error
@@ -18,18 +18,9 @@ type DefineOutcome struct {
 	}
 }
 
-type RedefineOutcome struct {
-	OutcomeID     string
-	NewDefinition string
-
-	Result struct {
-		Error error
-	}
-}
-
-type DescribeOutcome struct {
-	OutcomeID   string
-	Description string
+type UpdateOutcomeDescription struct {
+	OutcomeID          string
+	UpdatedDescription string
 
 	Result struct {
 		Error error

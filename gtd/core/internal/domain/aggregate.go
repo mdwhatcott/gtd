@@ -20,10 +20,10 @@ func NewAggregate(now time.Time) *Aggregate {
 	return &Aggregate{now: now}
 }
 func (this *Aggregate) DefineOutcome(outcomeID, definition string) error {
-	return this.raise(events.OutcomeDefinedV1{
-		Timestamp:  this.now,
-		OutcomeID:  outcomeID,
-		Definition: definition,
+	return this.raise(events.OutcomeExplanationProvidedV1{
+		Timestamp:   this.now,
+		OutcomeID:   outcomeID,
+		Explanation: definition,
 	})
 }
 func (this *Aggregate) RedefineOutcome(definition string) error {
@@ -45,13 +45,13 @@ func (this *Aggregate) raise(event interface{}) error {
 }
 func (this *Aggregate) apply(event interface{}) {
 	switch event := event.(type) {
-	case events.OutcomeDefinedV1:
+	case events.OutcomeExplanationProvidedV1:
 		this.applyOutcomeDefined(event)
 	}
 }
-func (this *Aggregate) applyOutcomeDefined(event events.OutcomeDefinedV1) {
+func (this *Aggregate) applyOutcomeDefined(event events.OutcomeExplanationProvidedV1) {
 	this.id = event.OutcomeID
-	this.definition = event.Definition
+	this.definition = event.Explanation
 }
 func (this *Aggregate) Replay(stream chan interface{}) {
 	for event := range stream {

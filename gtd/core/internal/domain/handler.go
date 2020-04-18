@@ -20,7 +20,7 @@ func NewHandler(runner joyride.Runner, task *Task) *Handler {
 }
 func (this *Handler) HandleMessage(message interface{}) bool {
 	switch message := message.(type) {
-	case *commands.DefineOutcome:
+	case *commands.ProvideOutcomeExplanation:
 		this.task.DefineOutcome(message)
 	case *commands.RedefineOutcome:
 		this.task.RedefineOutcome(message)
