@@ -3,6 +3,7 @@ package domain
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"testing"
 	"time"
 
@@ -35,7 +36,7 @@ type Fixture struct {
 func (this *Fixture) Setup() {
 	this.now = time.Now()
 	this.log = logging.Capture(ioutil.Discard)
-	this.log.SetFlags(0)
+	this.log.SetFlags(log.Lshortfile)
 	this.log.SetPrefix("--> ")
 	this.task = NewTask(this.generateID)
 	this.task.clock = clock.Freeze(this.now)
