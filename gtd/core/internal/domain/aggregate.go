@@ -3,11 +3,14 @@ package domain
 import (
 	"time"
 
+	"github.com/smartystreets/logging"
+
 	"github.com/mdwhatcott/gtd/gtd/core/events"
 )
 
 type Aggregate struct {
 	now time.Time
+	log *logging.Logger
 
 	id    string
 	title string
@@ -15,8 +18,8 @@ type Aggregate struct {
 	results []interface{}
 }
 
-func NewAggregate(now time.Time) *Aggregate {
-	return &Aggregate{now: now}
+func NewAggregate(now time.Time, log *logging.Logger) *Aggregate {
+	return &Aggregate{now: now, log: log}
 }
 func (this *Aggregate) TrackOutcome(outcomeID, title string) error {
 	return this.raise(events.OutcomeTrackedV1{
@@ -25,17 +28,28 @@ func (this *Aggregate) TrackOutcome(outcomeID, title string) error {
 		Title:     title,
 	})
 }
+func (this *Aggregate) ProvideOutcomeExplanation(explanation string) error {
+	return this.raise(events.OutcomeExplanationProvidedV1{
+		Timestamp:   this.now,
+		OutcomeID:   this.id,
+		Explanation: explanation,
+	})
+}
 func (this *Aggregate) raise(event interface{}) error {
 	this.results = append(this.results, event)
 	this.apply(event)
 	return nil
 }
 func (this *Aggregate) apply(event interface{}) {
-	switch event.(type) {
+	switch event := event.(type) {
+	case events.OutcomeTrackedV1:
+		this.id = event.OutcomeID
 	}
 }
 func (this *Aggregate) Replay(stream chan interface{}) {
+	this.log.Println("stream:", len(stream))
 	for event := range stream {
+		this.log.Println("applying event:", event)
 		this.apply(event)
 	}
 }

@@ -22,6 +22,8 @@ func (this *Handler) HandleMessage(message interface{}) bool {
 	switch message := message.(type) {
 	case *commands.TrackOutcome:
 		this.task.TrackOutcome(message)
+	case *commands.ProvideOutcomeExplanation:
+		this.task.ProvideOutcomeExplanation(message)
 	default:
 		return false
 	}

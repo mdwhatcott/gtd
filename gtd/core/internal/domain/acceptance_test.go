@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"io/ioutil"
 	"testing"
 	"time"
 
@@ -21,23 +22,35 @@ func TestFixture(t *testing.T) {
 
 type Fixture struct {
 	*gunit.Fixture
+	*FakeShell
 
 	id      int
 	now     time.Time
-	shell   *FakeShell
+	log     *logging.Logger
 	handler *Handler
 	task    *Task
+	runner  joyride.Runner
 }
 
 func (this *Fixture) Setup() {
 	this.now = time.Now()
-	this.shell = NewFakeShell(this)
+	this.log = logging.Capture(ioutil.Discard)
+	this.log.SetFlags(0)
+	this.log.SetPrefix("--> ")
 	this.task = NewTask(this.generateID)
 	this.task.clock = clock.Freeze(this.now)
-	this.task.log = logging.Capture(this)
+	this.task.log = this.log
+	this.FakeShell = NewFakeShell(this)
+	this.runner = joyride.NewRunner(
+		joyride.WithStorageReader(this.FakeShell),
+		joyride.WithStorageWriter(this.FakeShell),
+	)
 }
 func (this *Fixture) Teardown() {
 	this.assertTransferalOfResultOwnership()
+}
+func (this *Fixture) enableLogging() {
+	this.log.SetOutput(this.Fixture)
 }
 func (this *Fixture) assertTransferalOfResultOwnership() {
 	alreadyPublished := len(this.task.PendingWrites())
@@ -45,17 +58,16 @@ func (this *Fixture) assertTransferalOfResultOwnership() {
 	doublyPublished := len(this.task.PendingWrites()) - alreadyPublished
 	this.So(doublyPublished, should.Equal, 0)
 }
-func (this *Fixture) handle(commands ...interface{}) {
-	runner := joyride.NewRunner(
-		joyride.WithStorageReader(this.shell),
-		joyride.WithStorageWriter(this.shell),
-	)
-	this.handler = NewHandler(runner, this.task)
-	this.handler.Handle(commands...)
+func (this *Fixture) handle(command interface{}) {
+	this.handler = NewHandler(this.runner, this.task)
+	this.handler.Handle(command)
 }
 func (this *Fixture) generateID() string {
 	this.id++
 	return fmt.Sprint(this.id)
+}
+func (this *Fixture) AssertEventOutput(expected ...interface{}) {
+	this.So(this.task.PendingWrites(), should.Resemble, expected)
 }
 func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
 	this.So(func() { this.handle(42) }, should.PanicWith, joyride.ErrUnknownType)
@@ -67,11 +79,32 @@ func (this *Fixture) TestTrackOutcome_PublishOutcomeTracked_ReturnOutcomeID() {
 	this.handle(command)
 
 	this.So(command.Result, should.Resemble, commands.CreateResult{ID: "1"})
-	this.shell.AssertOutput(
+	this.AssertOutput(
 		events.OutcomeTrackedV1{
 			Timestamp: this.now,
 			OutcomeID: "1",
 			Title:     "title",
+		},
+	)
+}
+func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProvided() {
+	this.PrepareReadResults("1", events.OutcomeTrackedV1{
+		OutcomeID: "1",
+		Title:     "title",
+	})
+	command := &commands.ProvideOutcomeExplanation{
+		OutcomeID:   "1",
+		Explanation: "explanation",
+	}
+
+	this.handle(command)
+
+	this.So(command.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.OutcomeExplanationProvidedV1{
+			Timestamp:   this.now,
+			OutcomeID:   "1",
+			Explanation: "explanation",
 		},
 	)
 }

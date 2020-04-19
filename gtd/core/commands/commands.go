@@ -7,6 +7,7 @@ type TrackOutcome struct {
 }
 
 type ProvideOutcomeExplanation struct {
+	OutcomeID   string
 	Explanation string
 
 	Result Result

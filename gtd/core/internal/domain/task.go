@@ -32,7 +32,7 @@ func NewTask(nextID func() string) *Task {
 func (this *Task) aggregate(id string) *Aggregate {
 	aggregate, found := this.aggregates[id]
 	if !found {
-		aggregate = NewAggregate(this.clock.UTCNow())
+		aggregate = NewAggregate(this.clock.UTCNow(), this.log)
 		this.aggregates[id] = aggregate
 	}
 	return aggregate
@@ -48,10 +48,11 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 	this.AddRequiredReads(query)
 }
 func (this *Task) TrackOutcome(command *commands.TrackOutcome) {
-	id := this.nextID()
-	aggregate := this.aggregate(id)
-	command.Result.ID = id
-	command.Result.Error = aggregate.TrackOutcome(id, command.Title)
+	this.instructions = append(this.instructions, command)
+}
+func (this *Task) ProvideOutcomeExplanation(command *commands.ProvideOutcomeExplanation) {
+	this.instructions = append(this.instructions, command)
+	this.registerOutcomeEventStreamQuery(command.OutcomeID)
 }
 func (this *Task) Execute() joyride.TaskResult {
 	this.replayEvents()
@@ -66,7 +67,11 @@ func (this *Task) replayEvents() {
 }
 func (this *Task) processInstructions() {
 	for _, message := range this.instructions {
-		switch message.(type) {
+		switch command := message.(type) {
+		case *commands.TrackOutcome:
+			this.trackOutcome(command)
+		case *commands.ProvideOutcomeExplanation:
+			this.provideOutcomeExplanation(command)
 		}
 	}
 }
@@ -75,6 +80,10 @@ func (this *Task) trackOutcome(command *commands.TrackOutcome) {
 	aggregate := this.aggregate(outcomeID)
 	command.Result.ID = outcomeID
 	command.Result.Error = aggregate.TrackOutcome(outcomeID, command.Title)
+}
+func (this *Task) provideOutcomeExplanation(command *commands.ProvideOutcomeExplanation) {
+	aggregate := this.aggregate(command.OutcomeID)
+	command.Result.Error = aggregate.ProvideOutcomeExplanation(command.Explanation)
 }
 func (this *Task) publishResults() {
 	for _, aggregate := range this.aggregates {
