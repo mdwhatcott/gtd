@@ -49,11 +49,17 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 func (this *Task) TrackOutcome(command *commands.TrackOutcome) {
 	this.instructions = append(this.instructions, command)
 }
+
+// TODO: Combine methods WithInstruction(command, id)
 func (this *Task) UpdateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
 	this.instructions = append(this.instructions, command)
 	this.registerOutcomeEventStreamQuery(command.OutcomeID)
 }
 func (this *Task) UpdateOutcomeExplanation(command *commands.UpdateOutcomeExplanation) {
+	this.instructions = append(this.instructions, command)
+	this.registerOutcomeEventStreamQuery(command.OutcomeID)
+}
+func (this *Task) UpdateOutcomeDescription(command *commands.UpdateOutcomeDescription) {
 	this.instructions = append(this.instructions, command)
 	this.registerOutcomeEventStreamQuery(command.OutcomeID)
 }
@@ -77,6 +83,8 @@ func (this *Task) processInstructions() {
 			this.updateOutcomeTitle(command)
 		case *commands.UpdateOutcomeExplanation:
 			this.updateOutcomeExplanation(command)
+		case *commands.UpdateOutcomeDescription:
+			this.updateOutcomeDescription(command)
 		}
 	}
 }
@@ -93,6 +101,10 @@ func (this *Task) updateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
 func (this *Task) updateOutcomeExplanation(command *commands.UpdateOutcomeExplanation) {
 	aggregate := this.aggregate(command.OutcomeID)
 	command.Result.Error = aggregate.UpdateOutcomeExplanation(command.NewExplanation)
+}
+func (this *Task) updateOutcomeDescription(command *commands.UpdateOutcomeDescription) {
+	aggregate := this.aggregate(command.OutcomeID)
+	command.Result.Error = aggregate.UpdateOutcomeDescription(command.UpdatedDescription)
 }
 func (this *Task) publishResults() {
 	for _, aggregate := range this.aggregates {

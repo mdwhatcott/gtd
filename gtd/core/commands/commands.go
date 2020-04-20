@@ -6,12 +6,12 @@ type TrackOutcome struct {
 }
 type UpdateOutcomeTitle struct {
 	OutcomeID string
-	NewTitle  string
+	NewTitle  string // TODO: use Updated instead of New
 	Result    Result
 }
 type UpdateOutcomeExplanation struct {
 	OutcomeID      string
-	NewExplanation string
+	NewExplanation string // TODO: use Updated instead of New
 	Result         Result
 }
 type UpdateOutcomeDescription struct {

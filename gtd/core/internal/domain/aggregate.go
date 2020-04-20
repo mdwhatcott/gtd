@@ -55,6 +55,13 @@ func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
 		NewExplanation: explanation,
 	})
 }
+func (this *Aggregate) UpdateOutcomeDescription(description string) error {
+	return this.raise(events.OutcomeDescriptionUpdatedV1{
+		Timestamp:      this.now,
+		OutcomeID:      this.id,
+		NewDescription: description,
+	})
+}
 func (this *Aggregate) apply(event interface{}) {
 	switch event := event.(type) {
 	case events.OutcomeTrackedV1:
