@@ -13,6 +13,7 @@ import (
 	"github.com/smartystreets/joyride/v2"
 	"github.com/smartystreets/logging"
 
+	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
 	"github.com/mdwhatcott/gtd/gtd/core/events"
 )
@@ -108,6 +109,18 @@ func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 			NewTitle:  "new-title",
 		},
 	)
+}
+func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1", nil)
+	command := &commands.UpdateOutcomeTitle{
+		OutcomeID: "1",
+		NewTitle:  "new-title",
+	}
+
+	this.handle(command)
+
+	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
 }
 func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProvided() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{

@@ -5,6 +5,7 @@ import (
 
 	"github.com/smartystreets/logging"
 
+	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/events"
 )
 
@@ -36,6 +37,9 @@ func (this *Aggregate) ProvideOutcomeExplanation(explanation string) error {
 	})
 }
 func (this *Aggregate) UpdateOutcomeTitle(title string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
 	return this.raise(events.OutcomeTitleUpdatedV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
