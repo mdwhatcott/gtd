@@ -65,6 +65,8 @@ func (this *Aggregate) apply(event interface{}) {
 	case events.OutcomeTrackedV1:
 		this.id = event.OutcomeID
 		this.title = event.Title
+	case events.OutcomeTitleUpdatedV1:
+		this.title = event.NewTitle
 	case events.OutcomeExplanationUpdatedV1:
 		this.explanation = event.NewExplanation
 	}

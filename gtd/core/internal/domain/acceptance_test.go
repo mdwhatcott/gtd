@@ -122,7 +122,7 @@ func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
-func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchanged_ErrorReturned() {
+func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceCreation_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
 			OutcomeID: "1",
@@ -132,6 +132,27 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchanged_ErrorReturned() {
 	command := &commands.UpdateOutcomeTitle{
 		OutcomeID: "1",
 		NewTitle:  "first-title",
+	}
+
+	this.handle(command)
+
+	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceLastUpdate_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "first-title",
+		},
+		events.OutcomeTitleUpdatedV1{
+			OutcomeID: "1",
+			NewTitle:  "second-title",
+		},
+	)
+	command := &commands.UpdateOutcomeTitle{
+		OutcomeID: "1",
+		NewTitle:  "second-title",
 	}
 
 	this.handle(command)
