@@ -49,19 +49,9 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 func (this *Task) TrackOutcome(command *commands.TrackOutcome) {
 	this.instructions = append(this.instructions, command)
 }
-
-// TODO: Combine methods WithInstruction(command, id)
-func (this *Task) UpdateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
-	this.instructions = append(this.instructions, command)
-	this.registerOutcomeEventStreamQuery(command.OutcomeID)
-}
-func (this *Task) UpdateOutcomeExplanation(command *commands.UpdateOutcomeExplanation) {
-	this.instructions = append(this.instructions, command)
-	this.registerOutcomeEventStreamQuery(command.OutcomeID)
-}
-func (this *Task) UpdateOutcomeDescription(command *commands.UpdateOutcomeDescription) {
-	this.instructions = append(this.instructions, command)
-	this.registerOutcomeEventStreamQuery(command.OutcomeID)
+func (this *Task) WithInstruction(message interface{}, id string) {
+	this.instructions = append(this.instructions, message)
+	this.registerOutcomeEventStreamQuery(id)
 }
 func (this *Task) Execute() joyride.TaskResult {
 	this.replayEvents()

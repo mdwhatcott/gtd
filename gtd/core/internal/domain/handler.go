@@ -23,11 +23,11 @@ func (this *Handler) HandleMessage(message interface{}) bool {
 	case *commands.TrackOutcome:
 		this.task.TrackOutcome(message)
 	case *commands.UpdateOutcomeTitle:
-		this.task.UpdateOutcomeTitle(message)
+		this.task.WithInstruction(message, message.OutcomeID)
 	case *commands.UpdateOutcomeExplanation:
-		this.task.UpdateOutcomeExplanation(message)
+		this.task.WithInstruction(message, message.OutcomeID)
 	case *commands.UpdateOutcomeDescription:
-		this.task.UpdateOutcomeDescription(message)
+		this.task.WithInstruction(message, message.OutcomeID)
 	default:
 		return false
 	}
