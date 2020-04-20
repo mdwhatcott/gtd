@@ -13,7 +13,7 @@ type UpdateOutcomeTitle struct {
 	Result Result
 }
 
-type ProvideOutcomeExplanation struct {
+type UpdateOutcomeExplanation struct {
 	OutcomeID   string
 	Explanation string
 

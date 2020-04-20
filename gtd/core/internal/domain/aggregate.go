@@ -29,16 +29,6 @@ func (this *Aggregate) TrackOutcome(outcomeID, title string) error {
 		Title:     title,
 	})
 }
-func (this *Aggregate) ProvideOutcomeExplanation(explanation string) error {
-	if len(this.id) == 0 {
-		return core.ErrOutcomeNotFound
-	}
-	return this.raise(events.OutcomeExplanationProvidedV1{
-		Timestamp:   this.now,
-		OutcomeID:   this.id,
-		Explanation: explanation,
-	})
-}
 func (this *Aggregate) UpdateOutcomeTitle(title string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
@@ -47,6 +37,16 @@ func (this *Aggregate) UpdateOutcomeTitle(title string) error {
 		Timestamp: this.now,
 		OutcomeID: this.id,
 		NewTitle:  title,
+	})
+}
+func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	return this.raise(events.OutcomeExplanationUpdatedV1{
+		Timestamp:   this.now,
+		OutcomeID:   this.id,
+		Explanation: explanation,
 	})
 }
 func (this *Aggregate) raise(event interface{}) error {

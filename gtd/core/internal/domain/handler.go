@@ -24,8 +24,8 @@ func (this *Handler) HandleMessage(message interface{}) bool {
 		this.task.TrackOutcome(message)
 	case *commands.UpdateOutcomeTitle:
 		this.task.UpdateOutcomeTitle(message)
-	case *commands.ProvideOutcomeExplanation:
-		this.task.ProvideOutcomeExplanation(message)
+	case *commands.UpdateOutcomeExplanation:
+		this.task.UpdateOutcomeExplanation(message)
 	default:
 		return false
 	}

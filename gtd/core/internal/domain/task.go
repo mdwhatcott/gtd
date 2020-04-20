@@ -49,11 +49,11 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 func (this *Task) TrackOutcome(command *commands.TrackOutcome) {
 	this.instructions = append(this.instructions, command)
 }
-func (this *Task) ProvideOutcomeExplanation(command *commands.ProvideOutcomeExplanation) {
+func (this *Task) UpdateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
 	this.instructions = append(this.instructions, command)
 	this.registerOutcomeEventStreamQuery(command.OutcomeID)
 }
-func (this *Task) UpdateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
+func (this *Task) UpdateOutcomeExplanation(command *commands.UpdateOutcomeExplanation) {
 	this.instructions = append(this.instructions, command)
 	this.registerOutcomeEventStreamQuery(command.OutcomeID)
 }
@@ -73,10 +73,10 @@ func (this *Task) processInstructions() {
 		switch command := message.(type) {
 		case *commands.TrackOutcome:
 			this.trackOutcome(command)
-		case *commands.ProvideOutcomeExplanation:
-			this.provideOutcomeExplanation(command)
 		case *commands.UpdateOutcomeTitle:
 			this.updateOutcomeTitle(command)
+		case *commands.UpdateOutcomeExplanation:
+			this.updateOutcomeExplanation(command)
 		}
 	}
 }
@@ -86,14 +86,13 @@ func (this *Task) trackOutcome(command *commands.TrackOutcome) {
 	command.Result.ID = outcomeID
 	command.Result.Error = aggregate.TrackOutcome(outcomeID, command.Title)
 }
-func (this *Task) provideOutcomeExplanation(command *commands.ProvideOutcomeExplanation) {
-	aggregate := this.aggregate(command.OutcomeID)
-	command.Result.Error = aggregate.ProvideOutcomeExplanation(command.Explanation)
-}
-
 func (this *Task) updateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
 	aggregate := this.aggregate(command.OutcomeID)
 	command.Result.Error = aggregate.UpdateOutcomeTitle(command.NewTitle)
+}
+func (this *Task) updateOutcomeExplanation(command *commands.UpdateOutcomeExplanation) {
+	aggregate := this.aggregate(command.OutcomeID)
+	command.Result.Error = aggregate.UpdateOutcomeExplanation(command.Explanation)
 }
 func (this *Task) publishResults() {
 	for _, aggregate := range this.aggregates {

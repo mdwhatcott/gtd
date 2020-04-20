@@ -12,7 +12,7 @@ type OutcomeTitleUpdatedV1 struct {
 	NewTitle  string `json:"new_title"`
 }
 
-type OutcomeExplanationProvidedV1 struct {
+type OutcomeExplanationUpdatedV1 struct {
 	Timestamp   Time   `json:"timestamp"`
 	OutcomeID   string `json:"outcome_id"`
 	Explanation string `json:"explanation"`

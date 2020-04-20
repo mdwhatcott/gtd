@@ -127,7 +127,7 @@ func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProv
 		OutcomeID: "1",
 		Title:     "title",
 	})
-	command := &commands.ProvideOutcomeExplanation{
+	command := &commands.UpdateOutcomeExplanation{
 		OutcomeID:   "1",
 		Explanation: "explanation",
 	}
@@ -136,7 +136,7 @@ func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProv
 
 	this.So(command.Result.Error, should.BeNil)
 	this.AssertOutput(
-		events.OutcomeExplanationProvidedV1{
+		events.OutcomeExplanationUpdatedV1{
 			Timestamp:   this.now,
 			OutcomeID:   "1",
 			Explanation: "explanation",
@@ -145,7 +145,7 @@ func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProv
 }
 func (this *Fixture) TestProvideOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
-	command := &commands.ProvideOutcomeExplanation{
+	command := &commands.UpdateOutcomeExplanation{
 		OutcomeID:   "1",
 		Explanation: "new-explanation",
 	}
