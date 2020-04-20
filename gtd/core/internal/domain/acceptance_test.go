@@ -160,7 +160,7 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceLastUpdate_Erro
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
-func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProvided() {
+func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdated() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",
 		Title:     "title",
@@ -181,7 +181,7 @@ func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProv
 		},
 	)
 }
-func (this *Fixture) TestProvideOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
+func (this *Fixture) TestUpdateOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	command := &commands.UpdateOutcomeExplanation{
 		OutcomeID:      "1",

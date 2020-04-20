@@ -55,11 +55,6 @@ func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
 		NewExplanation: explanation,
 	})
 }
-func (this *Aggregate) raise(event interface{}) error {
-	this.results = append(this.results, event)
-	this.apply(event)
-	return nil
-}
 func (this *Aggregate) apply(event interface{}) {
 	switch event := event.(type) {
 	case events.OutcomeTrackedV1:
@@ -70,6 +65,11 @@ func (this *Aggregate) apply(event interface{}) {
 	case events.OutcomeExplanationUpdatedV1:
 		this.explanation = event.NewExplanation
 	}
+}
+func (this *Aggregate) raise(event interface{}) error {
+	this.results = append(this.results, event)
+	this.apply(event)
+	return nil
 }
 func (this *Aggregate) Replay(stream []interface{}) {
 	this.log.Println("stream:", len(stream))
