@@ -43,7 +43,6 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 		return
 	}
 	query = &storage.OutcomeEventStream{OutcomeID: id}
-	query.Result.Stream = make(chan interface{})
 	this.queries[id] = query
 	this.AddRequiredReads(query)
 }
@@ -66,7 +65,7 @@ func (this *Task) Execute() joyride.TaskResult {
 }
 func (this *Task) replayEvents() {
 	for id, query := range this.queries {
-		this.aggregate(id).Replay(query.Result.Stream)
+		this.aggregate(id).Replay(query.Result.Events)
 	}
 }
 func (this *Task) processInstructions() {

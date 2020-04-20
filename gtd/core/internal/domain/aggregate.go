@@ -57,9 +57,9 @@ func (this *Aggregate) apply(event interface{}) {
 		this.id = event.OutcomeID
 	}
 }
-func (this *Aggregate) Replay(stream chan interface{}) {
+func (this *Aggregate) Replay(stream []interface{}) {
 	this.log.Println("stream:", len(stream))
-	for event := range stream {
+	for _, event := range stream {
 		this.log.Println("applying event:", event)
 		this.apply(event)
 	}

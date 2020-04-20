@@ -29,17 +29,9 @@ func (this *FakeShell) Read(values ...interface{}) {
 		switch query := value.(type) {
 		case *storage.OutcomeEventStream:
 			this.log.Println("Reading outcome event stream...", query.OutcomeID)
-			query.Result.Stream = make(chan interface{})
-			go this.populate(query.OutcomeID, query.Result.Stream)
+			query.Result.Events = this.reads[query.OutcomeID]
 		}
 	}
-}
-func (this *FakeShell) populate(id string, stream chan interface{}) {
-	for _, event := range this.reads[id] {
-		this.log.Printf("adding event to stream: %#v", event)
-		stream <- event
-	}
-	close(stream)
 }
 func (this *FakeShell) PrepareReadResults(id string, results ...interface{}) {
 	this.reads[id] = append(this.reads[id], results...)
