@@ -96,11 +96,11 @@ func (this *Task) trackOutcome(command *commands.TrackOutcome) {
 }
 func (this *Task) updateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
 	aggregate := this.aggregate(command.OutcomeID)
-	command.Result.Error = aggregate.UpdateOutcomeTitle(command.NewTitle)
+	command.Result.Error = aggregate.UpdateOutcomeTitle(command.UpdatedTitle)
 }
 func (this *Task) updateOutcomeExplanation(command *commands.UpdateOutcomeExplanation) {
 	aggregate := this.aggregate(command.OutcomeID)
-	command.Result.Error = aggregate.UpdateOutcomeExplanation(command.NewExplanation)
+	command.Result.Error = aggregate.UpdateOutcomeExplanation(command.UpdatedExplanation)
 }
 func (this *Task) updateOutcomeDescription(command *commands.UpdateOutcomeDescription) {
 	aggregate := this.aggregate(command.OutcomeID)

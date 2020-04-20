@@ -95,8 +95,8 @@ func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 		Title:     "title",
 	})
 	command := &commands.UpdateOutcomeTitle{
-		OutcomeID: "1",
-		NewTitle:  "new-title",
+		OutcomeID:    "1",
+		UpdatedTitle: "new-title",
 	}
 
 	this.handle(command)
@@ -113,8 +113,8 @@ func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	command := &commands.UpdateOutcomeTitle{
-		OutcomeID: "1",
-		NewTitle:  "new-title",
+		OutcomeID:    "1",
+		UpdatedTitle: "new-title",
 	}
 
 	this.handle(command)
@@ -130,8 +130,8 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceCreation_ErrorR
 		},
 	)
 	command := &commands.UpdateOutcomeTitle{
-		OutcomeID: "1",
-		NewTitle:  "first-title",
+		OutcomeID:    "1",
+		UpdatedTitle: "first-title",
 	}
 
 	this.handle(command)
@@ -151,8 +151,8 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceLastUpdate_Erro
 		},
 	)
 	command := &commands.UpdateOutcomeTitle{
-		OutcomeID: "1",
-		NewTitle:  "second-title",
+		OutcomeID:    "1",
+		UpdatedTitle: "second-title",
 	}
 
 	this.handle(command)
@@ -166,8 +166,8 @@ func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdat
 		Title:     "title",
 	})
 	command := &commands.UpdateOutcomeExplanation{
-		OutcomeID:      "1",
-		NewExplanation: "explanation",
+		OutcomeID:          "1",
+		UpdatedExplanation: "explanation",
 	}
 
 	this.handle(command)
@@ -184,8 +184,8 @@ func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdat
 func (this *Fixture) TestUpdateOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	command := &commands.UpdateOutcomeExplanation{
-		OutcomeID:      "1",
-		NewExplanation: "new-explanation",
+		OutcomeID:          "1",
+		UpdatedExplanation: "new-explanation",
 	}
 
 	this.handle(command)
@@ -205,8 +205,8 @@ func (this *Fixture) TestUpdateOutcomeExplanation_ContentUnchanged_ErrorReturned
 		},
 	)
 	command := &commands.UpdateOutcomeExplanation{
-		OutcomeID:      "1",
-		NewExplanation: "first-explanation",
+		OutcomeID:          "1",
+		UpdatedExplanation: "first-explanation",
 	}
 
 	this.handle(command)

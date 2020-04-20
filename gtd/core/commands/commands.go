@@ -5,14 +5,14 @@ type TrackOutcome struct {
 	Result CreateResult
 }
 type UpdateOutcomeTitle struct {
-	OutcomeID string
-	NewTitle  string // TODO: use Updated instead of New
-	Result    Result
+	OutcomeID    string
+	UpdatedTitle string
+	Result       Result
 }
 type UpdateOutcomeExplanation struct {
-	OutcomeID      string
-	NewExplanation string // TODO: use Updated instead of New
-	Result         Result
+	OutcomeID          string
+	UpdatedExplanation string
+	Result             Result
 }
 type UpdateOutcomeDescription struct {
 	OutcomeID          string
