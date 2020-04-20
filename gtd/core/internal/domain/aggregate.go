@@ -33,6 +33,9 @@ func (this *Aggregate) UpdateOutcomeTitle(title string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
+	if title == this.title {
+		return core.ErrOutcomeUnchanged
+	}
 	return this.raise(events.OutcomeTitleUpdatedV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
@@ -58,6 +61,7 @@ func (this *Aggregate) apply(event interface{}) {
 	switch event := event.(type) {
 	case events.OutcomeTrackedV1:
 		this.id = event.OutcomeID
+		this.title = event.Title
 	}
 }
 func (this *Aggregate) Replay(stream []interface{}) {

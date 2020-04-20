@@ -122,6 +122,23 @@ func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
+func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchanged_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "first-title",
+		},
+	)
+	command := &commands.UpdateOutcomeTitle{
+		OutcomeID: "1",
+		NewTitle:  "first-title",
+	}
+
+	this.handle(command)
+
+	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
 func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProvided() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",
