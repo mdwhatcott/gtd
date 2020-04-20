@@ -143,3 +143,15 @@ func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProv
 		},
 	)
 }
+func (this *Fixture) TestProvideOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1", nil)
+	command := &commands.ProvideOutcomeExplanation{
+		OutcomeID:   "1",
+		Explanation: "new-explanation",
+	}
+
+	this.handle(command)
+
+	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}

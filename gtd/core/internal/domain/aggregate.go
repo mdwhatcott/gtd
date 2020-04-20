@@ -30,6 +30,9 @@ func (this *Aggregate) TrackOutcome(outcomeID, title string) error {
 	})
 }
 func (this *Aggregate) ProvideOutcomeExplanation(explanation string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
 	return this.raise(events.OutcomeExplanationProvidedV1{
 		Timestamp:   this.now,
 		OutcomeID:   this.id,
