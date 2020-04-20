@@ -92,7 +92,7 @@ func (this *Task) updateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
 }
 func (this *Task) updateOutcomeExplanation(command *commands.UpdateOutcomeExplanation) {
 	aggregate := this.aggregate(command.OutcomeID)
-	command.Result.Error = aggregate.UpdateOutcomeExplanation(command.Explanation)
+	command.Result.Error = aggregate.UpdateOutcomeExplanation(command.NewExplanation)
 }
 func (this *Task) publishResults() {
 	for _, aggregate := range this.aggregates {

@@ -11,9 +11,9 @@ type OutcomeTitleUpdatedV1 struct {
 	NewTitle  string `json:"new_title"`
 }
 type OutcomeExplanationUpdatedV1 struct {
-	Timestamp   Time   `json:"timestamp"`
-	OutcomeID   string `json:"outcome_id"`
-	Explanation string `json:"explanation"`
+	Timestamp      Time   `json:"timestamp"`
+	OutcomeID      string `json:"outcome_id"`
+	NewExplanation string `json:"explanation"`
 }
 type OutcomeDescriptionUpdatedV1 struct {
 	Timestamp      Time   `json:"timestamp"`

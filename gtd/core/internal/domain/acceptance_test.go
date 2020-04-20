@@ -145,8 +145,8 @@ func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProv
 		Title:     "title",
 	})
 	command := &commands.UpdateOutcomeExplanation{
-		OutcomeID:   "1",
-		Explanation: "explanation",
+		OutcomeID:      "1",
+		NewExplanation: "explanation",
 	}
 
 	this.handle(command)
@@ -154,21 +154,42 @@ func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProv
 	this.So(command.Result.Error, should.BeNil)
 	this.AssertOutput(
 		events.OutcomeExplanationUpdatedV1{
-			Timestamp:   this.now,
-			OutcomeID:   "1",
-			Explanation: "explanation",
+			Timestamp:      this.now,
+			OutcomeID:      "1",
+			NewExplanation: "explanation",
 		},
 	)
 }
 func (this *Fixture) TestProvideOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	command := &commands.UpdateOutcomeExplanation{
-		OutcomeID:   "1",
-		Explanation: "new-explanation",
+		OutcomeID:      "1",
+		NewExplanation: "new-explanation",
 	}
 
 	this.handle(command)
 
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestUpdateOutcomeExplanation_ContentUnchanged_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeExplanationUpdatedV1{
+			OutcomeID:      "1",
+			NewExplanation: "first-explanation",
+		},
+	)
+	command := &commands.UpdateOutcomeExplanation{
+		OutcomeID:      "1",
+		NewExplanation: "first-explanation",
+	}
+
+	this.handle(command)
+
+	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }

@@ -13,10 +13,10 @@ type Aggregate struct {
 	now time.Time
 	log *logging.Logger
 
-	id    string
-	title string
-
-	results []interface{}
+	id          string
+	title       string
+	explanation string
+	results     []interface{}
 }
 
 func NewAggregate(now time.Time, log *logging.Logger) *Aggregate {
@@ -46,10 +46,13 @@ func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
+	if explanation == this.explanation {
+		return core.ErrOutcomeUnchanged
+	}
 	return this.raise(events.OutcomeExplanationUpdatedV1{
-		Timestamp:   this.now,
-		OutcomeID:   this.id,
-		Explanation: explanation,
+		Timestamp:      this.now,
+		OutcomeID:      this.id,
+		NewExplanation: explanation,
 	})
 }
 func (this *Aggregate) raise(event interface{}) error {
@@ -62,6 +65,8 @@ func (this *Aggregate) apply(event interface{}) {
 	case events.OutcomeTrackedV1:
 		this.id = event.OutcomeID
 		this.title = event.Title
+	case events.OutcomeExplanationUpdatedV1:
+		this.explanation = event.NewExplanation
 	}
 }
 func (this *Aggregate) Replay(stream []interface{}) {

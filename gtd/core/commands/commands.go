@@ -10,9 +10,9 @@ type UpdateOutcomeTitle struct {
 	Result    Result
 }
 type UpdateOutcomeExplanation struct {
-	OutcomeID   string
-	Explanation string
-	Result      Result
+	OutcomeID      string
+	NewExplanation string
+	Result         Result
 }
 type UpdateOutcomeDescription struct {
 	OutcomeID          string
