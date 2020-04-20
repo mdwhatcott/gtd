@@ -88,6 +88,27 @@ func (this *Fixture) TestTrackOutcome_PublishOutcomeTracked_ReturnOutcomeID() {
 		},
 	)
 }
+func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
+	this.PrepareReadResults("1", events.OutcomeTrackedV1{
+		OutcomeID: "1",
+		Title:     "title",
+	})
+	command := &commands.UpdateOutcomeTitle{
+		OutcomeID: "1",
+		NewTitle:  "new-title",
+	}
+
+	this.handle(command)
+
+	this.So(command.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.OutcomeTitleUpdatedV1{
+			Timestamp: this.now,
+			OutcomeID: "1",
+			NewTitle:  "new-title",
+		},
+	)
+}
 func (this *Fixture) TestProvideOutcomeExplanation_PublishOutcomeExplanationProvided() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",

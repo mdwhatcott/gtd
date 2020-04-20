@@ -35,6 +35,13 @@ func (this *Aggregate) ProvideOutcomeExplanation(explanation string) error {
 		Explanation: explanation,
 	})
 }
+func (this *Aggregate) UpdateOutcomeTitle(title string) error {
+	return this.raise(events.OutcomeTitleUpdatedV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+		NewTitle:  title,
+	})
+}
 func (this *Aggregate) raise(event interface{}) error {
 	this.results = append(this.results, event)
 	this.apply(event)

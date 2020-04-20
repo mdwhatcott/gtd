@@ -6,6 +6,13 @@ type TrackOutcome struct {
 	Result CreateResult
 }
 
+type UpdateOutcomeTitle struct {
+	OutcomeID string
+	NewTitle  string
+
+	Result Result
+}
+
 type ProvideOutcomeExplanation struct {
 	OutcomeID   string
 	Explanation string

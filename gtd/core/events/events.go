@@ -6,6 +6,12 @@ type OutcomeTrackedV1 struct {
 	Title     string `json:"definition"`
 }
 
+type OutcomeTitleUpdatedV1 struct {
+	Timestamp Time   `json:"timestamp"`
+	OutcomeID string `json:"outcome_id"`
+	NewTitle  string `json:"new_title"`
+}
+
 type OutcomeExplanationProvidedV1 struct {
 	Timestamp   Time   `json:"timestamp"`
 	OutcomeID   string `json:"outcome_id"`

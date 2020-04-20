@@ -54,6 +54,10 @@ func (this *Task) ProvideOutcomeExplanation(command *commands.ProvideOutcomeExpl
 	this.instructions = append(this.instructions, command)
 	this.registerOutcomeEventStreamQuery(command.OutcomeID)
 }
+func (this *Task) UpdateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
+	this.instructions = append(this.instructions, command)
+	this.registerOutcomeEventStreamQuery(command.OutcomeID)
+}
 func (this *Task) Execute() joyride.TaskResult {
 	this.replayEvents()
 	this.processInstructions()
@@ -72,6 +76,8 @@ func (this *Task) processInstructions() {
 			this.trackOutcome(command)
 		case *commands.ProvideOutcomeExplanation:
 			this.provideOutcomeExplanation(command)
+		case *commands.UpdateOutcomeTitle:
+			this.updateOutcomeTitle(command)
 		}
 	}
 }
@@ -84,6 +90,11 @@ func (this *Task) trackOutcome(command *commands.TrackOutcome) {
 func (this *Task) provideOutcomeExplanation(command *commands.ProvideOutcomeExplanation) {
 	aggregate := this.aggregate(command.OutcomeID)
 	command.Result.Error = aggregate.ProvideOutcomeExplanation(command.Explanation)
+}
+
+func (this *Task) updateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
+	aggregate := this.aggregate(command.OutcomeID)
+	command.Result.Error = aggregate.UpdateOutcomeTitle(command.NewTitle)
 }
 func (this *Task) publishResults() {
 	for _, aggregate := range this.aggregates {
