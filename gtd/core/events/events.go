@@ -6,19 +6,19 @@ type OutcomeTrackedV1 struct {
 	Title     string `json:"definition"`
 }
 type OutcomeTitleUpdatedV1 struct {
-	Timestamp Time   `json:"timestamp"`
-	OutcomeID string `json:"outcome_id"`
-	NewTitle  string `json:"new_title"`
+	Timestamp    Time   `json:"timestamp"`
+	OutcomeID    string `json:"outcome_id"`
+	UpdatedTitle string `json:"new_title"`
 }
 type OutcomeExplanationUpdatedV1 struct {
-	Timestamp      Time   `json:"timestamp"`
-	OutcomeID      string `json:"outcome_id"`
-	NewExplanation string `json:"explanation"`
+	Timestamp          Time   `json:"timestamp"`
+	OutcomeID          string `json:"outcome_id"`
+	UpdatedExplanation string `json:"explanation"`
 }
 type OutcomeDescriptionUpdatedV1 struct {
-	Timestamp      Time   `json:"timestamp"`
-	OutcomeID      string `json:"outcome_id"`
-	NewDescription string `json:"description"`
+	Timestamp          Time   `json:"timestamp"`
+	OutcomeID          string `json:"outcome_id"`
+	UpdatedDescription string `json:"description"`
 }
 type OutcomeDeletedV1 struct {
 	Timestamp Time   `json:"timestamp"`

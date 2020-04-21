@@ -38,9 +38,9 @@ func (this *Aggregate) UpdateOutcomeTitle(title string) error {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeTitleUpdatedV1{
-		Timestamp: this.now,
-		OutcomeID: this.id,
-		NewTitle:  title,
+		Timestamp:    this.now,
+		OutcomeID:    this.id,
+		UpdatedTitle: title,
 	})
 }
 func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
@@ -51,9 +51,9 @@ func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeExplanationUpdatedV1{
-		Timestamp:      this.now,
-		OutcomeID:      this.id,
-		NewExplanation: explanation,
+		Timestamp:          this.now,
+		OutcomeID:          this.id,
+		UpdatedExplanation: explanation,
 	})
 }
 func (this *Aggregate) UpdateOutcomeDescription(description string) error {
@@ -64,9 +64,9 @@ func (this *Aggregate) UpdateOutcomeDescription(description string) error {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeDescriptionUpdatedV1{
-		Timestamp:      this.now,
-		OutcomeID:      this.id,
-		NewDescription: description,
+		Timestamp:          this.now,
+		OutcomeID:          this.id,
+		UpdatedDescription: description,
 	})
 }
 func (this *Aggregate) apply(event interface{}) {
@@ -75,11 +75,11 @@ func (this *Aggregate) apply(event interface{}) {
 		this.id = event.OutcomeID
 		this.title = event.Title
 	case events.OutcomeTitleUpdatedV1:
-		this.title = event.NewTitle
+		this.title = event.UpdatedTitle
 	case events.OutcomeExplanationUpdatedV1:
-		this.explanation = event.NewExplanation // todo rename
+		this.explanation = event.UpdatedExplanation
 	case events.OutcomeDescriptionUpdatedV1:
-		this.description = event.NewDescription // todo rename
+		this.description = event.UpdatedDescription
 	}
 }
 func (this *Aggregate) raise(event interface{}) error {

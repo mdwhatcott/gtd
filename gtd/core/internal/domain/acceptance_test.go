@@ -104,9 +104,9 @@ func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 	this.So(command.Result.Error, should.BeNil)
 	this.AssertOutput(
 		events.OutcomeTitleUpdatedV1{
-			Timestamp: this.now,
-			OutcomeID: "1",
-			NewTitle:  "new-title",
+			Timestamp:    this.now,
+			OutcomeID:    "1",
+			UpdatedTitle: "new-title",
 		},
 	)
 }
@@ -146,8 +146,8 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceLastUpdate_Erro
 			Title:     "first-title",
 		},
 		events.OutcomeTitleUpdatedV1{
-			OutcomeID: "1",
-			NewTitle:  "second-title",
+			OutcomeID:    "1",
+			UpdatedTitle: "second-title",
 		},
 	)
 	command := &commands.UpdateOutcomeTitle{
@@ -175,9 +175,9 @@ func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdat
 	this.So(command.Result.Error, should.BeNil)
 	this.AssertOutput(
 		events.OutcomeExplanationUpdatedV1{
-			Timestamp:      this.now,
-			OutcomeID:      "1",
-			NewExplanation: "explanation",
+			Timestamp:          this.now,
+			OutcomeID:          "1",
+			UpdatedExplanation: "explanation",
 		},
 	)
 }
@@ -200,8 +200,8 @@ func (this *Fixture) TestUpdateOutcomeExplanation_ContentUnchanged_ErrorReturned
 			Title:     "title",
 		},
 		events.OutcomeExplanationUpdatedV1{
-			OutcomeID:      "1",
-			NewExplanation: "first-explanation",
+			OutcomeID:          "1",
+			UpdatedExplanation: "first-explanation",
 		},
 	)
 	command := &commands.UpdateOutcomeExplanation{
@@ -230,9 +230,9 @@ func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdat
 	this.So(command.Result.Error, should.BeNil)
 	this.AssertOutput(
 		events.OutcomeDescriptionUpdatedV1{
-			Timestamp:      this.now,
-			OutcomeID:      "1",
-			NewDescription: "explanation",
+			Timestamp:          this.now,
+			OutcomeID:          "1",
+			UpdatedDescription: "explanation",
 		},
 	)
 }
@@ -255,8 +255,8 @@ func (this *Fixture) TestUpdateOutcomeDescription_ContentUnchanged_ErrorReturned
 			Title:     "title",
 		},
 		events.OutcomeDescriptionUpdatedV1{
-			OutcomeID:      "1",
-			NewDescription: "first-description",
+			OutcomeID:          "1",
+			UpdatedDescription: "first-description",
 		},
 	)
 	command := &commands.UpdateOutcomeDescription{
