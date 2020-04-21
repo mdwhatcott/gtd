@@ -46,11 +46,11 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 	this.queries[id] = query
 	this.AddRequiredReads(query)
 }
-func (this *Task) TrackOutcome(command *commands.TrackOutcome) {
+func (this *Task) PrepareToTrackOutcome(command *commands.TrackOutcome) {
 	this.instructions = append(this.instructions, command)
 }
-func (this *Task) WithInstruction(message interface{}, id string) {
-	this.instructions = append(this.instructions, message)
+func (this *Task) PrepareInstruction(instruction interface{}, id string) {
+	this.instructions = append(this.instructions, instruction)
 	this.registerOutcomeEventStreamQuery(id)
 }
 func (this *Task) Execute() joyride.TaskResult {

@@ -21,13 +21,13 @@ func NewHandler(runner joyride.Runner, task *Task) *Handler {
 func (this *Handler) HandleMessage(message interface{}) bool {
 	switch message := message.(type) {
 	case *commands.TrackOutcome:
-		this.task.TrackOutcome(message)
+		this.task.PrepareToTrackOutcome(message)
 	case *commands.UpdateOutcomeTitle:
-		this.task.WithInstruction(message, message.OutcomeID)
+		this.task.PrepareInstruction(message, message.OutcomeID)
 	case *commands.UpdateOutcomeExplanation:
-		this.task.WithInstruction(message, message.OutcomeID)
+		this.task.PrepareInstruction(message, message.OutcomeID)
 	case *commands.UpdateOutcomeDescription:
-		this.task.WithInstruction(message, message.OutcomeID)
+		this.task.PrepareInstruction(message, message.OutcomeID)
 	default:
 		return false
 	}
