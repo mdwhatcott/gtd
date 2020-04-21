@@ -16,6 +16,7 @@ type Aggregate struct {
 	id          string
 	title       string
 	explanation string
+	description string
 	results     []interface{}
 }
 
@@ -56,6 +57,12 @@ func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
 	})
 }
 func (this *Aggregate) UpdateOutcomeDescription(description string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	if description == this.description {
+		return core.ErrOutcomeUnchanged
+	}
 	return this.raise(events.OutcomeDescriptionUpdatedV1{
 		Timestamp:      this.now,
 		OutcomeID:      this.id,
@@ -70,7 +77,9 @@ func (this *Aggregate) apply(event interface{}) {
 	case events.OutcomeTitleUpdatedV1:
 		this.title = event.NewTitle
 	case events.OutcomeExplanationUpdatedV1:
-		this.explanation = event.NewExplanation
+		this.explanation = event.NewExplanation // todo rename
+	case events.OutcomeDescriptionUpdatedV1:
+		this.description = event.NewDescription // todo rename
 	}
 }
 func (this *Aggregate) raise(event interface{}) error {

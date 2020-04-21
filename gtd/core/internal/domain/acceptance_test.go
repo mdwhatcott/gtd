@@ -236,37 +236,36 @@ func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdat
 		},
 	)
 }
+func (this *Fixture) TestUpdateOutcomeDescription_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1", nil)
+	command := &commands.UpdateOutcomeDescription{
+		OutcomeID:          "1",
+		UpdatedDescription: "new-description",
+	}
 
-//func (this *Fixture) TestUpdateOutcomeDescription_OutcomeNotFound_ErrorReturned() {
-//	this.PrepareReadResults("1", nil)
-//	command := &commands.UpdateOutcomeDescription{
-//		OutcomeID:      "1",
-//		NewDescription: "new-explanation",
-//	}
-//
-//	this.handle(command)
-//
-//	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
-//	this.AssertNoOutput()
-//}
-//func (this *Fixture) TestUpdateOutcomeDescription_ContentUnchanged_ErrorReturned() {
-//	this.PrepareReadResults("1",
-//		events.OutcomeTrackedV1{
-//			OutcomeID: "1",
-//			Title:     "title",
-//		},
-//		events.OutcomeDescriptionUpdatedV1{
-//			OutcomeID:      "1",
-//			NewDescription: "first-explanation",
-//		},
-//	)
-//	command := &commands.UpdateOutcomeDescription{
-//		OutcomeID:      "1",
-//		NewDescription: "first-explanation",
-//	}
-//
-//	this.handle(command)
-//
-//	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
-//	this.AssertNoOutput()
-//}
+	this.handle(command)
+
+	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestUpdateOutcomeDescription_ContentUnchanged_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDescriptionUpdatedV1{
+			OutcomeID:      "1",
+			NewDescription: "first-description",
+		},
+	)
+	command := &commands.UpdateOutcomeDescription{
+		OutcomeID:          "1",
+		UpdatedDescription: "first-description",
+	}
+
+	this.handle(command)
+
+	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
