@@ -75,7 +75,7 @@ func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
 	this.So(func() { this.handle(42) }, should.PanicWith, joyride.ErrUnknownType)
 	this.So(func() { this.handle(true) }, should.PanicWith, joyride.ErrUnknownType)
 }
-func (this *Fixture) TestTrackOutcome_PublishOutcomeTracked_ReturnOutcomeID() {
+func (this *Fixture) TestTrackOutcome_PublishOutcomeTrackedAndFixed_ReturnOutcomeID() {
 	command := &commands.TrackOutcome{Title: "title"}
 
 	this.handle(command)
@@ -86,6 +86,10 @@ func (this *Fixture) TestTrackOutcome_PublishOutcomeTracked_ReturnOutcomeID() {
 			Timestamp: this.now,
 			OutcomeID: "1",
 			Title:     "title",
+		},
+		events.OutcomeFixedV1{
+			Timestamp: this.now,
+			OutcomeID: "1",
 		},
 	)
 }

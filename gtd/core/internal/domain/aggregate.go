@@ -24,11 +24,17 @@ func NewAggregate(now time.Time, log *logging.Logger) *Aggregate {
 	return &Aggregate{now: now, log: log}
 }
 func (this *Aggregate) TrackOutcome(outcomeID, title string) error {
-	return this.raise(events.OutcomeTrackedV1{
-		Timestamp: this.now,
-		OutcomeID: outcomeID,
-		Title:     title,
-	})
+	return this.raise(
+		events.OutcomeTrackedV1{
+			Timestamp: this.now,
+			OutcomeID: outcomeID,
+			Title:     title,
+		},
+		events.OutcomeFixedV1{
+			Timestamp: this.now,
+			OutcomeID: outcomeID,
+		},
+	)
 }
 func (this *Aggregate) UpdateOutcomeTitle(title string) error {
 	if len(this.id) == 0 {
@@ -82,9 +88,11 @@ func (this *Aggregate) apply(event interface{}) {
 		this.description = event.UpdatedDescription
 	}
 }
-func (this *Aggregate) raise(event interface{}) error {
-	this.results = append(this.results, event)
-	this.apply(event)
+func (this *Aggregate) raise(events ...interface{}) error {
+	for _, event := range events {
+		this.results = append(this.results, event)
+		this.apply(event)
+	}
 	return nil
 }
 func (this *Aggregate) Replay(stream []interface{}) {
