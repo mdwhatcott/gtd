@@ -52,3 +52,25 @@ func (this *OutcomeFixture) TestOutcomeTracked() {
 		Description: "",
 	})
 }
+func (this *OutcomeFixture) TestOutcomeFixed() {
+	this.projection.Apply(
+		events.OutcomeTrackedV1{
+			Timestamp: date(2020, 1, 1),
+			OutcomeID: "id-1",
+			Title:     "title",
+		},
+		events.OutcomeFixedV1{
+			Timestamp: date(2020, 1, 1),
+			OutcomeID: "id-1",
+		},
+	)
+
+	this.So(this.projection, should.Resemble, &Outcome{
+		Updated:     date(2020, 1, 1),
+		ID:          "id-1",
+		Title:       "title",
+		Status:      "fixed",
+		Explanation: "",
+		Description: "",
+	})
+}
