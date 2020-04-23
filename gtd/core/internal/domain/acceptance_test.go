@@ -68,7 +68,7 @@ func (this *Fixture) generateID() string {
 	this.id++
 	return fmt.Sprint(this.id)
 }
-func (this *Fixture) AssertEventOutput(expected ...interface{}) {
+func (this *Fixture) assertEventOutput(expected ...interface{}) {
 	this.So(this.task.PendingWrites(), should.Resemble, expected)
 }
 func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
