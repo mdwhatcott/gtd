@@ -218,7 +218,6 @@ func (this *Fixture) TestUpdateOutcomeExplanation_ContentUnchanged_ErrorReturned
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
-
 func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdated() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",
