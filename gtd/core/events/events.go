@@ -64,7 +64,7 @@ type ActionDescriptionUpdatedV1 struct {
 	Timestamp     Time   `json:"timestamp"`
 	OutcomeID     string `json:"outcome_id"`
 	ActionID      string `json:"action_id"`
-	NewDefinition string `json:"new_definition"`
+	NewDefinition string `json:"new_definition"` // TODO: rename UpdatedDefinition
 }
 type ActionStatusMarkedLatentV1 struct {
 	Timestamp Time   `json:"timestamp"`

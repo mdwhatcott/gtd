@@ -6,13 +6,13 @@ import (
 	"github.com/smartystreets/joyride/v2"
 )
 
-type NewEncoder func(io.Writer) Encoder
+type EncoderFunc func(io.Writer) Encoder
 
 type Encoder interface {
 	Encode(interface{}) error
 }
 
-type Writer func(AggregateRoot) io.WriteCloser
+type WriterFunc func(AggregateRoot) io.WriteCloser
 
 type AggregateRoot interface {
 	ID() string
