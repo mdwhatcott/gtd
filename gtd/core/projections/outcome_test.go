@@ -8,6 +8,7 @@ import (
 	"github.com/smartystreets/gunit"
 
 	"github.com/mdwhatcott/gtd/gtd/core/events"
+	"github.com/mdwhatcott/gtd/gtd/util/date"
 )
 
 func TestOutcomeFixture(t *testing.T) {
@@ -22,9 +23,6 @@ type OutcomeFixture struct {
 func (this *OutcomeFixture) Setup() {
 	this.projection = NewOutcome()
 }
-func date(ymd ...int) time.Time {
-	return time.Date(ymd[0], time.Month(ymd[1]), ymd[2], 0, 0, 0, 0, time.UTC)
-}
 func (this *OutcomeFixture) TestBlankWhenFirstInstantiated() {
 	this.So(this.projection, should.Resemble, &Outcome{
 		Updated:     time.Time{},
@@ -36,13 +34,13 @@ func (this *OutcomeFixture) TestBlankWhenFirstInstantiated() {
 }
 func (this *OutcomeFixture) TestOutcomeTracked() {
 	this.projection.Apply(events.OutcomeTrackedV1{
-		Timestamp: date(2020, 1, 1),
+		Timestamp: date.YMD(2020, 1, 1),
 		OutcomeID: "id-1",
 		Title:     "title",
 	})
 
 	this.So(this.projection, should.Resemble, &Outcome{
-		Updated:     date(2020, 1, 1),
+		Updated:     date.YMD(2020, 1, 1),
 		ID:          "id-1",
 		Title:       "title",
 		Explanation: "",
@@ -52,18 +50,18 @@ func (this *OutcomeFixture) TestOutcomeTracked() {
 func (this *OutcomeFixture) TestOutcomeFixed() {
 	this.projection.Apply(
 		events.OutcomeTrackedV1{
-			Timestamp: date(2020, 1, 1),
+			Timestamp: date.YMD(2020, 1, 1),
 			OutcomeID: "id-1",
 			Title:     "title",
 		},
 		events.OutcomeFixedV1{
-			Timestamp: date(2020, 1, 1),
+			Timestamp: date.YMD(2020, 1, 1),
 			OutcomeID: "id-1",
 		},
 	)
 
 	this.So(this.projection, should.Resemble, &Outcome{
-		Updated:     date(2020, 1, 1),
+		Updated:     date.YMD(2020, 1, 1),
 		ID:          "id-1",
 		Title:       "title",
 		Status:      "fixed",
