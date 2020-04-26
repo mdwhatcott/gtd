@@ -29,8 +29,8 @@ func (this *OutcomeRepository) Read(queries ...interface{}) {
 		}
 	}
 }
-func (this *OutcomeRepository) Write(_events ...interface{}) {
-	for _, event := range _events {
+func (this *OutcomeRepository) Write(events ...interface{}) {
+	for _, event := range events {
 		root, ok := event.(storage.AggregateRoot)
 		if !ok {
 			panic(fmt.Errorf("unrecognized event type: <%v>", reflect.TypeOf(event)))
