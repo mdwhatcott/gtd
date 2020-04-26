@@ -8,18 +8,18 @@ import (
 	"github.com/mdwhatcott/gtd/gtd/storage"
 )
 
-type OutcomeRepository struct{ OutcomeRepositoryState }
+type ReadWriter struct{ Dependencies }
 
-type OutcomeRepositoryState struct {
+type Dependencies struct {
 	encoder storage.EncoderFunc
 	writer  storage.WriterFunc
 	history map[string][]interface{}
 }
 
-func NewOutcomeRepository(state OutcomeRepositoryState) *OutcomeRepository {
-	return &OutcomeRepository{OutcomeRepositoryState: state}
+func NewReadWriter(dependencies Dependencies) *ReadWriter {
+	return &ReadWriter{Dependencies: dependencies}
 }
-func (this *OutcomeRepository) Read(queries ...interface{}) {
+func (this *ReadWriter) Read(queries ...interface{}) {
 	for _, query := range queries {
 		switch query := query.(type) {
 		case *storage.OutcomeEventStream:
@@ -29,7 +29,7 @@ func (this *OutcomeRepository) Read(queries ...interface{}) {
 		}
 	}
 }
-func (this *OutcomeRepository) Write(events ...interface{}) {
+func (this *ReadWriter) Write(events ...interface{}) {
 	for _, event := range events {
 		root, ok := event.(storage.AggregateRoot)
 		if !ok {
@@ -39,13 +39,13 @@ func (this *OutcomeRepository) Write(events ...interface{}) {
 		this.append(root)
 	}
 }
-func (this *OutcomeRepository) append(event storage.AggregateRoot) {
+func (this *ReadWriter) append(event storage.AggregateRoot) {
 	id := event.ID()
 	events := this.history[id]
 	events = append(events, event)
 	this.history[id] = events
 }
-func (this *OutcomeRepository) persist(root storage.AggregateRoot) {
+func (this *ReadWriter) persist(root storage.AggregateRoot) {
 	writer := this.writer(root)
 	defer this.close(writer)
 	err := this.encoder(writer).Encode(root)
@@ -53,7 +53,7 @@ func (this *OutcomeRepository) persist(root storage.AggregateRoot) {
 		panic(fmt.Errorf("persistence error: %w", err))
 	}
 }
-func (this *OutcomeRepository) close(writer io.WriteCloser) {
+func (this *ReadWriter) close(writer io.WriteCloser) {
 	err := writer.Close()
 	if err != nil {
 		panic(fmt.Errorf("persistence error (on close): %w", err))

@@ -18,7 +18,7 @@ func TestOutcomeRepositoryFixture(t *testing.T) {
 type OutcomeRepositoryFixture struct {
 	*gunit.Fixture
 
-	repo      *OutcomeRepository
+	repo      *ReadWriter
 	history   map[string][]interface{}
 	writers   map[string]*FakeWriter
 	writeErrs map[string]error
@@ -48,7 +48,7 @@ func (this *OutcomeRepositoryFixture) Setup() {
 	this.writers = make(map[string]*FakeWriter)
 	this.writeErrs = make(map[string]error)
 	this.closeErrs = make(map[string]error)
-	this.repo = NewOutcomeRepository(OutcomeRepositoryState{
+	this.repo = NewReadWriter(Dependencies{
 		encoder: this.encoderFunc,
 		writer:  this.writerFunc,
 		history: this.history,
