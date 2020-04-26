@@ -1,4 +1,4 @@
-package domain
+package outcome
 
 import (
 	"github.com/smartystreets/assertions/should"
