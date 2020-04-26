@@ -3,7 +3,7 @@ package events
 type OutcomeTrackedV1 struct {
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
-	Title     string `json:"definition"`
+	Title     string `json:"title"`
 }
 type OutcomeTitleUpdatedV1 struct {
 	Timestamp    Time   `json:"timestamp"`
