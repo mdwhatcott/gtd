@@ -102,9 +102,9 @@ func (this *Aggregate) raise(events ...interface{}) error {
 	return nil
 }
 
-func (this *Aggregate) Replay(stream []interface{}) {
+func (this *Aggregate) Replay(stream chan interface{}) {
 	this.log.Println("stream:", len(stream))
-	for _, event := range stream {
+	for event := range stream {
 		this.log.Println("applying event:", event)
 		this.apply(event)
 	}

@@ -43,7 +43,14 @@ func (this *OutcomeRepositoryFixture) encoderFunc(writer io.Writer) storage.Enco
 func (this *OutcomeRepositoryFixture) read(id string) (events []interface{}) {
 	query := &storage.OutcomeEventStream{OutcomeID: id}
 	this.repo.Read(query)
-	return query.Result.Events
+	return gather(query.Result.Stream)
+}
+
+func gather(stream chan interface{}) (all []interface{}) {
+	for event := range stream {
+		all = append(all, event)
+	}
+	return all
 }
 
 func (this *OutcomeRepositoryFixture) Setup() {

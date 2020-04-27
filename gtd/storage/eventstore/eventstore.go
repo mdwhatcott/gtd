@@ -25,10 +25,18 @@ func (this *ReadWriter) Read(queries ...interface{}) {
 	for _, query := range queries {
 		switch query := query.(type) {
 		case *storage.OutcomeEventStream:
-			query.Result.Events = this.history[query.OutcomeID]
+			query.Result.Stream = make(chan interface{})
+			go load(query.Result.Stream, this.history[query.OutcomeID])
 		default:
 			panic(fmt.Errorf("unrecognized query type: <%v>", reflect.TypeOf(query)))
 		}
+	}
+}
+
+func load(stream chan interface{}, events []interface{}) {
+	defer close(stream)
+	for _, event := range events {
+		stream <- event
 	}
 }
 

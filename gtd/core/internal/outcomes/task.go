@@ -67,7 +67,7 @@ func (this *Task) Execute() joyride.TaskResult {
 
 func (this *Task) replayEvents() {
 	for id, query := range this.queries {
-		this.aggregate(id).Replay(query.Result.Events)
+		this.aggregate(id).Replay(query.Result.Stream)
 	}
 }
 
