@@ -13,7 +13,7 @@ type ReadWriter struct{ Dependencies }
 type Dependencies struct {
 	encoder storage.EncoderFunc
 	writer  storage.WriterFunc
-	history map[string][]interface{}
+	history map[string][]interface{} // TODO: rather than an in-memory history, why not use a reader/decoder pair?
 }
 
 func NewReadWriter(dependencies Dependencies) *ReadWriter {

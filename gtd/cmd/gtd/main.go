@@ -1,6 +1,12 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/mdwhatcott/gtd/gtd/core/commands"
+	"github.com/mdwhatcott/gtd/gtd/core/wireup"
+	"github.com/mdwhatcott/gtd/gtd/storage/eventstore"
+)
 
 func main() {
 	// STARTUP:
@@ -13,5 +19,15 @@ func main() {
 	//     compare with canonical projection loaded from event store
 	//     if different, publish (apply and store) events representing the diff
 	//   All stored aggregates and projections should be up to date w/ actual on disk
-	fmt.Println("Hello, world!")
+
+	storage := eventstore.NewReadWriter(eventstore.Dependencies{
+		// TODO: wireup...
+	})
+
+	command := commands.TrackOutcome{Title: "App Finished"}
+
+	wireup.BuildHandler(storage, storage).Handle(command)
+
+	fmt.Println("ID: ", command.Result.ID)
+	fmt.Println("Err:", command.Result.Error)
 }
