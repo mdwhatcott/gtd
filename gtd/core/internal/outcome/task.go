@@ -29,6 +29,7 @@ func NewTask(nextID func() string) *Task {
 		aggregates: make(map[string]*Aggregate),
 	}
 }
+
 func (this *Task) aggregate(id string) *Aggregate {
 	aggregate, found := this.aggregates[id]
 	if !found {
@@ -37,6 +38,7 @@ func (this *Task) aggregate(id string) *Aggregate {
 	}
 	return aggregate
 }
+
 func (this *Task) registerOutcomeEventStreamQuery(id string) {
 	query, found := this.queries[id]
 	if found {
@@ -46,24 +48,29 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 	this.queries[id] = query
 	this.AddRequiredReads(query)
 }
+
 func (this *Task) PrepareToTrackOutcome(command *commands.TrackOutcome) {
 	this.instructions = append(this.instructions, command)
 }
+
 func (this *Task) PrepareInstruction(instruction interface{}, id string) {
 	this.instructions = append(this.instructions, instruction)
 	this.registerOutcomeEventStreamQuery(id)
 }
+
 func (this *Task) Execute() joyride.TaskResult {
 	this.replayEvents()
 	this.processInstructions()
 	this.publishResults()
 	return this
 }
+
 func (this *Task) replayEvents() {
 	for id, query := range this.queries {
 		this.aggregate(id).Replay(query.Result.Events)
 	}
 }
+
 func (this *Task) processInstructions() {
 	for _, message := range this.instructions {
 		switch command := message.(type) {
@@ -78,24 +85,29 @@ func (this *Task) processInstructions() {
 		}
 	}
 }
+
 func (this *Task) trackOutcome(command *commands.TrackOutcome) {
 	outcomeID := this.nextID()
 	aggregate := this.aggregate(outcomeID)
 	command.Result.ID = outcomeID
 	command.Result.Error = aggregate.TrackOutcome(outcomeID, command.Title)
 }
+
 func (this *Task) updateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
 	aggregate := this.aggregate(command.OutcomeID)
 	command.Result.Error = aggregate.UpdateOutcomeTitle(command.UpdatedTitle)
 }
+
 func (this *Task) updateOutcomeExplanation(command *commands.UpdateOutcomeExplanation) {
 	aggregate := this.aggregate(command.OutcomeID)
 	command.Result.Error = aggregate.UpdateOutcomeExplanation(command.UpdatedExplanation)
 }
+
 func (this *Task) updateOutcomeDescription(command *commands.UpdateOutcomeDescription) {
 	aggregate := this.aggregate(command.OutcomeID)
 	command.Result.Error = aggregate.UpdateOutcomeDescription(command.UpdatedDescription)
 }
+
 func (this *Task) publishResults() {
 	for _, aggregate := range this.aggregates {
 		this.AddPendingWrites(aggregate.TransferResults()...)

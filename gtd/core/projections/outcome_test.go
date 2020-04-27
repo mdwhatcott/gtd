@@ -23,6 +23,7 @@ type OutcomeFixture struct {
 func (this *OutcomeFixture) Setup() {
 	this.projection = NewOutcome()
 }
+
 func (this *OutcomeFixture) TestBlankWhenFirstInstantiated() {
 	this.So(this.projection, should.Resemble, &Outcome{
 		Updated:     time.Time{},
@@ -32,6 +33,7 @@ func (this *OutcomeFixture) TestBlankWhenFirstInstantiated() {
 		Description: "",
 	})
 }
+
 func (this *OutcomeFixture) TestOutcomeTracked() {
 	this.projection.Apply(events.OutcomeTrackedV1{
 		Timestamp: date.YMD(2020, 1, 1),
@@ -47,6 +49,7 @@ func (this *OutcomeFixture) TestOutcomeTracked() {
 		Description: "",
 	})
 }
+
 func (this *OutcomeFixture) TestOutcomeFixed() {
 	this.projection.Apply(
 		events.OutcomeTrackedV1{

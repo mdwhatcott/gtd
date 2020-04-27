@@ -60,6 +60,7 @@ func (this *DecoderFixture) TestDecodeAll_MissingValue() {
 	this.So(gather(all), should.Resemble, []interface{}{"a", "b"})
 	this.So(this.decoder.Error(), should.Wrap, io.EOF)
 }
+
 func (this *DecoderFixture) TestDecodeAll_UnregisteredType() {
 	this.source.WriteString(`"string"` + "\n")
 	this.source.WriteString(`"a"` + "\n")
@@ -76,6 +77,7 @@ func (this *DecoderFixture) TestDecodeAll_UnregisteredType() {
 	this.So(this.decoder.Error(), should.Wrap, errUnregisteredType)
 	this.So(this.decoder.Error().Error(), should.ContainSubstring, "UNREGISTERED-TYPE")
 }
+
 func gather(queue chan interface{}) (all []interface{}) {
 	for item := range queue {
 		all = append(all, item)

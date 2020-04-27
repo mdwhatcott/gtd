@@ -19,9 +19,11 @@ func NewFakeShell(fixture *Fixture) *FakeShell {
 		reads:   make(map[string][]interface{}),
 	}
 }
+
 func (this *FakeShell) Write(values ...interface{}) {
 	this.writes = append(this.writes, values...)
 }
+
 func (this *FakeShell) Read(values ...interface{}) {
 	this.log.Println("Reading:", values)
 	for _, value := range values {
@@ -33,13 +35,16 @@ func (this *FakeShell) Read(values ...interface{}) {
 		}
 	}
 }
+
 func (this *FakeShell) PrepareReadResults(id string, results ...interface{}) {
 	this.reads[id] = append(this.reads[id], results...)
 	this.log.Println("Read:", id, results)
 }
+
 func (this *FakeShell) AssertNoOutput() {
 	this.AssertOutput()
 }
+
 func (this *FakeShell) AssertOutput(expected ...interface{}) {
 	this.So(this.writes, should.Resemble, expected)
 }

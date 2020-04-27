@@ -19,6 +19,7 @@ type Dependencies struct {
 func NewReadWriter(dependencies Dependencies) *ReadWriter {
 	return &ReadWriter{Dependencies: dependencies}
 }
+
 func (this *ReadWriter) Read(queries ...interface{}) {
 	for _, query := range queries {
 		switch query := query.(type) {
@@ -29,6 +30,7 @@ func (this *ReadWriter) Read(queries ...interface{}) {
 		}
 	}
 }
+
 func (this *ReadWriter) Write(events ...interface{}) {
 	for _, event := range events {
 		root, ok := event.(storage.AggregateRoot)
@@ -39,12 +41,14 @@ func (this *ReadWriter) Write(events ...interface{}) {
 		this.append(root)
 	}
 }
+
 func (this *ReadWriter) append(event storage.AggregateRoot) {
 	id := event.ID()
 	events := this.history[id]
 	events = append(events, event)
 	this.history[id] = events
 }
+
 func (this *ReadWriter) persist(root storage.AggregateRoot) {
 	writer := this.writer(root)
 	defer this.close(writer)
@@ -53,6 +57,7 @@ func (this *ReadWriter) persist(root storage.AggregateRoot) {
 		panic(fmt.Errorf("persistence error: %w", err))
 	}
 }
+
 func (this *ReadWriter) close(writer io.WriteCloser) {
 	err := writer.Close()
 	if err != nil {

@@ -48,33 +48,41 @@ func (this *Fixture) Setup() {
 		joyride.WithStorageWriter(this.FakeShell),
 	)
 }
+
 func (this *Fixture) Teardown() {
 	this.assertTransferalOfResultOwnership()
 }
+
 func (this *Fixture) enableLogging() {
 	this.log.SetOutput(this.Fixture)
 }
+
 func (this *Fixture) assertTransferalOfResultOwnership() {
 	alreadyPublished := len(this.task.PendingWrites())
 	this.task.publishResults()
 	doublyPublished := len(this.task.PendingWrites()) - alreadyPublished
 	this.So(doublyPublished, should.Equal, 0)
 }
+
 func (this *Fixture) handle(command interface{}) {
 	this.handler = NewHandler(this.runner, this.task)
 	this.handler.Handle(command)
 }
+
 func (this *Fixture) generateID() string {
 	this.id++
 	return fmt.Sprint(this.id)
 }
+
 func (this *Fixture) assertEventOutput(expected ...interface{}) {
 	this.So(this.task.PendingWrites(), should.Resemble, expected)
 }
+
 func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
 	this.So(func() { this.handle(42) }, should.PanicWith, joyride.ErrUnknownType)
 	this.So(func() { this.handle(true) }, should.PanicWith, joyride.ErrUnknownType)
 }
+
 func (this *Fixture) TestTrackOutcome_PublishOutcomeTrackedAndFixed_ReturnOutcomeID() {
 	command := &commands.TrackOutcome{Title: "title"}
 
@@ -93,6 +101,7 @@ func (this *Fixture) TestTrackOutcome_PublishOutcomeTrackedAndFixed_ReturnOutcom
 		},
 	)
 }
+
 func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",
@@ -114,6 +123,7 @@ func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 		},
 	)
 }
+
 func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	command := &commands.UpdateOutcomeTitle{
@@ -126,6 +136,7 @@ func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
+
 func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceCreation_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
@@ -143,6 +154,7 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceCreation_ErrorR
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
+
 func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceLastUpdate_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
@@ -164,6 +176,7 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceLastUpdate_Erro
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
+
 func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdated() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",
@@ -185,6 +198,7 @@ func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdat
 		},
 	)
 }
+
 func (this *Fixture) TestUpdateOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	command := &commands.UpdateOutcomeExplanation{
@@ -197,6 +211,7 @@ func (this *Fixture) TestUpdateOutcomeExplanation_OutcomeNotFound_ErrorReturned(
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
+
 func (this *Fixture) TestUpdateOutcomeExplanation_ContentUnchanged_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
@@ -218,6 +233,7 @@ func (this *Fixture) TestUpdateOutcomeExplanation_ContentUnchanged_ErrorReturned
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
+
 func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdated() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",
@@ -239,6 +255,7 @@ func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdat
 		},
 	)
 }
+
 func (this *Fixture) TestUpdateOutcomeDescription_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	command := &commands.UpdateOutcomeDescription{
@@ -251,6 +268,7 @@ func (this *Fixture) TestUpdateOutcomeDescription_OutcomeNotFound_ErrorReturned(
 	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
+
 func (this *Fixture) TestUpdateOutcomeDescription_ContentUnchanged_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{

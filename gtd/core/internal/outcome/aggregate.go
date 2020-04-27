@@ -23,6 +23,7 @@ type Aggregate struct {
 func NewAggregate(now time.Time, log *logging.Logger) *Aggregate {
 	return &Aggregate{now: now, log: log}
 }
+
 func (this *Aggregate) TrackOutcome(outcomeID, title string) error {
 	return this.raise(
 		events.OutcomeTrackedV1{
@@ -36,6 +37,7 @@ func (this *Aggregate) TrackOutcome(outcomeID, title string) error {
 		},
 	)
 }
+
 func (this *Aggregate) UpdateOutcomeTitle(title string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
@@ -49,6 +51,7 @@ func (this *Aggregate) UpdateOutcomeTitle(title string) error {
 		UpdatedTitle: title,
 	})
 }
+
 func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
@@ -62,6 +65,7 @@ func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
 		UpdatedExplanation: explanation,
 	})
 }
+
 func (this *Aggregate) UpdateOutcomeDescription(description string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
@@ -75,6 +79,7 @@ func (this *Aggregate) UpdateOutcomeDescription(description string) error {
 		UpdatedDescription: description,
 	})
 }
+
 func (this *Aggregate) apply(event interface{}) {
 	switch event := event.(type) {
 	case events.OutcomeTrackedV1:
@@ -88,6 +93,7 @@ func (this *Aggregate) apply(event interface{}) {
 		this.description = event.UpdatedDescription
 	}
 }
+
 func (this *Aggregate) raise(events ...interface{}) error {
 	for _, event := range events {
 		this.results = append(this.results, event)
@@ -95,6 +101,7 @@ func (this *Aggregate) raise(events ...interface{}) error {
 	}
 	return nil
 }
+
 func (this *Aggregate) Replay(stream []interface{}) {
 	this.log.Println("stream:", len(stream))
 	for _, event := range stream {
@@ -102,6 +109,7 @@ func (this *Aggregate) Replay(stream []interface{}) {
 		this.apply(event)
 	}
 }
+
 func (this *Aggregate) TransferResults() []interface{} {
 	results := this.results
 	this.results = nil

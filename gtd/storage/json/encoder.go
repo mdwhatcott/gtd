@@ -13,6 +13,7 @@ func NewEncoder(writer io.Writer) *Encoder {
 	encoder.SetIndent("", "  ")
 	return &Encoder{inner: encoder}
 }
+
 func (this *Encoder) Encode(v interface{}) error {
 	type_ := reflect.TypeOf(v).String()
 	_ = this.inner.Encode(type_)

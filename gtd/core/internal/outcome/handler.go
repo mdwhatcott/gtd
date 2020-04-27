@@ -18,6 +18,7 @@ func NewHandler(runner joyride.Runner, task *Task) *Handler {
 	this.Handler.Add(this.task)
 	return this
 }
+
 func (this *Handler) HandleMessage(message interface{}) bool {
 	switch message := message.(type) {
 	case *commands.TrackOutcome:
