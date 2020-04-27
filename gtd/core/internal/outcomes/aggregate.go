@@ -1,4 +1,4 @@
-package outcome
+package outcomes
 
 import (
 	"time"
