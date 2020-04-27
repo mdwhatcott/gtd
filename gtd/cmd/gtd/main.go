@@ -21,7 +21,7 @@ func main() {
 	//   All stored aggregates and projections should be up to date w/ actual on disk
 
 	storage := eventstore.NewReadWriter(eventstore.Dependencies{
-		// TODO: wireup...
+		// TODO: storage wireup...
 	})
 
 	command := commands.TrackOutcome{Title: "App Finished"}

@@ -4,6 +4,6 @@ type OutcomeEventStream struct {
 	OutcomeID string
 
 	Result struct {
-		Events []interface{}
+		Events []interface{} // TODO: go back to a chan interface{}
 	}
 }

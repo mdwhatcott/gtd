@@ -20,6 +20,7 @@ func NewReadWriter(dependencies Dependencies) *ReadWriter {
 	return &ReadWriter{Dependencies: dependencies}
 }
 
+// TODO: separate read component from write component
 func (this *ReadWriter) Read(queries ...interface{}) {
 	for _, query := range queries {
 		switch query := query.(type) {
