@@ -61,10 +61,10 @@ type ActionReorderedV1 struct {
 	NewSequence float64 `json:"new_definition"`
 }
 type ActionDescriptionUpdatedV1 struct {
-	Timestamp     Time   `json:"timestamp"`
-	OutcomeID     string `json:"outcome_id"`
-	ActionID      string `json:"action_id"`
-	NewDefinition string `json:"new_definition"` // TODO: rename UpdatedDefinition
+	Timestamp          Time   `json:"timestamp"`
+	OutcomeID          string `json:"outcome_id"`
+	ActionID           string `json:"action_id"`
+	UpdatedDescription string `json:"updated_definition"`
 }
 type ActionStatusMarkedLatentV1 struct {
 	Timestamp Time   `json:"timestamp"`
