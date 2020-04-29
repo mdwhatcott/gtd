@@ -11,14 +11,14 @@ import (
 	"github.com/mdwhatcott/gtd/gtd/storage"
 )
 
-func TestOutcomeRepositoryFixture(t *testing.T) {
-	gunit.Run(new(OutcomeRepositoryFixture), t)
+func TestWriterFixture(t *testing.T) {
+	gunit.Run(new(WriterFixture), t)
 }
 
-type OutcomeRepositoryFixture struct {
+type WriterFixture struct {
 	*gunit.Fixture
 
-	repo      *ReadWriter
+	repo      *Writer
 	history   map[string][]interface{}
 	writers   map[string]*FakeWriter
 	writeErrs map[string]error
@@ -26,7 +26,7 @@ type OutcomeRepositoryFixture struct {
 	encodeErr error
 }
 
-func (this *OutcomeRepositoryFixture) writerFunc(root storage.AggregateRoot) io.WriteCloser {
+func (this *WriterFixture) writerFunc(root storage.AggregateRoot) io.WriteCloser {
 	id := root.ID()
 	writer, found := this.writers[id]
 	if !found {
@@ -36,84 +36,43 @@ func (this *OutcomeRepositoryFixture) writerFunc(root storage.AggregateRoot) io.
 	return writer
 }
 
-func (this *OutcomeRepositoryFixture) encoderFunc(writer io.Writer) storage.Encoder {
+func (this *WriterFixture) encoderFunc(writer io.Writer) storage.Encoder {
 	return NewFakeEncoder(writer, this.encodeErr)
 }
 
-func (this *OutcomeRepositoryFixture) read(id string) (events []interface{}) {
-	query := &storage.OutcomeEventStream{OutcomeID: id}
-	this.repo.Read(query)
-	return gather(query.Result.Stream)
-}
-
-func gather(stream chan interface{}) (all []interface{}) {
-	for event := range stream {
-		all = append(all, event)
-	}
-	return all
-}
-
-func (this *OutcomeRepositoryFixture) Setup() {
+func (this *WriterFixture) Setup() {
 	this.history = make(map[string][]interface{})
 	this.writers = make(map[string]*FakeWriter)
 	this.writeErrs = make(map[string]error)
 	this.closeErrs = make(map[string]error)
-	this.repo = NewReadWriter(Dependencies{
-		encoder: this.encoderFunc,
-		writer:  this.writerFunc,
-		history: this.history,
-	})
+	this.repo = NewWriter(this.encoderFunc, this.writerFunc)
 }
 
-func (this *OutcomeRepositoryFixture) TestRead_UnrecognizedQueryType_PANIC() {
-	action := func() { this.repo.Read(42) }
-	result := recovered(action)
-	this.So(result, should.BeError, "unrecognized query type: <int>")
-}
-
-func (this *OutcomeRepositoryFixture) TestRead_OutcomeEventStream_ResultPopulated() {
-	this.history["a"] = []interface{}{1, 2, 3}
-	stream := this.read("a")
-	this.So(stream, should.Resemble, []interface{}{1, 2, 3})
-}
-
-func (this *OutcomeRepositoryFixture) TestRead_OutcomeEventStream_NoHistory_ResultNil() {
-	this.history["a"] = nil
-	steam := this.read("a")
-	this.So(steam, should.BeNil)
-}
-
-func (this *OutcomeRepositoryFixture) TestWrite_UnrecognizedEventType_PANIC() {
+func (this *WriterFixture) TestWrite_UnrecognizedEventType_PANIC() {
 	action := func() { this.repo.Write(42) }
 	result := recovered(action)
 	this.So(result, should.BeError, "unrecognized event type: <int>")
 }
 
-func (this *OutcomeRepositoryFixture) TestWrite_AppendsToInMemoryCollection() {
-	this.repo.Write(outcomeTracked, outcomeUpdated)
-	actual := this.read(outcomeTracked.OutcomeID)
-	this.So(actual, should.Resemble, []interface{}{outcomeTracked, outcomeUpdated})
-}
-
-func (this *OutcomeRepositoryFixture) TestWrite_PersistsEncodedEventsToWriter() {
+func (this *WriterFixture) TestWrite_PersistsEncodedEventsToWriter() {
 	this.repo.Write(outcomeTracked, outcomeUpdated)
 	actual := this.writers["OutcomeID"].Lines()
 	this.So(actual, should.Resemble, []string{"OutcomeTrackedV1", "OutcomeTitleUpdatedV1"})
 }
 
-func (this *OutcomeRepositoryFixture) TestWrite_ErrFromWriter_PANIC() {
+func (this *WriterFixture) TestWrite_ErrFromWriter_PANIC() {
 	this.writeErrs["OutcomeID"] = errGophers
 	action := func() { this.repo.Write(outcomeTracked) }
 	this.So(recovered(action), should.Wrap, errGophers)
 }
 
-func (this *OutcomeRepositoryFixture) TestWrite_ErrFromEncoder_PANIC() {
+func (this *WriterFixture) TestWrite_ErrFromEncoder_PANIC() {
 	this.encodeErr = errGophers
 	action := func() { this.repo.Write(outcomeTracked) }
 	this.So(recovered(action), should.Wrap, errGophers)
 }
 
-func (this *OutcomeRepositoryFixture) TestWrite_ErrFromWriterClose_PANIC() {
+func (this *WriterFixture) TestWrite_ErrFromWriterClose_PANIC() {
 	this.closeErrs["OutcomeID"] = errGophers
 	action := func() { this.repo.Write(outcomeTracked) }
 	this.So(recovered(action), should.Wrap, errGophers)

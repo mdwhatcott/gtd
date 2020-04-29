@@ -5,7 +5,6 @@ import (
 
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
 	"github.com/mdwhatcott/gtd/gtd/core/wireup"
-	"github.com/mdwhatcott/gtd/gtd/storage/eventstore"
 )
 
 func main() {
@@ -20,13 +19,9 @@ func main() {
 	//     if different, publish (apply and store) events representing the diff
 	//   All stored aggregates and projections should be up to date w/ actual on disk
 
-	storage := eventstore.NewReadWriter(eventstore.Dependencies{
-		// TODO: storage wireup...
-	})
-
 	command := commands.TrackOutcome{Title: "App Finished"}
 
-	wireup.BuildHandler(storage, storage).Handle(command)
+	wireup.BuildHandler(nil, nil).Handle(command) // TODO
 
 	fmt.Println("ID: ", command.Result.ID)
 	fmt.Println("Err:", command.Result.Error)
