@@ -51,7 +51,8 @@ type ActionTrackedV1 struct {
 	ActionID    string   `json:"action_id"`
 	Description string   `json:"definition"`
 	Contexts    []string `json:"contexts"`
-	IsComplete  bool     `json:"is_complete"`
+	Status      string   `json:"status"`
+	Strategy    string   `json:"strategy"`
 	Sequence    float64  `json:"sequence"`
 }
 type ActionReorderedV1 struct {
