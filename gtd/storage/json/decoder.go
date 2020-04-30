@@ -2,63 +2,51 @@ package json
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"io"
 	"reflect"
+
+	"github.com/mdwhatcott/gtd/gtd/util/errors"
 )
 
 type Decoder struct {
-	inner *json.Decoder
-	err   error
+	inner    *json.Decoder
+	registry map[string]reflect.Type
 }
 
-func NewDecoder(reader io.Reader) *Decoder {
-	return &Decoder{inner: json.NewDecoder(reader)}
-}
-
-func (this *Decoder) Error() error {
-	return this.err
-}
-
-func (this *Decoder) DecodeAll(registry map[string]reflect.Type) chan interface{} {
-	all := make(chan interface{})
-	go this.decodeAll(registry, all)
-	return all
-}
-
-func (this *Decoder) decodeAll(registry map[string]reflect.Type, all chan interface{}) {
-	defer close(all)
-	for {
-		var value interface{}
-		value, this.err = this.decodeType(registry)
-		if this.err == io.EOF {
-			this.err = nil
-			break
-		}
-		if this.err != nil {
-			break
-		}
-
-		this.err = this.inner.Decode(&value)
-		if this.err != nil {
-			break
-		}
-		all <- value
+func NewDecoder(reader io.Reader, registry map[string]reflect.Type) *Decoder {
+	return &Decoder{
+		inner:    json.NewDecoder(reader),
+		registry: registry,
 	}
 }
 
-func (this *Decoder) decodeType(registry map[string]reflect.Type) (interface{}, error) {
-	var name string
-	err := this.inner.Decode(&name)
-	if err == io.EOF {
-		return nil, err
+func (this *Decoder) Decode() (interface{}, error) {
+	var NAME string
+	ERR := this.inner.Decode(&NAME)
+	if ERR != nil {
+		return nil, errors.Wrap(errDecodingInvalidJSONTypeName, ERR)
 	}
-	type_ := registry[name]
-	if type_ == nil {
-		return nil, fmt.Errorf("%w: [%s]", errUnregisteredType, name)
+
+	TYPE := this.registry[NAME]
+	if TYPE == nil {
+		return nil, errors.Wrap(errDecodingUnregisteredType, NAME)
 	}
-	return reflect.New(type_).Elem(), nil
+
+	VALUE := reflect.Indirect(reflect.New(TYPE)).Interface()
+	ERR = this.inner.Decode(&VALUE)
+	if ERR != nil {
+		return nil, errors.Wrap(errDecodingInvalidJSONValue, ERR)
+	}
+
+	if reflect.TypeOf(VALUE) != TYPE {
+		return nil, errors.Wrap(errDecodingTypeMismatch, ERR)
+	}
+	return VALUE, nil
 }
 
-var errUnregisteredType = errors.New("unregistered type name")
+var (
+	errDecodingInvalidJSONTypeName = errors.New("invalid JSON for type name")
+	errDecodingUnregisteredType    = errors.New("unregistered type name")
+	errDecodingInvalidJSONValue    = errors.New("invalid JSON for value")
+	errDecodingTypeMismatch        = errors.New("type/value mismatch")
+)

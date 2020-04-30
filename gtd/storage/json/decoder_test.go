@@ -2,7 +2,6 @@ package json
 
 import (
 	"bytes"
-	"io"
 	"reflect"
 	"testing"
 
@@ -24,63 +23,55 @@ type DecoderFixture struct {
 
 func (this *DecoderFixture) Setup() {
 	this.source = new(bytes.Buffer)
-	this.decoder = NewDecoder(this.source)
-	this.registry = map[string]reflect.Type{
-		"string": reflect.TypeOf(""),
-	}
+	this.registry = map[string]reflect.Type{"string": reflect.TypeOf("s")}
+	this.decoder = NewDecoder(this.source, this.registry)
 }
 
-func (this *DecoderFixture) TestDecodeAll() {
+func (this *DecoderFixture) TestDecodeType() {
 	this.source.WriteString(`"string"` + "\n")
 	this.source.WriteString(`"a"` + "\n")
 
-	this.source.WriteString(`"string"` + "\n")
-	this.source.WriteString(`"b"` + "\n")
+	v, err := this.decoder.Decode()
 
-	this.source.WriteString(`"string"` + "\n")
-	this.source.WriteString(`"c"` + "\n")
-
-	all := this.decoder.DecodeAll(this.registry)
-
-	this.So(gather(all), should.Resemble, []interface{}{"a", "b", "c"})
+	this.So(err, should.BeNil)
+	this.So(v, should.Equal, "a")
 }
 
-func (this *DecoderFixture) TestDecodeAll_MissingValue() {
+func (this *DecoderFixture) TestDecode_FailureToDecodeTypeName_Err() {
+	this.source.WriteString(`invalid json`)
+
+	v, err := this.decoder.Decode()
+
+	this.So(err, should.Wrap, errDecodingInvalidJSONTypeName)
+	this.So(v, should.BeNil)
+}
+
+func (this *DecoderFixture) TestDecode_FailureToDecodeValue_Err() {
 	this.source.WriteString(`"string"` + "\n")
+	this.source.WriteString(`invalid json`)
+
+	v, err := this.decoder.Decode()
+
+	this.So(err, should.Wrap, errDecodingInvalidJSONValue)
+	this.So(v, should.BeNil)
+}
+
+func (this *DecoderFixture) TestDecode_UnrecognizedType_Err() {
+	this.source.WriteString(`"UNRECOGNIZED_TYPE"` + "\n")
 	this.source.WriteString(`"a"` + "\n")
 
-	this.source.WriteString(`"string"` + "\n")
-	this.source.WriteString(`"b"` + "\n")
+	v, err := this.decoder.Decode()
 
-	this.source.WriteString(`"string"` + "\n")
-	//this.source.WriteString(`"c"` + "\n") // missing last line!
-
-	all := this.decoder.DecodeAll(this.registry)
-
-	this.So(gather(all), should.Resemble, []interface{}{"a", "b"})
-	this.So(this.decoder.Error(), should.Wrap, io.EOF)
+	this.So(err, should.Wrap, errDecodingUnregisteredType)
+	this.So(v, should.BeNil)
 }
 
-func (this *DecoderFixture) TestDecodeAll_UnregisteredType() {
+func (this *DecoderFixture) TestDecode_TypeValueMismatch_Err() {
 	this.source.WriteString(`"string"` + "\n")
-	this.source.WriteString(`"a"` + "\n")
+	this.source.WriteString(`1` + "\n")
 
-	this.source.WriteString(`"string"` + "\n")
-	this.source.WriteString(`"b"` + "\n")
+	v, err := this.decoder.Decode()
 
-	this.source.WriteString(`"UNREGISTERED-TYPE"` + "\n")
-	this.source.WriteString(`"c"` + "\n")
-
-	all := this.decoder.DecodeAll(this.registry)
-
-	this.So(gather(all), should.Resemble, []interface{}{"a", "b"})
-	this.So(this.decoder.Error(), should.Wrap, errUnregisteredType)
-	this.So(this.decoder.Error().Error(), should.ContainSubstring, "UNREGISTERED-TYPE")
-}
-
-func gather(queue chan interface{}) (all []interface{}) {
-	for item := range queue {
-		all = append(all, item)
-	}
-	return all
+	this.So(err, should.Wrap, errDecodingTypeMismatch)
+	this.So(v, should.BeNil)
 }

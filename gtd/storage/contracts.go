@@ -7,14 +7,19 @@ import (
 )
 
 type EncoderFunc func(io.Writer) Encoder
+type DecoderFunc func(io.Reader) Decoder
 
 type Encoder interface {
 	Encode(interface{}) error
 }
+type Decoder interface {
+	Decode() (interface{}, error)
+}
 
-type WriterFunc func(AggregateRoot) io.WriteCloser
+type WriterFunc func(Identifier) io.WriteCloser
+type ReaderFunc func(Identifier) io.ReadCloser
 
-type AggregateRoot interface {
+type Identifier interface {
 	ID() string
 }
 

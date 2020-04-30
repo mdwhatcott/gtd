@@ -22,26 +22,26 @@ func NewWriter(encoder storage.EncoderFunc, writer storage.WriterFunc) *Writer {
 
 func (this *Writer) Write(events ...interface{}) {
 	for _, event := range events {
-		root, ok := event.(storage.AggregateRoot)
+		root, ok := event.(storage.Identifier)
 		if !ok {
-			panic(fmt.Errorf("unrecognized event type: <%v>", reflect.TypeOf(event)))
+			panic(fmt.Errorf("unrecognized event type: <%v>", reflect.TypeOf(event))) // TODO: wrapped in defined error (this is backwards)
 		}
 		this.persist(root)
 	}
 }
 
-func (this *Writer) persist(root storage.AggregateRoot) {
+func (this *Writer) persist(root storage.Identifier) {
 	writer := this.writer(root)
 	defer this.close(writer)
 	err := this.encoder(writer).Encode(root)
 	if err != nil {
-		panic(fmt.Errorf("persistence error: %w", err))
+		panic(fmt.Errorf("persistence error: %w", err)) // TODO: wrapped in defined error (this is backwards)
 	}
 }
 
 func (this *Writer) close(writer io.WriteCloser) {
 	err := writer.Close()
 	if err != nil {
-		panic(fmt.Errorf("persistence error (on close): %w", err))
+		panic(fmt.Errorf("persistence error (on close): %w", err)) // TODO: wrapped in defined error (this is backwards)
 	}
 }

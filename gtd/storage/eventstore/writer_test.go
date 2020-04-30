@@ -26,7 +26,7 @@ type WriterFixture struct {
 	encodeErr error
 }
 
-func (this *WriterFixture) writerFunc(root storage.AggregateRoot) io.WriteCloser {
+func (this *WriterFixture) writerFunc(root storage.Identifier) io.WriteCloser {
 	id := root.ID()
 	writer, found := this.writers[id]
 	if !found {

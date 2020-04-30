@@ -7,3 +7,5 @@ type OutcomeEventStream struct {
 		Stream chan interface{}
 	}
 }
+
+func (this *OutcomeEventStream) ID() string { return this.OutcomeID }
