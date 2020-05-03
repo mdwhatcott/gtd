@@ -12,23 +12,23 @@ type Handler struct {
 	task *Task
 }
 
-func NewHandler(runner joyride.Runner, task *Task) *Handler {
-	this := &Handler{task: task}
-	this.Handler = joyride.NewHandler(this, runner)
-	this.Handler.Add(this.task)
-	return this
+func NewHandler(_runner joyride.Runner, _task *Task) *Handler {
+	THIS := &Handler{task: _task}
+	THIS.Handler = joyride.NewHandler(THIS, _runner)
+	THIS.Handler.Add(THIS.task)
+	return THIS
 }
 
-func (this *Handler) HandleMessage(message interface{}) bool {
-	switch message := message.(type) {
+func (this *Handler) HandleMessage(_message interface{}) bool {
+	switch MESSAGE := _message.(type) {
 	case *commands.TrackOutcome:
-		this.task.PrepareToTrackOutcome(message)
+		this.task.PrepareToTrackOutcome(MESSAGE)
 	case *commands.UpdateOutcomeTitle:
-		this.task.PrepareInstruction(message, message.OutcomeID)
+		this.task.PrepareInstruction(MESSAGE, MESSAGE.OutcomeID)
 	case *commands.UpdateOutcomeExplanation:
-		this.task.PrepareInstruction(message, message.OutcomeID)
+		this.task.PrepareInstruction(MESSAGE, MESSAGE.OutcomeID)
 	case *commands.UpdateOutcomeDescription:
-		this.task.PrepareInstruction(message, message.OutcomeID)
+		this.task.PrepareInstruction(MESSAGE, MESSAGE.OutcomeID)
 	default:
 		return false
 	}

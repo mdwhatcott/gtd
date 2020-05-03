@@ -1,23 +1,24 @@
 package wireup
 
 import (
-	"github.com/google/uuid"
 	"github.com/smartystreets/joyride/v2"
 
 	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/internal/outcomes"
 )
 
-func BuildHandler(reader joyride.StorageReader, writer joyride.StorageWriter) core.Handler {
-	return outcomes.NewHandler(
-		joyride.NewRunner(
-			joyride.WithStorageReader(reader),
-			joyride.WithStorageWriter(writer),
-		),
-		outcomes.NewTask(idFunc),
-	)
+type Requirements struct {
+	IDFunc func() string
+	Reader joyride.StorageReader
+	Writer joyride.StorageWriter
 }
 
-func idFunc() string {
-	return uuid.New().String()
+func BuildHandler(requirements Requirements) core.Handler {
+	return outcomes.NewHandler(
+		joyride.NewRunner(
+			joyride.WithStorageReader(requirements.Reader),
+			joyride.WithStorageWriter(requirements.Writer),
+		),
+		outcomes.NewTask(requirements.IDFunc),
+	)
 }

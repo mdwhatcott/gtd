@@ -25,9 +25,9 @@ var types = []reflect.Type{
 }
 
 func Registry() map[string]reflect.Type {
-	registry := make(map[string]reflect.Type)
+	REGISTRY := make(map[string]reflect.Type)
 	for _, TYPE := range types {
-		registry[TYPE.String()] = TYPE
+		REGISTRY[TYPE.String()] = TYPE
 	}
-	return registry
+	return REGISTRY
 }
