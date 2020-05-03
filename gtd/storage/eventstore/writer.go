@@ -1,11 +1,11 @@
 package eventstore
 
 import (
-	"fmt"
 	"io"
 	"reflect"
 
 	"github.com/mdwhatcott/gtd/gtd/storage"
+	"github.com/mdwhatcott/gtd/gtd/util/errors"
 )
 
 type Writer struct {
@@ -24,7 +24,7 @@ func (this *Writer) Write(events ...interface{}) {
 	for _, event := range events {
 		root, ok := event.(storage.Identifier)
 		if !ok {
-			panic(fmt.Errorf("unrecognized event type: <%v>", reflect.TypeOf(event))) // TODO: wrapped in defined error (this is backwards)
+			panic(errors.Wrap(ErrUnrecognizedType, reflect.TypeOf(event)))
 		}
 		this.persist(root)
 	}
@@ -35,13 +35,13 @@ func (this *Writer) persist(root storage.Identifier) {
 	defer this.close(writer)
 	err := this.encoder(writer).Encode(root)
 	if err != nil {
-		panic(fmt.Errorf("persistence error: %w", err)) // TODO: wrapped in defined error (this is backwards)
+		panic(errors.Wrap(ErrUnexpectedWriteError, err))
 	}
 }
 
 func (this *Writer) close(writer io.WriteCloser) {
 	err := writer.Close()
 	if err != nil {
-		panic(fmt.Errorf("persistence error (on close): %w", err)) // TODO: wrapped in defined error (this is backwards)
+		panic(errors.Wrap(ErrUnexpectedCloseError, err))
 	}
 }
