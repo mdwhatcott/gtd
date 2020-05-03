@@ -81,6 +81,7 @@ func (this *Aggregate) UpdateOutcomeDescription(description string) error {
 }
 
 func (this *Aggregate) apply(event interface{}) {
+	// TODO: panic if the event is an error value because something went very wrong in the load operation.
 	switch event := event.(type) {
 	case events.OutcomeTrackedV1:
 		this.id = event.OutcomeID

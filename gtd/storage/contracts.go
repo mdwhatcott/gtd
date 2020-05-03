@@ -16,8 +16,8 @@ type Decoder interface {
 	Decode() (interface{}, error)
 }
 
-type WriterFunc func(Identifier) io.WriteCloser
-type ReaderFunc func(Identifier) io.ReadCloser
+type WriterFunc func(Identifier) io.WriteCloser // TODO: does this need to return an error as well?
+type ReaderFunc func(Identifier) io.ReadCloser  // TODO: does this need to return an error as well?
 
 type Identifier interface {
 	ID() string

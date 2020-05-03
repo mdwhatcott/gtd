@@ -20,6 +20,7 @@ func NewOutcome() *Outcome {
 }
 
 func (this *Outcome) Apply(messages ...interface{}) {
+	// TODO: panic if the event is an error value because something went very wrong in the load operation.
 	for _, message := range messages {
 		switch event := message.(type) {
 		case events.OutcomeTrackedV1:
