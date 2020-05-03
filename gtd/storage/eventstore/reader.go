@@ -1,11 +1,11 @@
 package eventstore
 
 import (
-	"fmt"
 	"io"
 	"reflect"
 
 	"github.com/mdwhatcott/gtd/gtd/storage"
+	"github.com/mdwhatcott/gtd/gtd/util/errors"
 )
 
 type Reader struct {
@@ -27,7 +27,7 @@ func (this *Reader) Read(v ...interface{}) {
 			query.Result.Stream = make(chan interface{})
 			go this.stream(query, query.Result.Stream)
 		default:
-			panic(fmt.Errorf("unrecognized query type: <%v>", reflect.TypeOf(query))) // TODO: wrapped defined error type
+			panic(errors.Wrap(ErrUnrecognizedType, reflect.TypeOf(query)))
 		}
 	}
 }
@@ -36,7 +36,7 @@ func (this *Reader) stream(id storage.Identifier, stream chan interface{}) {
 	defer close(stream)
 
 	reader := this.reader(id)
-	defer closing(reader)
+	defer this.close(reader, stream)
 
 	decoder := this.decoder(reader)
 	for {
@@ -44,11 +44,17 @@ func (this *Reader) stream(id storage.Identifier, stream chan interface{}) {
 		if err == io.EOF {
 			break
 		}
-		// TODO: panic if err != nil, wrapped in defined error
+		if err != nil {
+			stream <- errors.Wrap(ErrUnexpectedReadError, err)
+			break
+		}
 		stream <- value
 	}
 }
 
-func closing(closer io.Closer) {
-	_ = closer.Close() // TODO: panic, wrapped in defined error
+func (this *Reader) close(reader io.ReadCloser, stream chan interface{}) {
+	err := reader.Close()
+	if err != nil {
+		stream <- errors.Wrap(ErrUnexpectedCloseError, err)
+	}
 }

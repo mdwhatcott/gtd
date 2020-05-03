@@ -14,11 +14,14 @@ func NewFakeReader(data string) *FakeReader {
 }
 
 func (this *FakeReader) Read(p []byte) (n int, err error) {
+	if this.readErr != nil {
+		return 0, this.readErr
+	}
 	n, err = this.data.Read(p)
 	if err != nil {
 		return n, err
 	}
-	return n, this.readErr
+	return n, nil
 }
 
 func (this *FakeReader) Close() error {

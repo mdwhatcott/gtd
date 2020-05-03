@@ -18,8 +18,6 @@ type ReaderFixture struct {
 	*gunit.Fixture
 	reader    *Reader
 	readers   map[string]*FakeReader
-	readErrs  map[string]error
-	closeErrs map[string]error
 	decodeErr error
 }
 
@@ -33,8 +31,6 @@ func (this *ReaderFixture) decoderFunc(reader io.Reader) storage.Decoder {
 
 func (this *ReaderFixture) Setup() {
 	this.readers = make(map[string]*FakeReader)
-	this.readErrs = make(map[string]error)
-	this.closeErrs = make(map[string]error)
 	this.reader = NewReader(this.readerFunc, this.decoderFunc)
 }
 
@@ -54,7 +50,7 @@ func gather(stream chan interface{}) (all []interface{}) {
 func (this *ReaderFixture) TestRead_UnrecognizedQueryType_PANIC() {
 	action := func() { this.reader.Read(42) }
 	result := recovered(action)
-	this.So(result, should.BeError, "unrecognized query type: <int>")
+	this.So(result, should.Wrap, ErrUnrecognizedType)
 }
 
 func (this *ReaderFixture) TestRead() {
@@ -65,4 +61,31 @@ func (this *ReaderFixture) TestRead() {
 
 	this.So(gather(query.Result.Stream), should.Resemble, []interface{}{1, 2, 3})
 	this.So(this.readers["A"].closed, should.Equal, 1)
+}
+
+func (this *ReaderFixture) TestReadErr() {
+	this.readers["A"] = NewFakeReader("1\n2\n3")
+	this.readers["A"].readErr = errGophers
+	query := &storage.OutcomeEventStream{OutcomeID: "A"}
+
+	this.reader.Read(query)
+
+	results := gather(query.Result.Stream)
+	if this.So(results, should.HaveLength, 1) {
+		this.So(results[0], should.Wrap, ErrUnexpectedReadError)
+	}
+}
+
+func (this *ReaderFixture) TestCloseErr() {
+	this.readers["A"] = NewFakeReader("1\n2\n3")
+	this.readers["A"].closeErr = errGophers
+	query := &storage.OutcomeEventStream{OutcomeID: "A"}
+
+	this.reader.Read(query)
+
+	results := gather(query.Result.Stream)
+	if this.So(results, should.HaveLength, 4) {
+		this.So(results[:3], should.Resemble, []interface{}{1, 2, 3})
+		this.So(results[3], should.Wrap, ErrUnexpectedCloseError)
+	}
 }
