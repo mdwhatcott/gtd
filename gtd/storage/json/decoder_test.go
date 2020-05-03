@@ -42,7 +42,7 @@ func (this *DecoderFixture) TestDecode_FailureToDecodeTypeName_Err() {
 
 	v, err := this.decoder.Decode()
 
-	this.So(err, should.Wrap, errDecodingInvalidJSONTypeName)
+	this.So(err, should.Wrap, ErrDecodingInvalidJSONTypeName)
 	this.So(v, should.BeNil)
 }
 
@@ -52,7 +52,7 @@ func (this *DecoderFixture) TestDecode_FailureToDecodeValue_Err() {
 
 	v, err := this.decoder.Decode()
 
-	this.So(err, should.Wrap, errDecodingInvalidJSONValue)
+	this.So(err, should.Wrap, ErrDecodingInvalidJSONValue)
 	this.So(v, should.BeNil)
 }
 
@@ -62,7 +62,7 @@ func (this *DecoderFixture) TestDecode_UnrecognizedType_Err() {
 
 	v, err := this.decoder.Decode()
 
-	this.So(err, should.Wrap, errDecodingUnregisteredType)
+	this.So(err, should.Wrap, ErrDecodingUnregisteredType)
 	this.So(v, should.BeNil)
 }
 
@@ -72,6 +72,6 @@ func (this *DecoderFixture) TestDecode_TypeValueMismatch_Err() {
 
 	v, err := this.decoder.Decode()
 
-	this.So(err, should.Wrap, errDecodingTypeMismatch)
+	this.So(err, should.Wrap, ErrDecodingTypeMismatch)
 	this.So(v, should.BeNil)
 }
