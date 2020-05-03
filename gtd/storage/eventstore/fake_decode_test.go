@@ -10,15 +10,15 @@ type FakeDecoder struct {
 	err    error
 }
 
-func NewFakeDecoder(reader io.Reader, err error) *FakeDecoder {
+func NewFakeDecoder(_reader io.Reader, _err error) *FakeDecoder {
 	return &FakeDecoder{
-		reader: reader,
-		err:    err,
+		reader: _reader,
+		err:    _err,
 	}
 }
 
 func (this *FakeDecoder) Decode() (interface{}, error) {
-	var n int
-	_, err := fmt.Fscanln(this.reader, &n)
-	return n, err
+	var N int
+	_, ERR := fmt.Fscanln(this.reader, &N)
+	return N, ERR
 }

@@ -14,17 +14,17 @@ func NewEncoder(writer io.Writer) *Encoder {
 	return &Encoder{inner: ENCODER}
 }
 
-func (this *Encoder) Encode(v interface{}) error {
-	this.encodeValueTypeName(v)
-	return this.encodeValue(v)
+func (this *Encoder) Encode(_v interface{}) error {
+	this.encodeValueTypeName(_v)
+	return this.encodeValue(_v)
 }
 
-func (this *Encoder) encodeValueTypeName(v interface{}) {
-	TYPE := reflect.TypeOf(v)
+func (this *Encoder) encodeValueTypeName(_v interface{}) {
+	TYPE := reflect.TypeOf(_v)
 	NAME := TYPE.String()
 	_ = this.inner.Encode(NAME)
 }
 
-func (this *Encoder) encodeValue(v interface{}) error {
-	return this.inner.Encode(v)
+func (this *Encoder) encodeValue(_v interface{}) error {
+	return this.inner.Encode(_v)
 }

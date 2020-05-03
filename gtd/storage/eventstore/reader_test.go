@@ -21,12 +21,12 @@ type ReaderFixture struct {
 	decodeErr error
 }
 
-func (this *ReaderFixture) readerFunc(id storage.Identifier) io.ReadCloser {
-	return this.readers[id.ID()]
+func (this *ReaderFixture) readerFunc(_id storage.Identifier) io.ReadCloser {
+	return this.readers[_id.ID()]
 }
 
-func (this *ReaderFixture) decoderFunc(reader io.Reader) storage.Decoder {
-	return NewFakeDecoder(reader, this.decodeErr)
+func (this *ReaderFixture) decoderFunc(_reader io.Reader) storage.Decoder {
+	return NewFakeDecoder(_reader, this.decodeErr)
 }
 
 func (this *ReaderFixture) Setup() {
@@ -34,58 +34,58 @@ func (this *ReaderFixture) Setup() {
 	this.reader = NewReader(this.readerFunc, this.decoderFunc)
 }
 
-func (this *ReaderFixture) read(id string) (events []interface{}) {
-	query := &storage.OutcomeEventStream{OutcomeID: id}
+func (this *ReaderFixture) read(_id string) (events_ []interface{}) {
+	query := &storage.OutcomeEventStream{OutcomeID: _id}
 	this.reader.Read(query)
 	return gather(query.Result.Stream)
 }
 
-func gather(stream chan interface{}) (all []interface{}) {
-	for event := range stream {
-		all = append(all, event)
+func gather(_stream chan interface{}) (all_ []interface{}) {
+	for EVENT := range _stream {
+		all_ = append(all_, EVENT)
 	}
-	return all
+	return all_
 }
 
 func (this *ReaderFixture) TestRead_UnrecognizedQueryType_PANIC() {
-	action := func() { this.reader.Read(42) }
-	result := recovered(action)
-	this.So(result, should.Wrap, ErrUnrecognizedType)
+	ACTION := func() { this.reader.Read(42) }
+	RESULT := recovered(ACTION)
+	this.So(RESULT, should.Wrap, ErrUnrecognizedType)
 }
 
 func (this *ReaderFixture) TestRead() {
 	this.readers["A"] = NewFakeReader("1\n2\n3")
-	query := &storage.OutcomeEventStream{OutcomeID: "A"}
+	QUERY := &storage.OutcomeEventStream{OutcomeID: "A"}
 
-	this.reader.Read(query)
+	this.reader.Read(QUERY)
 
-	this.So(gather(query.Result.Stream), should.Resemble, []interface{}{1, 2, 3})
+	this.So(gather(QUERY.Result.Stream), should.Resemble, []interface{}{1, 2, 3})
 	this.So(this.readers["A"].closed, should.Equal, 1)
 }
 
 func (this *ReaderFixture) TestReadErr() {
 	this.readers["A"] = NewFakeReader("1\n2\n3")
 	this.readers["A"].readErr = errGophers
-	query := &storage.OutcomeEventStream{OutcomeID: "A"}
+	QUERY := &storage.OutcomeEventStream{OutcomeID: "A"}
 
-	this.reader.Read(query)
+	this.reader.Read(QUERY)
 
-	results := gather(query.Result.Stream)
-	if this.So(results, should.HaveLength, 1) {
-		this.So(results[0], should.Wrap, ErrUnexpectedReadError)
+	RESULTS := gather(QUERY.Result.Stream)
+	if this.So(RESULTS, should.HaveLength, 1) {
+		this.So(RESULTS[0], should.Wrap, ErrUnexpectedReadError)
 	}
 }
 
 func (this *ReaderFixture) TestCloseErr() {
 	this.readers["A"] = NewFakeReader("1\n2\n3")
 	this.readers["A"].closeErr = errGophers
-	query := &storage.OutcomeEventStream{OutcomeID: "A"}
+	QUERY := &storage.OutcomeEventStream{OutcomeID: "A"}
 
-	this.reader.Read(query)
+	this.reader.Read(QUERY)
 
-	results := gather(query.Result.Stream)
-	if this.So(results, should.HaveLength, 4) {
-		this.So(results[:3], should.Resemble, []interface{}{1, 2, 3})
-		this.So(results[3], should.Wrap, ErrUnexpectedCloseError)
+	RESULTS := gather(QUERY.Result.Stream)
+	if this.So(RESULTS, should.HaveLength, 4) {
+		this.So(RESULTS[:3], should.Resemble, []interface{}{1, 2, 3})
+		this.So(RESULTS[3], should.Wrap, ErrUnexpectedCloseError)
 	}
 }

@@ -31,47 +31,47 @@ func (this *DecoderFixture) TestDecodeType() {
 	this.source.WriteString(`"string"` + "\n")
 	this.source.WriteString(`"a"` + "\n")
 
-	v, err := this.decoder.Decode()
+	V, ERR := this.decoder.Decode()
 
-	this.So(err, should.BeNil)
-	this.So(v, should.Equal, "a")
+	this.So(ERR, should.BeNil)
+	this.So(V, should.Equal, "a")
 }
 
 func (this *DecoderFixture) TestDecode_FailureToDecodeTypeName_Err() {
 	this.source.WriteString(`invalid json`)
 
-	v, err := this.decoder.Decode()
+	V, ERR := this.decoder.Decode()
 
-	this.So(err, should.Wrap, ErrDecodingInvalidJSONTypeName)
-	this.So(v, should.BeNil)
+	this.So(ERR, should.Wrap, ErrDecodingInvalidJSONTypeName)
+	this.So(V, should.BeNil)
 }
 
 func (this *DecoderFixture) TestDecode_FailureToDecodeValue_Err() {
 	this.source.WriteString(`"string"` + "\n")
 	this.source.WriteString(`invalid json`)
 
-	v, err := this.decoder.Decode()
+	V, ERR := this.decoder.Decode()
 
-	this.So(err, should.Wrap, ErrDecodingInvalidJSONValue)
-	this.So(v, should.BeNil)
+	this.So(ERR, should.Wrap, ErrDecodingInvalidJSONValue)
+	this.So(V, should.BeNil)
 }
 
 func (this *DecoderFixture) TestDecode_UnrecognizedType_Err() {
 	this.source.WriteString(`"UNRECOGNIZED_TYPE"` + "\n")
 	this.source.WriteString(`"a"` + "\n")
 
-	v, err := this.decoder.Decode()
+	V, ERR := this.decoder.Decode()
 
-	this.So(err, should.Wrap, ErrDecodingUnregisteredType)
-	this.So(v, should.BeNil)
+	this.So(ERR, should.Wrap, ErrDecodingUnregisteredType)
+	this.So(V, should.BeNil)
 }
 
 func (this *DecoderFixture) TestDecode_TypeValueMismatch_Err() {
 	this.source.WriteString(`"string"` + "\n")
 	this.source.WriteString(`1` + "\n")
 
-	v, err := this.decoder.Decode()
+	V, ERR := this.decoder.Decode()
 
-	this.So(err, should.Wrap, ErrDecodingTypeMismatch)
-	this.So(v, should.BeNil)
+	this.So(ERR, should.Wrap, ErrDecodingTypeMismatch)
+	this.So(V, should.BeNil)
 }

@@ -58,10 +58,10 @@ func (this *Fixture) enableLogging() {
 }
 
 func (this *Fixture) assertTransferalOfResultOwnership() {
-	alreadyPublished := len(this.task.PendingWrites())
+	alreadyPUBLISHED := len(this.task.PendingWrites())
 	this.task.publishResults()
-	doublyPublished := len(this.task.PendingWrites()) - alreadyPublished
-	this.So(doublyPublished, should.Equal, 0)
+	doublyPUBLISHED := len(this.task.PendingWrites()) - alreadyPUBLISHED
+	this.So(doublyPUBLISHED, should.Equal, 0)
 }
 
 func (this *Fixture) handle(command interface{}) {
@@ -84,11 +84,11 @@ func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
 }
 
 func (this *Fixture) TestTrackOutcome_PublishOutcomeTrackedAndFixed_ReturnOutcomeID() {
-	command := &commands.TrackOutcome{Title: "title"}
+	COMMAND := &commands.TrackOutcome{Title: "title"}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result, should.Resemble, commands.CreateResult{ID: "1"})
+	this.So(COMMAND.Result, should.Resemble, commands.CreateResult{ID: "1"})
 	this.AssertOutput(
 		events.OutcomeTrackedV1{
 			Timestamp: this.now,
@@ -107,14 +107,14 @@ func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 		OutcomeID: "1",
 		Title:     "title",
 	})
-	command := &commands.UpdateOutcomeTitle{
+	COMMAND := &commands.UpdateOutcomeTitle{
 		OutcomeID:    "1",
 		UpdatedTitle: "new-title",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.BeNil)
+	this.So(COMMAND.Result.Error, should.BeNil)
 	this.AssertOutput(
 		events.OutcomeTitleUpdatedV1{
 			Timestamp:    this.now,
@@ -126,14 +126,14 @@ func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 
 func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
-	command := &commands.UpdateOutcomeTitle{
+	COMMAND := &commands.UpdateOutcomeTitle{
 		OutcomeID:    "1",
 		UpdatedTitle: "new-title",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
 
@@ -144,14 +144,14 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceCreation_ErrorR
 			Title:     "first-title",
 		},
 	)
-	command := &commands.UpdateOutcomeTitle{
+	COMMAND := &commands.UpdateOutcomeTitle{
 		OutcomeID:    "1",
 		UpdatedTitle: "first-title",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
 
@@ -166,14 +166,14 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceLastUpdate_Erro
 			UpdatedTitle: "second-title",
 		},
 	)
-	command := &commands.UpdateOutcomeTitle{
+	COMMAND := &commands.UpdateOutcomeTitle{
 		OutcomeID:    "1",
 		UpdatedTitle: "second-title",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
 
@@ -182,14 +182,14 @@ func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdat
 		OutcomeID: "1",
 		Title:     "title",
 	})
-	command := &commands.UpdateOutcomeExplanation{
+	COMMAND := &commands.UpdateOutcomeExplanation{
 		OutcomeID:          "1",
 		UpdatedExplanation: "explanation",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.BeNil)
+	this.So(COMMAND.Result.Error, should.BeNil)
 	this.AssertOutput(
 		events.OutcomeExplanationUpdatedV1{
 			Timestamp:          this.now,
@@ -201,14 +201,14 @@ func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdat
 
 func (this *Fixture) TestUpdateOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
-	command := &commands.UpdateOutcomeExplanation{
+	COMMAND := &commands.UpdateOutcomeExplanation{
 		OutcomeID:          "1",
 		UpdatedExplanation: "new-explanation",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
 
@@ -223,14 +223,14 @@ func (this *Fixture) TestUpdateOutcomeExplanation_ContentUnchanged_ErrorReturned
 			UpdatedExplanation: "first-explanation",
 		},
 	)
-	command := &commands.UpdateOutcomeExplanation{
+	COMMAND := &commands.UpdateOutcomeExplanation{
 		OutcomeID:          "1",
 		UpdatedExplanation: "first-explanation",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
 
@@ -239,14 +239,14 @@ func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdat
 		OutcomeID: "1",
 		Title:     "title",
 	})
-	command := &commands.UpdateOutcomeDescription{
+	COMMAND := &commands.UpdateOutcomeDescription{
 		OutcomeID:          "1",
 		UpdatedDescription: "explanation",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.BeNil)
+	this.So(COMMAND.Result.Error, should.BeNil)
 	this.AssertOutput(
 		events.OutcomeDescriptionUpdatedV1{
 			Timestamp:          this.now,
@@ -258,14 +258,14 @@ func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdat
 
 func (this *Fixture) TestUpdateOutcomeDescription_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
-	command := &commands.UpdateOutcomeDescription{
+	COMMAND := &commands.UpdateOutcomeDescription{
 		OutcomeID:          "1",
 		UpdatedDescription: "new-description",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
 
@@ -280,13 +280,13 @@ func (this *Fixture) TestUpdateOutcomeDescription_ContentUnchanged_ErrorReturned
 			UpdatedDescription: "first-description",
 		},
 	)
-	command := &commands.UpdateOutcomeDescription{
+	COMMAND := &commands.UpdateOutcomeDescription{
 		OutcomeID:          "1",
 		UpdatedDescription: "first-description",
 	}
 
-	this.handle(command)
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }

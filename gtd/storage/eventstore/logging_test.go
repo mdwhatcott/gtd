@@ -6,10 +6,10 @@ import (
 	"github.com/smartystreets/logging"
 )
 
-func CaptureLogging(out io.Writer) *logging.Logger {
+func CaptureLogging(_out io.Writer) *logging.Logger {
 	log := logging.Capture()
 	log.SetFlags(0)
-	log.SetOutput(out)
+	log.SetOutput(_out)
 	log.SetPrefix("[CAPTURED] ")
 	return log
 }

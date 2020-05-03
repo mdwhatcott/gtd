@@ -28,42 +28,38 @@ func main() {
 	//     if different, publish (apply and store) events representing the diff
 	//   All stored aggregates and projections should be up to date w/ actual on disk
 
-	handler := wireup.BuildHandler(wireup.Requirements{
+	HANDLER := wireup.BuildHandler(wireup.Requirements{
 		IDFunc: func() string { return uuid.New().String() },
 		Reader: eventstore.NewReader(readerFunc, decoderFunc),
 		Writer: eventstore.NewWriter(encoderFunc, writerFunc),
 	})
 
-	command := &commands.TrackOutcome{Title: "App Finished"}
-	handler.Handle(command)
+	COMMAND := &commands.TrackOutcome{Title: "App Finished"}
+	HANDLER.Handle(COMMAND)
 
-	fmt.Println("ID: ", command.Result.ID)
-	fmt.Println("Err:", command.Result.Error)
+	fmt.Println("ID: ", COMMAND.Result.ID)
+	fmt.Println("Err:", COMMAND.Result.Error)
 }
 
-func decoderFunc(reader io.Reader) storage.Decoder {
-	return json.NewDecoder(reader, events.Registry())
+func decoderFunc(_reader io.Reader) storage.Decoder {
+	return json.NewDecoder(_reader, events.Registry())
 }
-func encoderFunc(writer io.Writer) storage.Encoder {
-	return json.NewEncoder(writer)
+func encoderFunc(_writer io.Writer) storage.Encoder {
+	return json.NewEncoder(_writer)
 }
-func readerFunc(identifier storage.Identifier) io.ReadCloser {
-	id := identifier.ID()
-	path := filepath.Join(storagePath, id+".md")
-	file, err := os.Open(path)
-	if err != nil {
-		panic(err)
+func readerFunc(_identifier storage.Identifier) io.ReadCloser {
+	return fileFunc(_identifier.ID() + ".md")
+}
+func writerFunc(_identifier storage.Identifier) io.WriteCloser {
+	return fileFunc(_identifier.ID() + ".md")
+}
+func fileFunc(_name string) *os.File {
+	PATH := filepath.Join(storagePath, _name)
+	FILE, ERR := os.OpenFile(PATH, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+	if ERR != nil {
+		panic(ERR)
 	}
-	return file
-}
-func writerFunc(identifier storage.Identifier) io.WriteCloser {
-	id := identifier.ID()
-	path := filepath.Join(storagePath, id+".md")
-	file, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		panic(err)
-	}
-	return file
+	return FILE
 }
 
 var storagePath = filepath.Join(os.Getenv("HOME"), "Desktop")

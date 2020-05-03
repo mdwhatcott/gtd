@@ -9,19 +9,19 @@ type FakeReader struct {
 	closed   int
 }
 
-func NewFakeReader(data string) *FakeReader {
-	return &FakeReader{data: strings.NewReader(data)}
+func NewFakeReader(_data string) *FakeReader {
+	return &FakeReader{data: strings.NewReader(_data)}
 }
 
-func (this *FakeReader) Read(p []byte) (n int, err error) {
+func (this *FakeReader) Read(_p []byte) (n_ int, err_ error) {
 	if this.readErr != nil {
 		return 0, this.readErr
 	}
-	n, err = this.data.Read(p)
-	if err != nil {
-		return n, err
+	n_, err_ = this.data.Read(_p)
+	if err_ != nil {
+		return n_, err_
 	}
-	return n, nil
+	return n_, nil
 }
 
 func (this *FakeReader) Close() error {

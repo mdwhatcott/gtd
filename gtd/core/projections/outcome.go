@@ -19,14 +19,14 @@ func NewOutcome() *Outcome {
 	return &Outcome{}
 }
 
-func (this *Outcome) Apply(messages ...interface{}) {
+func (this *Outcome) Apply(_messages ...interface{}) {
 	// TODO: panic if the event is an error value because something went very wrong in the load operation.
-	for _, message := range messages {
-		switch event := message.(type) {
+	for _, MESSAGE := range _messages {
+		switch EVENT := MESSAGE.(type) {
 		case events.OutcomeTrackedV1:
-			this.Updated = event.Timestamp
-			this.ID = event.OutcomeID
-			this.Title = event.Title
+			this.Updated = EVENT.Timestamp
+			this.ID = EVENT.OutcomeID
+			this.Title = EVENT.Title
 		case events.OutcomeFixedV1:
 			this.Status = "fixed"
 		}

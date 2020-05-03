@@ -8,17 +8,17 @@ import (
 )
 
 type Requirements struct {
-	IDFunc func() string
+	IDFunc core.IDFunc
 	Reader joyride.StorageReader
 	Writer joyride.StorageWriter
 }
 
-func BuildHandler(requirements Requirements) core.Handler {
+func BuildHandler(_requirements Requirements) core.Handler {
 	return outcomes.NewHandler(
 		joyride.NewRunner(
-			joyride.WithStorageReader(requirements.Reader),
-			joyride.WithStorageWriter(requirements.Writer),
+			joyride.WithStorageReader(_requirements.Reader),
+			joyride.WithStorageWriter(_requirements.Writer),
 		),
-		outcomes.NewTask(requirements.IDFunc),
+		outcomes.NewTask(_requirements.IDFunc),
 	)
 }

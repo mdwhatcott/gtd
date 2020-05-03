@@ -13,48 +13,52 @@ type Reader struct {
 	decoder storage.DecoderFunc
 }
 
-func NewReader(readerFunc storage.ReaderFunc, decoderFunc storage.DecoderFunc) *Reader {
+func NewReader(_readerFunc storage.ReaderFunc, _decoderFunc storage.DecoderFunc) *Reader {
 	return &Reader{
-		reader:  readerFunc,
-		decoder: decoderFunc,
+		reader:  _readerFunc,
+		decoder: _decoderFunc,
 	}
 }
 
-func (this *Reader) Read(v ...interface{}) {
-	for _, query := range v {
-		switch query := query.(type) {
+func (this *Reader) Read(_v ...interface{}) {
+	for _, QUERY := range _v {
+		switch QUERY := QUERY.(type) {
 		case *storage.OutcomeEventStream:
-			query.Result.Stream = make(chan interface{})
-			go this.stream(query, query.Result.Stream)
+			QUERY.Result.Stream = make(chan interface{})
+			go this.stream(QUERY, QUERY.Result.Stream)
 		default:
-			panic(errors.Wrap(ErrUnrecognizedType, reflect.TypeOf(query)))
+			panic(errors.Wrap(ErrUnrecognizedType, reflect.TypeOf(QUERY)))
 		}
 	}
 }
 
-func (this *Reader) stream(id storage.Identifier, stream chan interface{}) {
-	defer close(stream)
+func (this *Reader) stream(_id storage.Identifier, _stream chan interface{}) {
+	defer close(_stream)
 
-	reader := this.reader(id)
-	defer this.close(reader, stream)
+	READER := this.reader(_id)
+	defer this.close(READER, _stream)
 
-	decoder := this.decoder(reader)
+	DECODER := this.decoder(READER)
+	this.decodeStream(DECODER, _stream)
+}
+
+func (this *Reader) decodeStream(_decoder storage.Decoder, _stream chan interface{}) {
 	for {
-		value, err := decoder.Decode()
-		if err == io.EOF {
-			break
+		VALUE, ERR := _decoder.Decode()
+		if ERR == io.EOF {
+			return
 		}
-		if err != nil {
-			stream <- errors.Wrap(ErrUnexpectedReadError, err)
-			break
+		if ERR != nil {
+			_stream <- errors.Wrap(ErrUnexpectedReadError, ERR)
+			return
 		}
-		stream <- value
+		_stream <- VALUE
 	}
 }
 
-func (this *Reader) close(reader io.ReadCloser, stream chan interface{}) {
-	err := reader.Close()
-	if err != nil {
-		stream <- errors.Wrap(ErrUnexpectedCloseError, err)
+func (this *Reader) close(_reader io.ReadCloser, _stream chan interface{}) {
+	ERR := _reader.Close()
+	if ERR != nil {
+		_stream <- errors.Wrap(ErrUnexpectedCloseError, ERR)
 	}
 }

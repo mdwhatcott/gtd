@@ -28,14 +28,14 @@ func (this *EncoderFixture) Setup() {
 }
 
 func (this *EncoderFixture) TestEventSerialization() {
-	event := events.OutcomeTrackedV1{
+	EVENT := events.OutcomeTrackedV1{
 		Timestamp: date.YMD(2020, 1, 1),
 		OutcomeID: "OutcomeID",
 		Title:     "Title",
 	}
-	err := this.encoder.Encode(event)
+	ERR := this.encoder.Encode(EVENT)
 
-	this.So(err, should.BeNil)
+	this.So(ERR, should.BeNil)
 	this.So("\n"+this.writer.String(), should.Equal, `
 "events.OutcomeTrackedV1"
 {
@@ -47,7 +47,7 @@ func (this *EncoderFixture) TestEventSerialization() {
 }
 
 func (this *EncoderFixture) TestErr() {
-	err := this.encoder.Encode(make(chan int))
-	this.So(err, should.NotBeNil)
+	ERR := this.encoder.Encode(make(chan int))
+	this.So(ERR, should.NotBeNil)
 	this.So(this.writer.String(), should.Equal, `"chan int"`+"\n")
 }

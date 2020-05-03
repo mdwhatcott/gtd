@@ -5,6 +5,7 @@ import (
 	"github.com/smartystreets/joyride/v2"
 	"github.com/smartystreets/logging"
 
+	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
 	"github.com/mdwhatcott/gtd/gtd/storage"
 )
@@ -14,48 +15,48 @@ type Task struct {
 
 	log    *logging.Logger
 	clock  *clock.Clock
-	nextID func() string
+	nextID core.IDFunc
 
 	queries      map[string]*storage.OutcomeEventStream
 	instructions []interface{}
 	aggregates   map[string]*Aggregate
 }
 
-func NewTask(nextID func() string) *Task {
+func NewTask(_nextID core.IDFunc) *Task {
 	return &Task{
 		Base:       joyride.New(),
-		nextID:     nextID,
+		nextID:     _nextID,
 		queries:    make(map[string]*storage.OutcomeEventStream),
 		aggregates: make(map[string]*Aggregate),
 	}
 }
 
-func (this *Task) aggregate(id string) *Aggregate {
-	aggregate, found := this.aggregates[id]
-	if !found {
-		aggregate = NewAggregate(this.clock.UTCNow(), this.log)
-		this.aggregates[id] = aggregate
+func (this *Task) aggregate(_id string) *Aggregate {
+	AGGREGATE, FOUND := this.aggregates[_id]
+	if !FOUND {
+		AGGREGATE = NewAggregate(this.clock.UTCNow(), this.log)
+		this.aggregates[_id] = AGGREGATE
 	}
-	return aggregate
+	return AGGREGATE
 }
 
-func (this *Task) registerOutcomeEventStreamQuery(id string) {
-	query, found := this.queries[id]
-	if found {
+func (this *Task) registerOutcomeEventStreamQuery(_id string) {
+	QUERY, FOUND := this.queries[_id]
+	if FOUND {
 		return
 	}
-	query = &storage.OutcomeEventStream{OutcomeID: id}
-	this.queries[id] = query
-	this.AddRequiredReads(query)
+	QUERY = &storage.OutcomeEventStream{OutcomeID: _id}
+	this.queries[_id] = QUERY
+	this.AddRequiredReads(QUERY)
 }
 
-func (this *Task) PrepareToTrackOutcome(command *commands.TrackOutcome) {
-	this.instructions = append(this.instructions, command)
+func (this *Task) PrepareToTrackOutcome(_command *commands.TrackOutcome) {
+	this.instructions = append(this.instructions, _command)
 }
 
-func (this *Task) PrepareInstruction(instruction interface{}, id string) {
-	this.instructions = append(this.instructions, instruction)
-	this.registerOutcomeEventStreamQuery(id)
+func (this *Task) PrepareInstruction(_instruction interface{}, _id string) {
+	this.instructions = append(this.instructions, _instruction)
+	this.registerOutcomeEventStreamQuery(_id)
 }
 
 func (this *Task) Execute() joyride.TaskResult {
@@ -66,50 +67,50 @@ func (this *Task) Execute() joyride.TaskResult {
 }
 
 func (this *Task) replayEvents() {
-	for id, query := range this.queries {
-		this.aggregate(id).Replay(query.Result.Stream)
+	for ID, QUERY := range this.queries {
+		this.aggregate(ID).Replay(QUERY.Result.Stream)
 	}
 }
 
 func (this *Task) processInstructions() {
-	for _, message := range this.instructions {
-		switch command := message.(type) {
+	for _, MESSAGE := range this.instructions {
+		switch COMMAND := MESSAGE.(type) {
 		case *commands.TrackOutcome:
-			this.trackOutcome(command)
+			this.trackOutcome(COMMAND)
 		case *commands.UpdateOutcomeTitle:
-			this.updateOutcomeTitle(command)
+			this.updateOutcomeTitle(COMMAND)
 		case *commands.UpdateOutcomeExplanation:
-			this.updateOutcomeExplanation(command)
+			this.updateOutcomeExplanation(COMMAND)
 		case *commands.UpdateOutcomeDescription:
-			this.updateOutcomeDescription(command)
+			this.updateOutcomeDescription(COMMAND)
 		}
 	}
 }
 
-func (this *Task) trackOutcome(command *commands.TrackOutcome) {
-	outcomeID := this.nextID()
-	aggregate := this.aggregate(outcomeID)
-	command.Result.ID = outcomeID
-	command.Result.Error = aggregate.TrackOutcome(outcomeID, command.Title)
+func (this *Task) trackOutcome(_command *commands.TrackOutcome) {
+	ID := this.nextID()
+	AGGREGATE := this.aggregate(ID)
+	_command.Result.ID = ID
+	_command.Result.Error = AGGREGATE.TrackOutcome(ID, _command.Title)
 }
 
-func (this *Task) updateOutcomeTitle(command *commands.UpdateOutcomeTitle) {
-	aggregate := this.aggregate(command.OutcomeID)
-	command.Result.Error = aggregate.UpdateOutcomeTitle(command.UpdatedTitle)
+func (this *Task) updateOutcomeTitle(_command *commands.UpdateOutcomeTitle) {
+	AGGREGATE := this.aggregate(_command.OutcomeID)
+	_command.Result.Error = AGGREGATE.UpdateOutcomeTitle(_command.UpdatedTitle)
 }
 
-func (this *Task) updateOutcomeExplanation(command *commands.UpdateOutcomeExplanation) {
-	aggregate := this.aggregate(command.OutcomeID)
-	command.Result.Error = aggregate.UpdateOutcomeExplanation(command.UpdatedExplanation)
+func (this *Task) updateOutcomeExplanation(_command *commands.UpdateOutcomeExplanation) {
+	AGGREGATE := this.aggregate(_command.OutcomeID)
+	_command.Result.Error = AGGREGATE.UpdateOutcomeExplanation(_command.UpdatedExplanation)
 }
 
-func (this *Task) updateOutcomeDescription(command *commands.UpdateOutcomeDescription) {
-	aggregate := this.aggregate(command.OutcomeID)
-	command.Result.Error = aggregate.UpdateOutcomeDescription(command.UpdatedDescription)
+func (this *Task) updateOutcomeDescription(_command *commands.UpdateOutcomeDescription) {
+	AGGREGATE := this.aggregate(_command.OutcomeID)
+	_command.Result.Error = AGGREGATE.UpdateOutcomeDescription(_command.UpdatedDescription)
 }
 
 func (this *Task) publishResults() {
-	for _, aggregate := range this.aggregates {
-		this.AddPendingWrites(aggregate.TransferResults()...)
+	for _, AGGREGATE := range this.aggregates {
+		this.AddPendingWrites(AGGREGATE.TransferResults()...)
 	}
 }

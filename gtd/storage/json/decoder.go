@@ -13,10 +13,10 @@ type Decoder struct {
 	registry map[string]reflect.Type
 }
 
-func NewDecoder(reader io.Reader, registry map[string]reflect.Type) *Decoder {
+func NewDecoder(_reader io.Reader, _registry map[string]reflect.Type) *Decoder {
 	return &Decoder{
-		inner:    json.NewDecoder(reader),
-		registry: registry,
+		inner:    json.NewDecoder(_reader),
+		registry: _registry,
 	}
 }
 

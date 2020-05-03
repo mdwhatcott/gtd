@@ -13,46 +13,46 @@ type FakeShell struct {
 	reads  map[string][]interface{}
 }
 
-func NewFakeShell(fixture *Fixture) *FakeShell {
+func NewFakeShell(_fixture *Fixture) *FakeShell {
 	return &FakeShell{
-		Fixture: fixture,
+		Fixture: _fixture,
 		reads:   make(map[string][]interface{}),
 	}
 }
 
-func (this *FakeShell) Write(values ...interface{}) {
-	this.writes = append(this.writes, values...)
+func (this *FakeShell) Write(_values ...interface{}) {
+	this.writes = append(this.writes, _values...)
 }
 
-func (this *FakeShell) Read(values ...interface{}) {
-	this.log.Println("Reading:", values)
-	for _, value := range values {
-		this.log.Println("Reading value:", value)
-		switch query := value.(type) {
+func (this *FakeShell) Read(_values ...interface{}) {
+	this.log.Println("Reading:", _values)
+	for _, VALUE := range _values {
+		this.log.Println("Reading value:", VALUE)
+		switch QUERY := VALUE.(type) {
 		case *storage.OutcomeEventStream:
-			this.log.Println("Reading outcome event stream...", query.OutcomeID)
-			query.Result.Stream = make(chan interface{})
-			go load(query.Result.Stream, this.reads[query.OutcomeID])
+			this.log.Println("Reading outcome event stream...", QUERY.OutcomeID)
+			QUERY.Result.Stream = make(chan interface{})
+			go load(QUERY.Result.Stream, this.reads[QUERY.OutcomeID])
 		}
 	}
 }
 
-func load(stream chan interface{}, events []interface{}) {
-	defer close(stream)
-	for _, event := range events {
-		stream <- event
+func load(_stream chan interface{}, _events []interface{}) {
+	defer close(_stream)
+	for _, EVENT := range _events {
+		_stream <- EVENT
 	}
 }
 
-func (this *FakeShell) PrepareReadResults(id string, results ...interface{}) {
-	this.reads[id] = append(this.reads[id], results...)
-	this.log.Println("Read:", id, results)
+func (this *FakeShell) PrepareReadResults(_id string, _results ...interface{}) {
+	this.reads[_id] = append(this.reads[_id], _results...)
+	this.log.Println("Read:", _id, _results)
 }
 
 func (this *FakeShell) AssertNoOutput() {
 	this.AssertOutput()
 }
 
-func (this *FakeShell) AssertOutput(expected ...interface{}) {
-	this.So(this.writes, should.Resemble, expected)
+func (this *FakeShell) AssertOutput(_expected ...interface{}) {
+	this.So(this.writes, should.Resemble, _expected)
 }

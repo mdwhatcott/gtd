@@ -11,17 +11,17 @@ type FakeEncoder struct {
 	err    error
 }
 
-func NewFakeEncoder(writer io.Writer, err error) *FakeEncoder {
+func NewFakeEncoder(_writer io.Writer, _err error) *FakeEncoder {
 	return &FakeEncoder{
-		writer: writer,
-		err:    err,
+		writer: _writer,
+		err:    _err,
 	}
 }
 
-func (this *FakeEncoder) Encode(v interface{}) error {
-	_, err := fmt.Fprintln(this.writer, reflect.TypeOf(v).Name())
-	if err != nil {
-		return err
+func (this *FakeEncoder) Encode(_v interface{}) error {
+	_, ERR := fmt.Fprintln(this.writer, reflect.TypeOf(_v).Name())
+	if ERR != nil {
+		return ERR
 	}
 	return this.err
 }
