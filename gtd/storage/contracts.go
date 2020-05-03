@@ -2,8 +2,6 @@ package storage
 
 import (
 	"io"
-
-	"github.com/smartystreets/joyride/v2"
 )
 
 type EncoderFunc func(io.Writer) Encoder
@@ -23,11 +21,7 @@ type Identifier interface {
 	ID() string
 }
 
-type Projector interface {
-	joyride.StorageWriter
-}
-
-type EventStore interface {
-	joyride.StorageReader
-	joyride.StorageWriter
+type Projection interface {
+	Identifier
+	Apply(events ...interface{})
 }

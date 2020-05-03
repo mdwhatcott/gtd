@@ -16,6 +16,7 @@ import (
 	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
 	"github.com/mdwhatcott/gtd/gtd/core/events"
+	"github.com/mdwhatcott/gtd/gtd/util/fake"
 )
 
 func TestFixture(t *testing.T) {
@@ -24,7 +25,7 @@ func TestFixture(t *testing.T) {
 
 type Fixture struct {
 	*gunit.Fixture
-	*FakeShell
+	*fake.Joyride
 
 	id      int
 	now     time.Time
@@ -32,6 +33,14 @@ type Fixture struct {
 	handler *Handler
 	task    *Task
 	runner  joyride.Runner
+}
+
+func (this *Fixture) AssertNoOutput() {
+	this.AssertOutput()
+}
+
+func (this *Fixture) AssertOutput(_expected ...interface{}) {
+	this.So(this.Writes, should.Resemble, _expected)
 }
 
 func (this *Fixture) Setup() {
@@ -42,10 +51,10 @@ func (this *Fixture) Setup() {
 	this.task = NewTask(this.generateID)
 	this.task.clock = clock.Freeze(this.now)
 	this.task.log = this.log
-	this.FakeShell = NewFakeShell(this)
+	this.Joyride = fake.NewJoyride()
 	this.runner = joyride.NewRunner(
-		joyride.WithStorageReader(this.FakeShell),
-		joyride.WithStorageWriter(this.FakeShell),
+		joyride.WithStorageReader(this.Joyride),
+		joyride.WithStorageWriter(this.Joyride),
 	)
 }
 

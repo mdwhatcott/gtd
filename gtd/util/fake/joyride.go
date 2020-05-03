@@ -1,30 +1,26 @@
-package outcomes
+package fake
 
 import (
-	"github.com/smartystreets/assertions/should"
+	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/gtd/storage"
 )
 
-type FakeShell struct {
-	*Fixture
-
-	writes []interface{}
+type Joyride struct {
+	log    *logging.Logger
+	Writes []interface{}
 	reads  map[string][]interface{}
 }
 
-func NewFakeShell(_fixture *Fixture) *FakeShell {
-	return &FakeShell{
-		Fixture: _fixture,
-		reads:   make(map[string][]interface{}),
-	}
+func NewJoyride() *Joyride {
+	return &Joyride{reads: make(map[string][]interface{})}
 }
 
-func (this *FakeShell) Write(_values ...interface{}) {
-	this.writes = append(this.writes, _values...)
+func (this *Joyride) Write(_values ...interface{}) {
+	this.Writes = append(this.Writes, _values...)
 }
 
-func (this *FakeShell) Read(_values ...interface{}) {
+func (this *Joyride) Read(_values ...interface{}) {
 	this.log.Println("Reading:", _values)
 	for _, VALUE := range _values {
 		this.log.Println("Reading value:", VALUE)
@@ -44,15 +40,7 @@ func load(_stream chan interface{}, _events []interface{}) {
 	}
 }
 
-func (this *FakeShell) PrepareReadResults(_id string, _results ...interface{}) {
+func (this *Joyride) PrepareReadResults(_id string, _results ...interface{}) {
 	this.reads[_id] = append(this.reads[_id], _results...)
 	this.log.Println("Read:", _id, _results)
-}
-
-func (this *FakeShell) AssertNoOutput() {
-	this.AssertOutput()
-}
-
-func (this *FakeShell) AssertOutput(_expected ...interface{}) {
-	this.So(this.writes, should.Resemble, _expected)
 }

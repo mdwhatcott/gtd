@@ -8,6 +8,7 @@ import (
 	"github.com/smartystreets/gunit"
 
 	"github.com/mdwhatcott/gtd/gtd/storage"
+	"github.com/mdwhatcott/gtd/gtd/util/fake"
 )
 
 func TestReaderFixture(t *testing.T) {
@@ -17,7 +18,7 @@ func TestReaderFixture(t *testing.T) {
 type ReaderFixture struct {
 	*gunit.Fixture
 	reader    *Reader
-	readers   map[string]*FakeReader
+	readers   map[string]*fake.Reader
 	decodeErr error
 }
 
@@ -26,11 +27,11 @@ func (this *ReaderFixture) readerFunc(_id storage.Identifier) io.ReadCloser {
 }
 
 func (this *ReaderFixture) decoderFunc(_reader io.Reader) storage.Decoder {
-	return NewFakeDecoder(_reader, this.decodeErr)
+	return fake.NewDecoder(_reader, this.decodeErr)
 }
 
 func (this *ReaderFixture) Setup() {
-	this.readers = make(map[string]*FakeReader)
+	this.readers = make(map[string]*fake.Reader)
 	this.reader = NewReader(this.readerFunc, this.decoderFunc)
 }
 
@@ -54,18 +55,18 @@ func (this *ReaderFixture) TestRead_UnrecognizedQueryType_PANIC() {
 }
 
 func (this *ReaderFixture) TestRead() {
-	this.readers["A"] = NewFakeReader("1\n2\n3")
+	this.readers["A"] = fake.NewReader("1\n2\n3")
 	QUERY := &storage.OutcomeEventStream{OutcomeID: "A"}
 
 	this.reader.Read(QUERY)
 
 	this.So(gather(QUERY.Result.Stream), should.Resemble, []interface{}{1, 2, 3})
-	this.So(this.readers["A"].closed, should.Equal, 1)
+	this.So(this.readers["A"].Closed, should.Equal, 1)
 }
 
 func (this *ReaderFixture) TestReadErr() {
-	this.readers["A"] = NewFakeReader("1\n2\n3")
-	this.readers["A"].readErr = errGophers
+	this.readers["A"] = fake.NewReader("1\n2\n3")
+	this.readers["A"].ReadErr = errGophers
 	QUERY := &storage.OutcomeEventStream{OutcomeID: "A"}
 
 	this.reader.Read(QUERY)
@@ -77,8 +78,8 @@ func (this *ReaderFixture) TestReadErr() {
 }
 
 func (this *ReaderFixture) TestCloseErr() {
-	this.readers["A"] = NewFakeReader("1\n2\n3")
-	this.readers["A"].closeErr = errGophers
+	this.readers["A"] = fake.NewReader("1\n2\n3")
+	this.readers["A"].CloseErr = errGophers
 	QUERY := &storage.OutcomeEventStream{OutcomeID: "A"}
 
 	this.reader.Read(QUERY)

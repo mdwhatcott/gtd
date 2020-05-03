@@ -1,26 +1,26 @@
-package eventstore
+package fake
 
 import (
 	"bytes"
 	"strings"
 )
 
-type FakeWriter struct {
+type Writer struct {
 	buffer   *bytes.Buffer
-	closed   int
+	closed   int // TODO: unused!
 	writeErr error
 	closeErr error
 }
 
-func NewFakeWriter(_writeErr, _closeErr error) *FakeWriter {
-	return &FakeWriter{
+func NewWriter(_writeErr, _closeErr error) *Writer {
+	return &Writer{
 		buffer:   new(bytes.Buffer),
 		writeErr: _writeErr,
 		closeErr: _closeErr,
 	}
 }
 
-func (this *FakeWriter) Write(_p []byte) (_n int, _err error) {
+func (this *Writer) Write(_p []byte) (_n int, _err error) {
 	_n, _err = this.buffer.Write(_p)
 	if _err != nil {
 		return _n, _err
@@ -28,11 +28,11 @@ func (this *FakeWriter) Write(_p []byte) (_n int, _err error) {
 	return _n, this.writeErr
 }
 
-func (this *FakeWriter) Close() error {
+func (this *Writer) Close() error {
 	this.closed++
 	return this.closeErr
 }
 
-func (this *FakeWriter) Lines() []string {
+func (this *Writer) Lines() []string {
 	return strings.Split(strings.TrimSpace(this.buffer.String()), "\n")
 }

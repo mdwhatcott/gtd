@@ -9,6 +9,7 @@ import (
 
 	"github.com/mdwhatcott/gtd/gtd/core/events"
 	"github.com/mdwhatcott/gtd/gtd/storage"
+	"github.com/mdwhatcott/gtd/gtd/util/fake"
 )
 
 func TestWriterFixture(t *testing.T) {
@@ -20,7 +21,7 @@ type WriterFixture struct {
 
 	repo      *Writer
 	history   map[string][]interface{}
-	writers   map[string]*FakeWriter
+	writers   map[string]*fake.Writer
 	writeErrs map[string]error
 	closeErrs map[string]error
 	encodeErr error
@@ -30,19 +31,19 @@ func (this *WriterFixture) writerFunc(_root storage.Identifier) io.WriteCloser {
 	ID := _root.ID()
 	WRITER, FOUND := this.writers[ID]
 	if !FOUND {
-		WRITER = NewFakeWriter(this.writeErrs[ID], this.closeErrs[ID])
+		WRITER = fake.NewWriter(this.writeErrs[ID], this.closeErrs[ID])
 		this.writers[ID] = WRITER
 	}
 	return WRITER
 }
 
 func (this *WriterFixture) encoderFunc(_writer io.Writer) storage.Encoder {
-	return NewFakeEncoder(_writer, this.encodeErr)
+	return fake.NewEncoder(_writer, this.encodeErr)
 }
 
 func (this *WriterFixture) Setup() {
 	this.history = make(map[string][]interface{})
-	this.writers = make(map[string]*FakeWriter)
+	this.writers = make(map[string]*fake.Writer)
 	this.writeErrs = make(map[string]error)
 	this.closeErrs = make(map[string]error)
 	this.repo = NewWriter(this.encoderFunc, this.writerFunc)
