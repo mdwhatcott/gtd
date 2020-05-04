@@ -13,7 +13,7 @@ type Requirements struct {
 	Writer joyride.StorageWriter
 }
 
-func BuildHandler(_requirements Requirements) core.Handler {
+func BuildOutcomesHandler(_requirements Requirements) core.Handler {
 	return outcomes.NewHandler(
 		joyride.NewRunner(
 			joyride.WithStorageReader(_requirements.Reader),

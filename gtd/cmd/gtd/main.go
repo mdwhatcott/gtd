@@ -17,19 +17,14 @@ import (
 )
 
 func main() {
-	// STARTUP:
-	//   for each file in projection folder
-	//     unmarshal projection into review queue
-	//   for each projection in review queue
-	//     compare with canonical projection (loaded from event store)
-	//     if different, publish (apply and store) events representing the diff
-
-	HANDLER := wireup.BuildHandler(wireup.Requirements{
+	requirements := wireup.Requirements{
 		IDFunc: func() string { return uuid.New().String() },
-		Reader: eventstore.NewReader(readerFunc, decoderFunc),
-		Writer: eventstore.NewWriter(encoderFunc, writerFunc),
-	})
+		Reader: eventstore.NewReader(reading, decoding),
+		Writer: eventstore.NewWriter(encoding, writing),
+	}
 
+	// TODO: wrap handler in (cli-)routed controller
+	HANDLER := wireup.BuildOutcomesHandler(requirements)
 	COMMAND := &commands.TrackOutcome{Title: "App Finished"}
 	HANDLER.Handle(COMMAND)
 
@@ -37,19 +32,13 @@ func main() {
 	fmt.Println("Err:", COMMAND.Result.Error)
 }
 
-func decoderFunc(_reader io.Reader) storage.Decoder {
-	return json.NewDecoder(_reader, events.Registry())
-}
-func encoderFunc(_writer io.Writer) storage.Encoder {
-	return json.NewEncoder(_writer)
-}
-func readerFunc(_identifier storage.Identifier) io.ReadCloser {
-	return fileFunc(_identifier.ID() + ".md")
-}
-func writerFunc(_identifier storage.Identifier) io.WriteCloser {
-	return fileFunc(_identifier.ID() + ".md")
-}
-func fileFunc(_name string) *os.File {
+func decoding(_reader io.Reader) storage.Decoder { return json.NewDecoder(_reader, events.Registry()) }
+func encoding(_writer io.Writer) storage.Encoder { return json.NewEncoder(_writer) }
+
+func reading() io.ReadCloser  { return open("events.json") }
+func writing() io.WriteCloser { return open("events.json") }
+
+func open(_name string) *os.File {
 	PATH := filepath.Join(storagePath, _name)
 	FILE, ERR := os.OpenFile(PATH, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if ERR != nil {

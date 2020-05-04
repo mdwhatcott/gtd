@@ -18,12 +18,12 @@ func TestReaderFixture(t *testing.T) {
 type ReaderFixture struct {
 	*gunit.Fixture
 	reader    *Reader
-	readers   map[string]*fake.Reader
+	inner     *fake.Reader
 	decodeErr error
 }
 
-func (this *ReaderFixture) readerFunc(_id storage.Identifier) io.ReadCloser {
-	return this.readers[_id.ID()]
+func (this *ReaderFixture) readerFunc() io.ReadCloser {
+	return this.inner
 }
 
 func (this *ReaderFixture) decoderFunc(_reader io.Reader) storage.Decoder {
@@ -31,21 +31,8 @@ func (this *ReaderFixture) decoderFunc(_reader io.Reader) storage.Decoder {
 }
 
 func (this *ReaderFixture) Setup() {
-	this.readers = make(map[string]*fake.Reader)
+	this.inner = fake.NewReader("1\n2\n3")
 	this.reader = NewReader(this.readerFunc, this.decoderFunc)
-}
-
-func (this *ReaderFixture) read(_id string) (events_ []interface{}) {
-	query := &storage.OutcomeEventStream{OutcomeID: _id}
-	this.reader.Read(query)
-	return gather(query.Result.Stream)
-}
-
-func gather(_stream chan interface{}) (all_ []interface{}) {
-	for EVENT := range _stream {
-		all_ = append(all_, EVENT)
-	}
-	return all_
 }
 
 func (this *ReaderFixture) TestRead_UnrecognizedQueryType_PANIC() {
@@ -54,39 +41,59 @@ func (this *ReaderFixture) TestRead_UnrecognizedQueryType_PANIC() {
 	this.So(RESULT, should.Wrap, ErrUnrecognizedType)
 }
 
-func (this *ReaderFixture) TestRead() {
-	this.readers["A"] = fake.NewReader("1\n2\n3")
-	QUERY := &storage.OutcomeEventStream{OutcomeID: "A"}
+func (this *ReaderFixture) TestRead_OutcomeEventStream_EventsFilteredByID() {
+	this.inner = fake.NewReader("1\n2\n2")
+	QUERY := &storage.OutcomeEventStream{OutcomeID: "2"}
 
 	this.reader.Read(QUERY)
 
-	this.So(gather(QUERY.Result.Stream), should.Resemble, []interface{}{1, 2, 3})
-	this.So(this.readers["A"].Closed, should.Equal, 1)
+	this.So(QUERY.Result.Events, should.Resemble, []interface{}{
+		fake.NewIdentifiable(2),
+		fake.NewIdentifiable(2),
+	})
+	this.So(this.inner.Closed, should.Equal, 1)
 }
 
-func (this *ReaderFixture) TestReadErr() {
-	this.readers["A"] = fake.NewReader("1\n2\n3")
-	this.readers["A"].ReadErr = errGophers
-	QUERY := &storage.OutcomeEventStream{OutcomeID: "A"}
+func (this *ReaderFixture) TestRead_OutcomeEventStream_NonIdentifiableValueEncountered_PANIC() {
+	this.inner = fake.NewReader("1\n2\n-1000") // The fake decoder treats negative numbers as unidentifiable.
+	QUERY := &storage.OutcomeEventStream{OutcomeID: "2"}
 
-	this.reader.Read(QUERY)
+	ACTION := func() { this.reader.Read(QUERY) }
+	RESULT := recovered(ACTION)
 
-	RESULTS := gather(QUERY.Result.Stream)
-	if this.So(RESULTS, should.HaveLength, 1) {
-		this.So(RESULTS[0], should.Wrap, ErrUnexpectedReadError)
-	}
+	this.So(RESULT, should.Wrap, ErrUnidentifiableType)
+	this.So(QUERY.Result.Events, should.BeEmpty)
+	this.So(this.inner.Closed, should.Equal, 1)
+}
+
+func (this *ReaderFixture) TestRead_OutcomeEventStreamErr() {
+	this.inner.ReadErr = errGophers
+	QUERY := new(storage.OutcomeEventStream)
+
+	ACTION := func() { this.reader.Read(QUERY) }
+	RECOVERED := recovered(ACTION)
+
+	this.So(RECOVERED, should.Wrap, ErrUnexpectedReadError)
 }
 
 func (this *ReaderFixture) TestCloseErr() {
-	this.readers["A"] = fake.NewReader("1\n2\n3")
-	this.readers["A"].CloseErr = errGophers
-	QUERY := &storage.OutcomeEventStream{OutcomeID: "A"}
+	this.inner.CloseErr = errGophers
+	QUERY := new(storage.OutcomeEventStream)
+
+	ACTION := func() { this.reader.Read(QUERY) }
+	RECOVERED := recovered(ACTION)
+
+	this.So(RECOVERED, should.Wrap, ErrUnexpectedCloseError)
+}
+
+func (this *ReaderFixture) TestRead_EventStream_AllEventsIncluded() {
+	QUERY := new(storage.EventStream)
 
 	this.reader.Read(QUERY)
 
-	RESULTS := gather(QUERY.Result.Stream)
-	if this.So(RESULTS, should.HaveLength, 4) {
-		this.So(RESULTS[:3], should.Resemble, []interface{}{1, 2, 3})
-		this.So(RESULTS[3], should.Wrap, ErrUnexpectedCloseError)
-	}
+	this.So(QUERY.Result.Events, should.Resemble, []interface{}{
+		fake.NewIdentifiable(1),
+		fake.NewIdentifiable(2),
+		fake.NewIdentifiable(3),
+	})
 }

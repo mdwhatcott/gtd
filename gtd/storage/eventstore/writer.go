@@ -22,7 +22,7 @@ func NewWriter(_encoder storage.EncoderFunc, _writer storage.WriterFunc) *Writer
 
 func (this *Writer) Write(_events ...interface{}) {
 	for _, EVENT := range _events {
-		ROOT, OK := EVENT.(storage.Identifier)
+		ROOT, OK := EVENT.(storage.Identifiable)
 		if !OK {
 			panic(errors.Wrap(ErrUnrecognizedType, reflect.TypeOf(EVENT)))
 		}
@@ -30,10 +30,12 @@ func (this *Writer) Write(_events ...interface{}) {
 	}
 }
 
-func (this *Writer) persist(_root storage.Identifier) {
-	WRITER := this.writer(_root)
+func (this *Writer) persist(_root storage.Identifiable) {
+	WRITER := this.writer()
 	defer this.close(WRITER)
-	ERR := this.encoder(WRITER).Encode(_root)
+
+	encoder := this.encoder(WRITER)
+	ERR := encoder.Encode(_root)
 	if ERR != nil {
 		panic(errors.Wrap(ErrUnexpectedWriteError, ERR))
 	}

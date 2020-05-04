@@ -19,22 +19,18 @@ func TestWriterFixture(t *testing.T) {
 type WriterFixture struct {
 	*gunit.Fixture
 
-	repo      *Writer
-	history   map[string][]interface{}
-	writers   map[string]*fake.Writer
-	writeErrs map[string]error
-	closeErrs map[string]error
+	writer    *Writer
+	inner     *fake.Writer
+	writeErr  error
+	closeErr  error
 	encodeErr error
 }
 
-func (this *WriterFixture) writerFunc(_root storage.Identifier) io.WriteCloser {
-	ID := _root.ID()
-	WRITER, FOUND := this.writers[ID]
-	if !FOUND {
-		WRITER = fake.NewWriter(this.writeErrs[ID], this.closeErrs[ID])
-		this.writers[ID] = WRITER
+func (this *WriterFixture) writerFunc() io.WriteCloser {
+	if this.inner == nil {
+		this.inner = fake.NewWriter(this.writeErr, this.closeErr)
 	}
-	return WRITER
+	return this.inner
 }
 
 func (this *WriterFixture) encoderFunc(_writer io.Writer) storage.Encoder {
@@ -42,40 +38,36 @@ func (this *WriterFixture) encoderFunc(_writer io.Writer) storage.Encoder {
 }
 
 func (this *WriterFixture) Setup() {
-	this.history = make(map[string][]interface{})
-	this.writers = make(map[string]*fake.Writer)
-	this.writeErrs = make(map[string]error)
-	this.closeErrs = make(map[string]error)
-	this.repo = NewWriter(this.encoderFunc, this.writerFunc)
+	this.writer = NewWriter(this.encoderFunc, this.writerFunc)
 }
 
 func (this *WriterFixture) TestWrite_UnrecognizedEventType_PANIC() {
-	ACTION := func() { this.repo.Write(42) }
+	ACTION := func() { this.writer.Write(42) }
 	RESULT := recovered(ACTION)
 	this.So(RESULT, should.Wrap, ErrUnrecognizedType)
 }
 
 func (this *WriterFixture) TestWrite_PersistsEncodedEventsToWriter() {
-	this.repo.Write(outcomeTracked, outcomeUpdated)
-	ACTUAL := this.writers["OutcomeID"].Lines()
+	this.writer.Write(outcomeTracked, outcomeUpdated)
+	ACTUAL := this.inner.Lines()
 	this.So(ACTUAL, should.Resemble, []string{"OutcomeTrackedV1", "OutcomeTitleUpdatedV1"})
 }
 
 func (this *WriterFixture) TestWrite_ErrFromWriter_PANIC() {
-	this.writeErrs["OutcomeID"] = errGophers
-	ACTION := func() { this.repo.Write(outcomeTracked) }
+	this.writeErr = errGophers
+	ACTION := func() { this.writer.Write(outcomeTracked) }
 	this.So(recovered(ACTION), should.Wrap, ErrUnexpectedWriteError)
 }
 
 func (this *WriterFixture) TestWrite_ErrFromEncoder_PANIC() {
 	this.encodeErr = errGophers
-	ACTION := func() { this.repo.Write(outcomeTracked) }
+	ACTION := func() { this.writer.Write(outcomeTracked) }
 	this.So(recovered(ACTION), should.Wrap, ErrUnexpectedWriteError)
 }
 
 func (this *WriterFixture) TestWrite_ErrFromWriterClose_PANIC() {
-	this.closeErrs["OutcomeID"] = errGophers
-	ACTION := func() { this.repo.Write(outcomeTracked) }
+	this.closeErr = errGophers
+	ACTION := func() { this.writer.Write(outcomeTracked) }
 	this.So(recovered(ACTION), should.Wrap, ErrUnexpectedCloseError)
 }
 

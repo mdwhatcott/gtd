@@ -20,6 +20,7 @@ import (
 )
 
 func TestFixture(t *testing.T) {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	gunit.Run(new(Fixture), t)
 }
 
@@ -51,7 +52,7 @@ func (this *Fixture) Setup() {
 	this.task = NewTask(this.generateID)
 	this.task.clock = clock.Freeze(this.now)
 	this.task.log = this.log
-	this.Joyride = fake.NewJoyride()
+	this.Joyride = fake.NewJoyride(this.log)
 	this.runner = joyride.NewRunner(
 		joyride.WithStorageReader(this.Joyride),
 		joyride.WithStorageWriter(this.Joyride),

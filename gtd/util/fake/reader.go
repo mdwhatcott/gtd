@@ -1,16 +1,24 @@
 package fake
 
-import "strings"
+import (
+	"bytes"
+)
 
 type Reader struct {
-	data     *strings.Reader
+	data     *bytes.Buffer
 	ReadErr  error
 	CloseErr error
 	Closed   int
 }
 
 func NewReader(_data string) *Reader {
-	return &Reader{data: strings.NewReader(_data)}
+	THIS := new(Reader)
+	THIS.Initialize(_data)
+	return THIS
+}
+
+func (this *Reader) Initialize(_data string) {
+	this.data = bytes.NewBufferString(_data)
 }
 
 func (this *Reader) Read(_p []byte) (n_ int, err_ error) {
@@ -27,4 +35,8 @@ func (this *Reader) Read(_p []byte) (n_ int, err_ error) {
 func (this *Reader) Close() error {
 	this.Closed++
 	return this.CloseErr
+}
+
+func (this *Reader) String() string {
+	return this.data.String()
 }

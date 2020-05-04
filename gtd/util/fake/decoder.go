@@ -20,5 +20,11 @@ func NewDecoder(_reader io.Reader, _err error) *Decoder {
 func (this *Decoder) Decode() (interface{}, error) {
 	var N int
 	_, ERR := fmt.Fscanln(this.reader, &N)
-	return N, ERR
+	if N < 0 {
+		return N, nil
+	}
+	if ERR == nil {
+		return NewIdentifiable(N), nil
+	}
+	return nil, ERR
 }

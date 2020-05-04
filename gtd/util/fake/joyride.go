@@ -12,8 +12,11 @@ type Joyride struct {
 	reads  map[string][]interface{}
 }
 
-func NewJoyride() *Joyride {
-	return &Joyride{reads: make(map[string][]interface{})}
+func NewJoyride(log *logging.Logger) *Joyride {
+	return &Joyride{
+		log:   log,
+		reads: make(map[string][]interface{}),
+	}
 }
 
 func (this *Joyride) Write(_values ...interface{}) {
@@ -21,22 +24,13 @@ func (this *Joyride) Write(_values ...interface{}) {
 }
 
 func (this *Joyride) Read(_values ...interface{}) {
-	this.log.Println("Reading:", _values)
 	for _, VALUE := range _values {
 		this.log.Println("Reading value:", VALUE)
 		switch QUERY := VALUE.(type) {
 		case *storage.OutcomeEventStream:
 			this.log.Println("Reading outcome event stream...", QUERY.OutcomeID)
-			QUERY.Result.Stream = make(chan interface{})
-			go load(QUERY.Result.Stream, this.reads[QUERY.OutcomeID])
+			QUERY.Result.Events = this.reads[QUERY.OutcomeID]
 		}
-	}
-}
-
-func load(_stream chan interface{}, _events []interface{}) {
-	defer close(_stream)
-	for _, EVENT := range _events {
-		_stream <- EVENT
 	}
 }
 
