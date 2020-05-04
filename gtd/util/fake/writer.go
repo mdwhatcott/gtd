@@ -7,7 +7,7 @@ import (
 
 type Writer struct {
 	buffer   *bytes.Buffer
-	closed   int // TODO: unused!
+	closed   int
 	writeErr error
 	closeErr error
 }
@@ -35,4 +35,8 @@ func (this *Writer) Close() error {
 
 func (this *Writer) Lines() []string {
 	return strings.Split(strings.TrimSpace(this.buffer.String()), "\n")
+}
+
+func (this *Writer) CloseCount() int {
+	return this.closed
 }

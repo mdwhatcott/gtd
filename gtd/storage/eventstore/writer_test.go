@@ -51,24 +51,28 @@ func (this *WriterFixture) TestWrite_PersistsEncodedEventsToWriter() {
 	this.writer.Write(outcomeTracked, outcomeUpdated)
 	ACTUAL := this.inner.Lines()
 	this.So(ACTUAL, should.Resemble, []string{"OutcomeTrackedV1", "OutcomeTitleUpdatedV1"})
+	this.So(this.inner.CloseCount(), should.Equal, 2)
 }
 
 func (this *WriterFixture) TestWrite_ErrFromWriter_PANIC() {
 	this.writeErr = errGophers
 	ACTION := func() { this.writer.Write(outcomeTracked) }
 	this.So(recovered(ACTION), should.Wrap, ErrUnexpectedWriteError)
+	this.So(this.inner.CloseCount(), should.Equal, 1)
 }
 
 func (this *WriterFixture) TestWrite_ErrFromEncoder_PANIC() {
 	this.encodeErr = errGophers
 	ACTION := func() { this.writer.Write(outcomeTracked) }
 	this.So(recovered(ACTION), should.Wrap, ErrUnexpectedWriteError)
+	this.So(this.inner.CloseCount(), should.Equal, 1)
 }
 
 func (this *WriterFixture) TestWrite_ErrFromWriterClose_PANIC() {
 	this.closeErr = errGophers
 	ACTION := func() { this.writer.Write(outcomeTracked) }
 	this.So(recovered(ACTION), should.Wrap, ErrUnexpectedCloseError)
+	this.So(this.inner.CloseCount(), should.Equal, 1)
 }
 
 var (
