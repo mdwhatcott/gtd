@@ -18,6 +18,7 @@ import (
 
 func main() {
 	requirements := wireup.Requirements{
+
 		IDFunc: func() string { return uuid.New().String() },
 		Reader: eventstore.NewReader(reading, decoding),
 		Writer: eventstore.NewWriter(encoding, writing),
