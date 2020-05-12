@@ -19,32 +19,32 @@ type UpdateOutcomeDescription struct {
 	UpdatedDescription string
 	Result             Result
 }
-type DeleteOutcome struct { // todo: joyride
+type DeleteOutcome struct { // joyride
 	OutcomeID string
 	Result    Result
 }
-type DeclareOutcomeFixed struct { // todo: joyride
+type DeclareOutcomeFixed struct { // joyride
 	OutcomeID string
 	Result    Result
 }
-type DeclareOutcomeRealized struct { // todo: joyride
+type DeclareOutcomeRealized struct { // joyride
 	OutcomeID string
 	Result    Result
 }
-type DeclareOutcomeAbandoned struct { // todo: joyride
+type DeclareOutcomeAbandoned struct { // joyride
 	OutcomeID string
 	Reason    string
 	Result    Result
 }
-type DeclareOutcomeDeferred struct { // todo: joyride
+type DeclareOutcomeDeferred struct { // joyride
 	OutcomeID string
 	Result    Result
 }
-type DeclareOutcomeUncertain struct { // todo: joyride
+type DeclareOutcomeUncertain struct { // joyride
 	OutcomeID string
 	Result    Result
 }
-type TrackAction struct { // todo: joyride
+type TrackAction struct { // joyride
 	OutcomeID   string
 	Description string
 	Result      struct {
@@ -52,44 +52,44 @@ type TrackAction struct { // todo: joyride
 		ActionID string
 	}
 }
-type ReorderAction struct { // todo: joyride
+type ReorderAction struct { // joyride
 	OutcomeID string
 	ActionID  string
 	NewOrder  float64
 	Result    Result
 }
-type UpdateActionDescription struct { // todo: joyride
+type UpdateActionDescription struct { // joyride
 	OutcomeID      string
 	ActionID       string
 	NewDescription string
 	Result         Result
 }
-type MarkActionStatusLatent struct { // todo: joyride
+type MarkActionStatusLatent struct { // joyride
 	OutcomeID string
 	ActionID  string
 	Result    Result
 }
-type MarkActionStatusIncomplete struct { // todo: joyride
+type MarkActionStatusIncomplete struct { // joyride
 	OutcomeID string
 	ActionID  string
 	Result    Result
 }
-type MarkActionStatusComplete struct { // todo: joyride
+type MarkActionStatusComplete struct { // joyride
 	OutcomeID string
 	ActionID  string
 	Result    Result
 }
-type MarkActionStrategySequential struct { // todo: joyride
+type MarkActionStrategySequential struct { // joyride
 	OutcomeID string
 	ActionID  string
 	Result    Result
 }
-type MarkActionStrategyConcurrent struct { // todo: joyride
+type MarkActionStrategyConcurrent struct { // joyride
 	OutcomeID string
 	ActionID  string
 	Result    Result
 }
-type DeleteAction struct { // todo: joyride
+type DeleteAction struct { // joyride
 	OutcomeID string
 	ActionID  string
 	Result    Result
