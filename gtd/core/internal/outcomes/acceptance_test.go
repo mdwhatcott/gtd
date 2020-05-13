@@ -300,3 +300,23 @@ func (this *Fixture) TestUpdateOutcomeDescription_ContentUnchanged_ErrorReturned
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
+
+func (this *Fixture) TestDeleteOutcome_PublishedOutcomeDeleted() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			Timestamp: events.Time{},
+			OutcomeID: "1",
+			Title:     "title",
+		},
+	)
+	command := &commands.DeleteOutcome{OutcomeID: "1"}
+	this.handle(command)
+
+	this.So(command.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.OutcomeDeletedV1{
+			Timestamp: this.now,
+			OutcomeID: "1",
+		},
+	)
+}

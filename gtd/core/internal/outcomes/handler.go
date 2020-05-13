@@ -29,6 +29,8 @@ func (this *Handler) HandleMessage(_message interface{}) bool {
 		this.task.PrepareInstruction(MESSAGE, MESSAGE.OutcomeID)
 	case *commands.UpdateOutcomeDescription:
 		this.task.PrepareInstruction(MESSAGE, MESSAGE.OutcomeID)
+	case *commands.DeleteOutcome:
+		this.task.PrepareInstruction(MESSAGE, MESSAGE.OutcomeID)
 	default:
 		return false
 	}

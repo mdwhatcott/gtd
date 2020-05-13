@@ -80,6 +80,13 @@ func (this *Aggregate) UpdateOutcomeDescription(_description string) error {
 	})
 }
 
+func (this *Aggregate) DeleteOutcome() error {
+	return this.raise(events.OutcomeDeletedV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+	})
+}
+
 func (this *Aggregate) apply(_event interface{}) {
 	switch EVENT := _event.(type) {
 	case events.OutcomeTrackedV1:
