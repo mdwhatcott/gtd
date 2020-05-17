@@ -17,6 +17,7 @@ type Aggregate struct {
 	title       string
 	explanation string
 	description string
+	deleted     bool
 	results     []interface{}
 }
 
@@ -81,6 +82,13 @@ func (this *Aggregate) UpdateOutcomeDescription(_description string) error {
 }
 
 func (this *Aggregate) DeleteOutcome() error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	if this.deleted {
+		return core.ErrOutcomeUnchanged
+	}
+
 	return this.raise(events.OutcomeDeletedV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
@@ -98,6 +106,8 @@ func (this *Aggregate) apply(_event interface{}) {
 		this.explanation = EVENT.UpdatedExplanation
 	case events.OutcomeDescriptionUpdatedV1:
 		this.description = EVENT.UpdatedDescription
+	case events.OutcomeDeletedV1:
+		this.deleted = true
 	}
 }
 

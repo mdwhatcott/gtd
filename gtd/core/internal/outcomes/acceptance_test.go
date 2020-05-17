@@ -39,9 +39,14 @@ type Fixture struct {
 func (this *Fixture) AssertNoOutput() {
 	this.AssertOutput()
 }
-
 func (this *Fixture) AssertOutput(_expected ...interface{}) {
 	this.So(this.Writes, should.Resemble, _expected)
+}
+func (this *Fixture) assertTransferalOfResultOwnership() {
+	alreadyPUBLISHED := len(this.task.PendingWrites())
+	this.task.publishResults()
+	doublyPUBLISHED := len(this.task.PendingWrites()) - alreadyPUBLISHED
+	this.So(doublyPUBLISHED, should.Equal, 0)
 }
 
 func (this *Fixture) Setup() {
@@ -58,41 +63,25 @@ func (this *Fixture) Setup() {
 		joyride.WithStorageWriter(this.Joyride),
 	)
 }
-
 func (this *Fixture) Teardown() {
 	this.assertTransferalOfResultOwnership()
 }
-
-func (this *Fixture) enableLogging() {
-	this.log.SetOutput(this.Fixture)
-}
-
-func (this *Fixture) assertTransferalOfResultOwnership() {
-	alreadyPUBLISHED := len(this.task.PendingWrites())
-	this.task.publishResults()
-	doublyPUBLISHED := len(this.task.PendingWrites()) - alreadyPUBLISHED
-	this.So(doublyPUBLISHED, should.Equal, 0)
-}
-
 func (this *Fixture) handle(command interface{}) {
 	this.handler = NewHandler(this.runner, this.task)
 	this.handler.Handle(command)
 }
-
 func (this *Fixture) generateID() string {
 	this.id++
 	return fmt.Sprint(this.id)
 }
-
-func (this *Fixture) assertEventOutput(expected ...interface{}) {
-	this.So(this.task.PendingWrites(), should.Resemble, expected)
+func (this *Fixture) enableLogging() {
+	this.log.SetOutput(this.Fixture)
 }
 
 func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {
 	this.So(func() { this.handle(42) }, should.PanicWith, joyride.ErrUnknownType)
 	this.So(func() { this.handle(true) }, should.PanicWith, joyride.ErrUnknownType)
 }
-
 func (this *Fixture) TestTrackOutcome_PublishOutcomeTrackedAndFixed_ReturnOutcomeID() {
 	COMMAND := &commands.TrackOutcome{Title: "title"}
 
@@ -111,7 +100,6 @@ func (this *Fixture) TestTrackOutcome_PublishOutcomeTrackedAndFixed_ReturnOutcom
 		},
 	)
 }
-
 func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",
@@ -133,7 +121,6 @@ func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 		},
 	)
 }
-
 func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	COMMAND := &commands.UpdateOutcomeTitle{
@@ -146,7 +133,6 @@ func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
-
 func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceCreation_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
@@ -164,7 +150,6 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceCreation_ErrorR
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
-
 func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceLastUpdate_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
@@ -186,7 +171,6 @@ func (this *Fixture) TestUpdateOutcomeTitle_ContentUnchangedSinceLastUpdate_Erro
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
-
 func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdated() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",
@@ -208,7 +192,6 @@ func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdat
 		},
 	)
 }
-
 func (this *Fixture) TestUpdateOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	COMMAND := &commands.UpdateOutcomeExplanation{
@@ -221,7 +204,6 @@ func (this *Fixture) TestUpdateOutcomeExplanation_OutcomeNotFound_ErrorReturned(
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
-
 func (this *Fixture) TestUpdateOutcomeExplanation_ContentUnchanged_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
@@ -243,7 +225,6 @@ func (this *Fixture) TestUpdateOutcomeExplanation_ContentUnchanged_ErrorReturned
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
-
 func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdated() {
 	this.PrepareReadResults("1", events.OutcomeTrackedV1{
 		OutcomeID: "1",
@@ -265,7 +246,6 @@ func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdat
 		},
 	)
 }
-
 func (this *Fixture) TestUpdateOutcomeDescription_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1", nil)
 	COMMAND := &commands.UpdateOutcomeDescription{
@@ -278,7 +258,6 @@ func (this *Fixture) TestUpdateOutcomeDescription_OutcomeNotFound_ErrorReturned(
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
-
 func (this *Fixture) TestUpdateOutcomeDescription_ContentUnchanged_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
@@ -300,7 +279,6 @@ func (this *Fixture) TestUpdateOutcomeDescription_ContentUnchanged_ErrorReturned
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
-
 func (this *Fixture) TestDeleteOutcome_PublishedOutcomeDeleted() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
@@ -309,14 +287,41 @@ func (this *Fixture) TestDeleteOutcome_PublishedOutcomeDeleted() {
 			Title:     "title",
 		},
 	)
-	command := &commands.DeleteOutcome{OutcomeID: "1"}
-	this.handle(command)
+	COMMAND := &commands.DeleteOutcome{OutcomeID: "1"}
+	this.handle(COMMAND)
 
-	this.So(command.Result.Error, should.BeNil)
+	this.So(COMMAND.Result.Error, should.BeNil)
 	this.AssertOutput(
 		events.OutcomeDeletedV1{
 			Timestamp: this.now,
 			OutcomeID: "1",
 		},
 	)
+}
+func (this *Fixture) TestDeleteOutcome_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1", nil)
+	COMMAND := &commands.DeleteOutcome{OutcomeID: "1"}
+
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeleteOutcome_AlreadyDeleted_DoNothing() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeleteOutcome{OutcomeID: "1"}
+
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
 }

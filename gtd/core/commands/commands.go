@@ -19,7 +19,7 @@ type UpdateOutcomeDescription struct {
 	UpdatedDescription string
 	Result             Result
 }
-type DeleteOutcome struct { // joyride
+type DeleteOutcome struct {
 	OutcomeID string
 	Result    Result
 }

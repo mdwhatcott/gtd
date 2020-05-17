@@ -40,6 +40,14 @@ func (this *Task) aggregate(_id string) *Aggregate {
 	return AGGREGATE
 }
 
+func (this *Task) PrepareToTrackOutcome(_command *commands.TrackOutcome) {
+	this.instructions = append(this.instructions, _command)
+}
+
+func (this *Task) PrepareInstruction(_instruction interface{}, _id string) {
+	this.instructions = append(this.instructions, _instruction)
+	this.registerOutcomeEventStreamQuery(_id)
+}
 func (this *Task) registerOutcomeEventStreamQuery(_id string) {
 	QUERY, FOUND := this.queries[_id]
 	if FOUND {
@@ -48,15 +56,6 @@ func (this *Task) registerOutcomeEventStreamQuery(_id string) {
 	QUERY = &storage.OutcomeEventStream{OutcomeID: _id}
 	this.queries[_id] = QUERY
 	this.AddRequiredReads(QUERY)
-}
-
-func (this *Task) PrepareToTrackOutcome(_command *commands.TrackOutcome) {
-	this.instructions = append(this.instructions, _command)
-}
-
-func (this *Task) PrepareInstruction(_instruction interface{}, _id string) {
-	this.instructions = append(this.instructions, _instruction)
-	this.registerOutcomeEventStreamQuery(_id)
 }
 
 func (this *Task) Execute() joyride.TaskResult {
