@@ -307,7 +307,7 @@ func (this *Fixture) TestDeleteOutcome_OutcomeNotFound_ErrorReturned() {
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
-func (this *Fixture) TestDeleteOutcome_AlreadyDeleted_DoNothing() {
+func (this *Fixture) TestDeleteOutcome_AlreadyDeleted_ErrorReturned() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
 			OutcomeID: "1",
