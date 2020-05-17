@@ -34,8 +34,8 @@ func (this *Writer) persist(_root storage.Identifiable) {
 	WRITER := this.writer()
 	defer this.close(WRITER)
 
-	encoder := this.encoder(WRITER)
-	ERR := encoder.Encode(_root)
+	ENCODER := this.encoder(WRITER)
+	ERR := ENCODER.Encode(_root)
 	if ERR != nil {
 		panic(errors.Wrap(ErrUnexpectedWriteError, ERR))
 	}
