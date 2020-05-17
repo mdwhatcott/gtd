@@ -35,7 +35,6 @@ type OutcomeRealizedV1 struct {
 type OutcomeAbandonedV1 struct {
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
-	Reason    string `json:"reason"`
 }
 type OutcomeDeferredV1 struct {
 	Timestamp Time   `json:"timestamp"`

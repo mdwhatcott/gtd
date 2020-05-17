@@ -33,7 +33,6 @@ type DeclareOutcomeRealized struct { // joyride
 }
 type DeclareOutcomeAbandoned struct { // joyride
 	OutcomeID string
-	Reason    string
 	Result    Result
 }
 type DeclareOutcomeDeferred struct { // joyride
