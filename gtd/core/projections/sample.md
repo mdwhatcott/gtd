@@ -5,17 +5,17 @@
 
 ## Actions:
 
--  [ ] do this anytime @home                                            `0x520b1fab`
--  [ ] ALSO DO THIS @COMPUTER ANYTIME                                   `0xd2e4d9b9`
--  [?] I'm not sure if this will be necessary or not, best wait and see `0x612459b6`
-1. [x] this should happen before any subsequent numbered steps          `0x76ca05c3`
-1. [ ] **this can't happen until after all previous numbered steps**    `0x5dbb4aa9`
+-  [ ] `520b1fab` do this anytime @home
+-  [ ] `d2e4d9b9` ALSO DO THIS @COMPUTER ANYTIME
+-  [?] `612459b6` I'm not sure if this will be necessary or not, best wait and see
+1. [x] `76ca05c3` this should happen before any subsequent numbered steps
+1. [ ] `5dbb4aa9` **this can't happen until after all previous numbered steps
 
 ## Support Materials
 
 ### Thoughts about action format:
 
-The ID value (`0x520b1fab`) at the end of the line is the first segment of the UUID serving as the action id.
+The ID value (`520b1fab`) immediately following the brackets is the first segment of the UUID serving as the action id.
 
 I'd also like ways to convey urgency and importance in actions:
 
