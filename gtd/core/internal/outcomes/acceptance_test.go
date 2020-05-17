@@ -282,7 +282,6 @@ func (this *Fixture) TestUpdateOutcomeDescription_ContentUnchanged_ErrorReturned
 func (this *Fixture) TestDeleteOutcome_PublishedOutcomeDeleted() {
 	this.PrepareReadResults("1",
 		events.OutcomeTrackedV1{
-			Timestamp: events.Time{},
 			OutcomeID: "1",
 			Title:     "title",
 		},
