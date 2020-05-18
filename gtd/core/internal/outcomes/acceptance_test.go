@@ -324,3 +324,21 @@ func (this *Fixture) TestDeleteOutcome_AlreadyDeleted_ErrorReturned() {
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
+func (this *Fixture) TestDeclareOutcomeRealized_PublishedOutcomeRealized() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+	)
+	COMMAND := &commands.DeclareOutcomeRealized{OutcomeID: "1"}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.OutcomeRealizedV1{
+			Timestamp: this.now,
+			OutcomeID: "1",
+		},
+	)
+}

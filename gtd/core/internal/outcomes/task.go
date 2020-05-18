@@ -84,6 +84,8 @@ func (this *Task) processInstructions() {
 			this.updateOutcomeDescription(COMMAND)
 		case *commands.DeleteOutcome:
 			this.deleteOutcome(COMMAND)
+		case *commands.DeclareOutcomeRealized:
+			this.declareOutcomeRealized(COMMAND)
 		}
 	}
 }
@@ -113,6 +115,11 @@ func (this *Task) updateOutcomeDescription(_command *commands.UpdateOutcomeDescr
 func (this *Task) deleteOutcome(_command *commands.DeleteOutcome) {
 	AGGREGATE := this.aggregate(_command.OutcomeID)
 	_command.Result.Error = AGGREGATE.DeleteOutcome()
+}
+
+func (this *Task) declareOutcomeRealized(_command *commands.DeclareOutcomeRealized) {
+	AGGREGATE := this.aggregate(_command.OutcomeID)
+	_command.Result.Error = AGGREGATE.DeclareOutcomeRealized()
 }
 
 func (this *Task) publishResults() {

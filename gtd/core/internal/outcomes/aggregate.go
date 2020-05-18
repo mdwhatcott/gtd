@@ -95,6 +95,13 @@ func (this *Aggregate) DeleteOutcome() error {
 	})
 }
 
+func (this *Aggregate) DeclareOutcomeRealized() error {
+	return this.raise(events.OutcomeRealizedV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+	})
+}
+
 func (this *Aggregate) apply(_event interface{}) {
 	switch EVENT := _event.(type) {
 	case events.OutcomeTrackedV1:
