@@ -23,7 +23,7 @@ type DeleteOutcome struct {
 	OutcomeID string
 	Result    Result
 }
-type DeclareOutcomeFixed struct { // joyride
+type DeclareOutcomeFixed struct {
 	OutcomeID string
 	Result    Result
 }

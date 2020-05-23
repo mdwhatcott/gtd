@@ -17,6 +17,7 @@ type Aggregate struct {
 	title       string
 	explanation string
 	description string
+	status      string
 	deleted     bool
 	results     []interface{}
 }
@@ -38,7 +39,6 @@ func (this *Aggregate) TrackOutcome(_outcomeID, _title string) error {
 		},
 	)
 }
-
 func (this *Aggregate) UpdateOutcomeTitle(_title string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
@@ -52,7 +52,6 @@ func (this *Aggregate) UpdateOutcomeTitle(_title string) error {
 		UpdatedTitle: _title,
 	})
 }
-
 func (this *Aggregate) UpdateOutcomeExplanation(_explanation string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
@@ -66,7 +65,6 @@ func (this *Aggregate) UpdateOutcomeExplanation(_explanation string) error {
 		UpdatedExplanation: _explanation,
 	})
 }
-
 func (this *Aggregate) UpdateOutcomeDescription(_description string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
@@ -80,7 +78,6 @@ func (this *Aggregate) UpdateOutcomeDescription(_description string) error {
 		UpdatedDescription: _description,
 	})
 }
-
 func (this *Aggregate) DeleteOutcome() error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
@@ -94,12 +91,22 @@ func (this *Aggregate) DeleteOutcome() error {
 		OutcomeID: this.id,
 	})
 }
-
 func (this *Aggregate) DeclareOutcomeRealized() error {
 	return this.raise(events.OutcomeRealizedV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
 	})
+}
+func (this *Aggregate) DeclareOutcomeFixed() error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+
+	if this.status == "FIXED" {
+		return core.ErrOutcomeUnchanged
+	}
+
+	return nil
 }
 
 func (this *Aggregate) apply(_event interface{}) {
@@ -107,6 +114,8 @@ func (this *Aggregate) apply(_event interface{}) {
 	case events.OutcomeTrackedV1:
 		this.id = EVENT.OutcomeID
 		this.title = EVENT.Title
+	case events.OutcomeFixedV1:
+		this.status = "FIXED"
 	case events.OutcomeTitleUpdatedV1:
 		this.title = EVENT.UpdatedTitle
 	case events.OutcomeExplanationUpdatedV1:

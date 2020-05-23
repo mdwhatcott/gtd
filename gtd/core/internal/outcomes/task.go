@@ -44,9 +44,9 @@ func (this *Task) PrepareToTrackOutcome(_command *commands.TrackOutcome) {
 	this.instructions = append(this.instructions, _command)
 }
 
-func (this *Task) PrepareInstruction(_instruction interface{}, _id string) {
+func (this *Task) PrepareInstruction(_instruction commands.Identifiable) {
 	this.instructions = append(this.instructions, _instruction)
-	this.registerOutcomeEventStreamQuery(_id)
+	this.registerOutcomeEventStreamQuery(_instruction.ID())
 }
 func (this *Task) registerOutcomeEventStreamQuery(_id string) {
 	QUERY, FOUND := this.queries[_id]
@@ -86,6 +86,8 @@ func (this *Task) processInstructions() {
 			this.deleteOutcome(COMMAND)
 		case *commands.DeclareOutcomeRealized:
 			this.declareOutcomeRealized(COMMAND)
+		case *commands.DeclareOutcomeFixed:
+			this.declareOutcomeFixed(COMMAND)
 		}
 	}
 }
@@ -120,6 +122,11 @@ func (this *Task) deleteOutcome(_command *commands.DeleteOutcome) {
 func (this *Task) declareOutcomeRealized(_command *commands.DeclareOutcomeRealized) {
 	AGGREGATE := this.aggregate(_command.OutcomeID)
 	_command.Result.Error = AGGREGATE.DeclareOutcomeRealized()
+}
+
+func (this *Task) declareOutcomeFixed(_command *commands.DeclareOutcomeFixed) {
+	AGGREGATE := this.aggregate(_command.OutcomeID)
+	_command.Result.Error = AGGREGATE.DeclareOutcomeFixed()
 }
 
 func (this *Task) publishResults() {
