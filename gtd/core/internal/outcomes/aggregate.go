@@ -92,6 +92,12 @@ func (this *Aggregate) DeleteOutcome() error {
 	})
 }
 func (this *Aggregate) DeclareOutcomeRealized() error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	if this.status == "REALIZED" {
+		return core.ErrOutcomeUnchanged
+	}
 	return this.raise(events.OutcomeRealizedV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
@@ -106,7 +112,10 @@ func (this *Aggregate) DeclareOutcomeFixed() error {
 		return core.ErrOutcomeUnchanged
 	}
 
-	return nil
+	return this.raise(events.OutcomeFixedV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+	})
 }
 
 func (this *Aggregate) apply(_event interface{}) {
@@ -116,6 +125,8 @@ func (this *Aggregate) apply(_event interface{}) {
 		this.title = EVENT.Title
 	case events.OutcomeFixedV1:
 		this.status = "FIXED"
+	case events.OutcomeRealizedV1:
+		this.status = "REALIZED"
 	case events.OutcomeTitleUpdatedV1:
 		this.title = EVENT.UpdatedTitle
 	case events.OutcomeExplanationUpdatedV1:
@@ -126,7 +137,6 @@ func (this *Aggregate) apply(_event interface{}) {
 		this.deleted = true
 	}
 }
-
 func (this *Aggregate) raise(_events ...interface{}) error {
 	for _, EVENT := range _events {
 		this.results = append(this.results, EVENT)
@@ -134,7 +144,6 @@ func (this *Aggregate) raise(_events ...interface{}) error {
 	}
 	return nil
 }
-
 func (this *Aggregate) Replay(events ...interface{}) {
 	this.log.Println("stream:", len(events))
 	for _, EVENT := range events {
@@ -142,7 +151,6 @@ func (this *Aggregate) Replay(events ...interface{}) {
 		this.apply(EVENT)
 	}
 }
-
 func (this *Aggregate) TransferResults() []interface{} {
 	RESULTS := this.results
 	this.results = nil
