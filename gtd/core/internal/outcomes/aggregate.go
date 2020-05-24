@@ -10,8 +10,8 @@ import (
 )
 
 type Aggregate struct {
-	now time.Time
 	log *logging.Logger
+	now time.Time
 
 	id          string
 	title       string
@@ -19,11 +19,15 @@ type Aggregate struct {
 	description string
 	status      string
 	deleted     bool
-	results     []interface{}
+
+	results []interface{}
 }
 
 func NewAggregate(_now time.Time, _log *logging.Logger) *Aggregate {
-	return &Aggregate{now: _now, log: _log}
+	return &Aggregate{
+		now: _now,
+		log: _log,
+	}
 }
 
 func (this *Aggregate) TrackOutcome(_outcomeID, _title string) error {
@@ -85,7 +89,6 @@ func (this *Aggregate) DeleteOutcome() error {
 	if this.deleted {
 		return core.ErrOutcomeUnchanged
 	}
-
 	return this.raise(events.OutcomeDeletedV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
@@ -107,11 +110,9 @@ func (this *Aggregate) DeclareOutcomeFixed() error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-
 	if this.status == "FIXED" {
 		return core.ErrOutcomeUnchanged
 	}
-
 	return this.raise(events.OutcomeFixedV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
@@ -120,19 +121,26 @@ func (this *Aggregate) DeclareOutcomeFixed() error {
 
 func (this *Aggregate) apply(_event interface{}) {
 	switch EVENT := _event.(type) {
+
 	case events.OutcomeTrackedV1:
 		this.id = EVENT.OutcomeID
 		this.title = EVENT.Title
+
 	case events.OutcomeFixedV1:
 		this.status = "FIXED"
+
 	case events.OutcomeRealizedV1:
 		this.status = "REALIZED"
+
 	case events.OutcomeTitleUpdatedV1:
 		this.title = EVENT.UpdatedTitle
+
 	case events.OutcomeExplanationUpdatedV1:
 		this.explanation = EVENT.UpdatedExplanation
+
 	case events.OutcomeDescriptionUpdatedV1:
 		this.description = EVENT.UpdatedDescription
+
 	case events.OutcomeDeletedV1:
 		this.deleted = true
 	}

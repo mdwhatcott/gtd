@@ -34,16 +34,17 @@ func NewTask(_nextID core.IDFunc) *Task {
 func (this *Task) saveInstruction(_command interface{}) {
 	this.instructions = append(this.instructions, _command)
 }
-func (this *Task) get(_id commands.Identifiable) *Aggregate {
-	return this.getByID(_id.ID())
-}
-func (this *Task) getByID(_id string) *Aggregate {
-	AGGREGATE, FOUND := this.aggregates[_id]
-	if !FOUND {
-		AGGREGATE = NewAggregate(this.clock.UTCNow(), this.log)
-		this.aggregates[_id] = AGGREGATE
+func (this *Task) aggregate(_id commands.Identifiable) *Aggregate {
+	AGGREGATE, FOUND := this.aggregates[_id.ID()]
+	if FOUND {
+		return AGGREGATE
 	}
-	return AGGREGATE
+	return this.createAggregate(_id.ID())
+}
+func (this *Task) createAggregate(_id string) (aggregate_ *Aggregate) {
+	aggregate_ = NewAggregate(this.clock.UTCNow(), this.log)
+	this.aggregates[_id] = aggregate_
+	return aggregate_
 }
 
 func (this *Task) PrepareToTrackOutcome(_command *commands.TrackOutcome) {
@@ -70,8 +71,8 @@ func (this *Task) Execute() joyride.TaskResult {
 	return this
 }
 func (this *Task) replayEvents() {
-	for ID, QUERY := range this.queries {
-		this.getByID(ID).Replay(QUERY.Result.Events...)
+	for _, QUERY := range this.queries {
+		this.aggregate(QUERY).Replay(QUERY.Result.Events...)
 	}
 }
 func (this *Task) processInstructions() {
@@ -80,27 +81,26 @@ func (this *Task) processInstructions() {
 
 		case *commands.TrackOutcome:
 			ID := this.nextID()
-			AGGREGATE := this.getByID(ID)
 			COMMAND.Result.ID = ID
-			COMMAND.Result.Error = AGGREGATE.TrackOutcome(ID, COMMAND.Title)
+			COMMAND.Result.Error = this.createAggregate(ID).TrackOutcome(ID, COMMAND.Title)
 
 		case *commands.UpdateOutcomeTitle:
-			COMMAND.Result.Error = this.get(COMMAND).UpdateOutcomeTitle(COMMAND.UpdatedTitle)
+			COMMAND.Result.Error = this.aggregate(COMMAND).UpdateOutcomeTitle(COMMAND.UpdatedTitle)
 
 		case *commands.UpdateOutcomeExplanation:
-			COMMAND.Result.Error = this.get(COMMAND).UpdateOutcomeExplanation(COMMAND.UpdatedExplanation)
+			COMMAND.Result.Error = this.aggregate(COMMAND).UpdateOutcomeExplanation(COMMAND.UpdatedExplanation)
 
 		case *commands.UpdateOutcomeDescription:
-			COMMAND.Result.Error = this.get(COMMAND).UpdateOutcomeDescription(COMMAND.UpdatedDescription)
+			COMMAND.Result.Error = this.aggregate(COMMAND).UpdateOutcomeDescription(COMMAND.UpdatedDescription)
 
 		case *commands.DeleteOutcome:
-			COMMAND.Result.Error = this.get(COMMAND).DeleteOutcome()
+			COMMAND.Result.Error = this.aggregate(COMMAND).DeleteOutcome()
 
 		case *commands.DeclareOutcomeRealized:
-			COMMAND.Result.Error = this.get(COMMAND).DeclareOutcomeRealized()
+			COMMAND.Result.Error = this.aggregate(COMMAND).DeclareOutcomeRealized()
 
 		case *commands.DeclareOutcomeFixed:
-			COMMAND.Result.Error = this.get(COMMAND).DeclareOutcomeFixed()
+			COMMAND.Result.Error = this.aggregate(COMMAND).DeclareOutcomeFixed()
 		}
 	}
 }

@@ -8,6 +8,10 @@ type OutcomeEventStream struct {
 	}
 }
 
+func (this OutcomeEventStream) ID() string {
+	return this.OutcomeID
+}
+
 type EventStream struct {
 	Result struct {
 		Events []interface{}
