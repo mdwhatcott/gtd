@@ -27,7 +27,7 @@ type DeclareOutcomeFixed struct {
 	OutcomeID string
 	Result    Result
 }
-type DeclareOutcomeRealized struct { // joyride
+type DeclareOutcomeRealized struct {
 	OutcomeID string
 	Result    Result
 }

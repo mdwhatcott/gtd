@@ -31,7 +31,13 @@ func NewTask(_nextID core.IDFunc) *Task {
 	}
 }
 
-func (this *Task) aggregate(_id string) *Aggregate {
+func (this *Task) saveInstruction(_command interface{}) {
+	this.instructions = append(this.instructions, _command)
+}
+func (this *Task) get(_id commands.Identifiable) *Aggregate {
+	return this.getByID(_id.ID())
+}
+func (this *Task) getByID(_id string) *Aggregate {
 	AGGREGATE, FOUND := this.aggregates[_id]
 	if !FOUND {
 		AGGREGATE = NewAggregate(this.clock.UTCNow(), this.log)
@@ -41,11 +47,10 @@ func (this *Task) aggregate(_id string) *Aggregate {
 }
 
 func (this *Task) PrepareToTrackOutcome(_command *commands.TrackOutcome) {
-	this.instructions = append(this.instructions, _command)
+	this.saveInstruction(_command)
 }
-
 func (this *Task) PrepareInstruction(_instruction commands.Identifiable) {
-	this.instructions = append(this.instructions, _instruction)
+	this.saveInstruction(_instruction)
 	this.registerOutcomeEventStreamQuery(_instruction.ID())
 }
 func (this *Task) registerOutcomeEventStreamQuery(_id string) {
@@ -64,71 +69,41 @@ func (this *Task) Execute() joyride.TaskResult {
 	this.publishResults()
 	return this
 }
-
 func (this *Task) replayEvents() {
 	for ID, QUERY := range this.queries {
-		this.aggregate(ID).Replay(QUERY.Result.Events...)
+		this.getByID(ID).Replay(QUERY.Result.Events...)
 	}
 }
-
 func (this *Task) processInstructions() {
 	for _, MESSAGE := range this.instructions {
 		switch COMMAND := MESSAGE.(type) {
+
 		case *commands.TrackOutcome:
-			this.trackOutcome(COMMAND)
+			ID := this.nextID()
+			AGGREGATE := this.getByID(ID)
+			COMMAND.Result.ID = ID
+			COMMAND.Result.Error = AGGREGATE.TrackOutcome(ID, COMMAND.Title)
+
 		case *commands.UpdateOutcomeTitle:
-			this.updateOutcomeTitle(COMMAND)
+			COMMAND.Result.Error = this.get(COMMAND).UpdateOutcomeTitle(COMMAND.UpdatedTitle)
+
 		case *commands.UpdateOutcomeExplanation:
-			this.updateOutcomeExplanation(COMMAND)
+			COMMAND.Result.Error = this.get(COMMAND).UpdateOutcomeExplanation(COMMAND.UpdatedExplanation)
+
 		case *commands.UpdateOutcomeDescription:
-			this.updateOutcomeDescription(COMMAND)
+			COMMAND.Result.Error = this.get(COMMAND).UpdateOutcomeDescription(COMMAND.UpdatedDescription)
+
 		case *commands.DeleteOutcome:
-			this.deleteOutcome(COMMAND)
+			COMMAND.Result.Error = this.get(COMMAND).DeleteOutcome()
+
 		case *commands.DeclareOutcomeRealized:
-			this.declareOutcomeRealized(COMMAND)
+			COMMAND.Result.Error = this.get(COMMAND).DeclareOutcomeRealized()
+
 		case *commands.DeclareOutcomeFixed:
-			this.declareOutcomeFixed(COMMAND)
+			COMMAND.Result.Error = this.get(COMMAND).DeclareOutcomeFixed()
 		}
 	}
 }
-
-func (this *Task) trackOutcome(_command *commands.TrackOutcome) {
-	ID := this.nextID()
-	AGGREGATE := this.aggregate(ID)
-	_command.Result.ID = ID
-	_command.Result.Error = AGGREGATE.TrackOutcome(ID, _command.Title)
-}
-
-func (this *Task) updateOutcomeTitle(_command *commands.UpdateOutcomeTitle) {
-	AGGREGATE := this.aggregate(_command.OutcomeID)
-	_command.Result.Error = AGGREGATE.UpdateOutcomeTitle(_command.UpdatedTitle)
-}
-
-func (this *Task) updateOutcomeExplanation(_command *commands.UpdateOutcomeExplanation) {
-	AGGREGATE := this.aggregate(_command.OutcomeID)
-	_command.Result.Error = AGGREGATE.UpdateOutcomeExplanation(_command.UpdatedExplanation)
-}
-
-func (this *Task) updateOutcomeDescription(_command *commands.UpdateOutcomeDescription) {
-	AGGREGATE := this.aggregate(_command.OutcomeID)
-	_command.Result.Error = AGGREGATE.UpdateOutcomeDescription(_command.UpdatedDescription)
-}
-
-func (this *Task) deleteOutcome(_command *commands.DeleteOutcome) {
-	AGGREGATE := this.aggregate(_command.OutcomeID)
-	_command.Result.Error = AGGREGATE.DeleteOutcome()
-}
-
-func (this *Task) declareOutcomeRealized(_command *commands.DeclareOutcomeRealized) {
-	AGGREGATE := this.aggregate(_command.OutcomeID)
-	_command.Result.Error = AGGREGATE.DeclareOutcomeRealized()
-}
-
-func (this *Task) declareOutcomeFixed(_command *commands.DeclareOutcomeFixed) {
-	AGGREGATE := this.aggregate(_command.OutcomeID)
-	_command.Result.Error = AGGREGATE.DeclareOutcomeFixed()
-}
-
 func (this *Task) publishResults() {
 	for _, AGGREGATE := range this.aggregates {
 		this.AddPendingWrites(AGGREGATE.TransferResults()...)
