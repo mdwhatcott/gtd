@@ -31,11 +31,11 @@ type DeclareOutcomeRealized struct {
 	OutcomeID string
 	Result    Result
 }
-type DeclareOutcomeAbandoned struct { // joyride
+type DeclareOutcomeAbandoned struct {
 	OutcomeID string
 	Result    Result
 }
-type DeclareOutcomeDeferred struct { // joyride
+type DeclareOutcomeDeferred struct {
 	OutcomeID string
 	Result    Result
 }

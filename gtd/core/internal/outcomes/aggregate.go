@@ -130,6 +130,18 @@ func (this *Aggregate) DeclareOutcomeAbandoned() error {
 		OutcomeID: this.id,
 	})
 }
+func (this *Aggregate) DeclareOutcomeDeferred() error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	if this.status == "DEFERRED" {
+		return core.ErrOutcomeUnchanged
+	}
+	return this.raise(events.OutcomeDeferredV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+	})
+}
 
 func (this *Aggregate) apply(_event interface{}) {
 	switch EVENT := _event.(type) {
@@ -146,6 +158,9 @@ func (this *Aggregate) apply(_event interface{}) {
 
 	case events.OutcomeAbandonedV1:
 		this.status = "ABANDONED"
+
+	case events.OutcomeDeferredV1:
+		this.status = "DEFERRED"
 
 	case events.OutcomeTitleUpdatedV1:
 		this.title = EVENT.UpdatedTitle

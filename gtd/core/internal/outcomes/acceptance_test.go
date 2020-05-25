@@ -468,3 +468,50 @@ func (this *Fixture) TestDeclareOutcomeAbandoned_OutcomeNotFound_ErrorReturned()
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
+func (this *Fixture) TestDeclareOutcomeDeferred_PublishedOutcomeDeferred() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+	)
+	COMMAND := &commands.DeclareOutcomeDeferred{OutcomeID: "1"}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.OutcomeDeferredV1{
+			Timestamp: this.now,
+			OutcomeID: "1",
+		},
+	)
+}
+func (this *Fixture) TestDeclareOutcomeDeferred_AlreadyDeferred_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeferredV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeclareOutcomeDeferred{OutcomeID: "1"}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeclareOutcomeDeferred_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeDeferredV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeclareOutcomeDeferred{OutcomeID: "1"}
+	this.handle(COMMAND)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
