@@ -21,7 +21,7 @@ func (this DeclareOutcomeAbandoned) ID() string      { return this.OutcomeID }
 func (this DeclareOutcomeDeferred) ID() string       { return this.OutcomeID }
 func (this DeclareOutcomeUncertain) ID() string      { return this.OutcomeID }
 func (this TrackAction) ID() string                  { return this.OutcomeID }
-func (this ReorderAction) ID() string                { return this.OutcomeID }
+func (this ChangeActionDisplayOrder) ID() string     { return this.OutcomeID }
 func (this UpdateActionDescription) ID() string      { return this.OutcomeID }
 func (this MarkActionStatusLatent) ID() string       { return this.OutcomeID }
 func (this MarkActionStatusIncomplete) ID() string   { return this.OutcomeID }

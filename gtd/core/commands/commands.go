@@ -48,17 +48,17 @@ type TrackAction struct { // joyride
 	Description string
 	Result      CreateResult
 }
-type ReorderAction struct { // joyride
-	OutcomeID string
-	ActionID  string
-	NewOrder  float64
-	Result    Result
-}
 type UpdateActionDescription struct { // joyride
 	OutcomeID      string
 	ActionID       string
 	NewDescription string
 	Result         Result
+}
+type ChangeActionDisplayOrder struct { // joyride
+	OutcomeID string
+	ActionID  string
+	NewOrder  float64
+	Result    Result
 }
 type MarkActionStatusLatent struct { // joyride
 	OutcomeID string

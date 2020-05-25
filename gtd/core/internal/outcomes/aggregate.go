@@ -30,6 +30,61 @@ func NewAggregate(_now time.Time, _log *logging.Logger) *Aggregate {
 	}
 }
 
+func (this *Aggregate) TransferResults() []interface{} {
+	RESULTS := this.results
+	this.results = nil
+	return RESULTS
+}
+func (this *Aggregate) raise(_events ...interface{}) error {
+	for _, EVENT := range _events {
+		this.results = append(this.results, EVENT)
+		this.apply(EVENT)
+	}
+	return nil
+}
+func (this *Aggregate) Replay(events ...interface{}) {
+	this.log.Println("stream:", len(events))
+	for _, EVENT := range events {
+		this.log.Println("applying event:", EVENT)
+		this.apply(EVENT)
+	}
+}
+func (this *Aggregate) apply(_event interface{}) {
+	switch EVENT := _event.(type) {
+
+	case events.OutcomeTrackedV1:
+		this.id = EVENT.OutcomeID
+		this.title = EVENT.Title
+
+	case events.OutcomeFixedV1:
+		this.status = "FIXED"
+
+	case events.OutcomeRealizedV1:
+		this.status = "REALIZED"
+
+	case events.OutcomeAbandonedV1:
+		this.status = "ABANDONED"
+
+	case events.OutcomeDeferredV1:
+		this.status = "DEFERRED"
+
+	case events.OutcomeUncertainV1:
+		this.status = "UNCERTAIN"
+
+	case events.OutcomeTitleUpdatedV1:
+		this.title = EVENT.UpdatedTitle
+
+	case events.OutcomeExplanationUpdatedV1:
+		this.explanation = EVENT.UpdatedExplanation
+
+	case events.OutcomeDescriptionUpdatedV1:
+		this.description = EVENT.UpdatedDescription
+
+	case events.OutcomeDeletedV1:
+		this.deleted = true
+	}
+}
+
 func (this *Aggregate) TrackOutcome(_outcomeID, _title string) error {
 	return this.raise(
 		events.OutcomeTrackedV1{
@@ -153,59 +208,4 @@ func (this *Aggregate) DeclareOutcomeUncertain() error {
 		Timestamp: this.now,
 		OutcomeID: this.id,
 	})
-}
-
-func (this *Aggregate) apply(_event interface{}) {
-	switch EVENT := _event.(type) {
-
-	case events.OutcomeTrackedV1:
-		this.id = EVENT.OutcomeID
-		this.title = EVENT.Title
-
-	case events.OutcomeFixedV1:
-		this.status = "FIXED"
-
-	case events.OutcomeRealizedV1:
-		this.status = "REALIZED"
-
-	case events.OutcomeAbandonedV1:
-		this.status = "ABANDONED"
-
-	case events.OutcomeDeferredV1:
-		this.status = "DEFERRED"
-
-	case events.OutcomeUncertainV1:
-		this.status = "UNCERTAIN"
-
-	case events.OutcomeTitleUpdatedV1:
-		this.title = EVENT.UpdatedTitle
-
-	case events.OutcomeExplanationUpdatedV1:
-		this.explanation = EVENT.UpdatedExplanation
-
-	case events.OutcomeDescriptionUpdatedV1:
-		this.description = EVENT.UpdatedDescription
-
-	case events.OutcomeDeletedV1:
-		this.deleted = true
-	}
-}
-func (this *Aggregate) raise(_events ...interface{}) error {
-	for _, EVENT := range _events {
-		this.results = append(this.results, EVENT)
-		this.apply(EVENT)
-	}
-	return nil
-}
-func (this *Aggregate) Replay(events ...interface{}) {
-	this.log.Println("stream:", len(events))
-	for _, EVENT := range events {
-		this.log.Println("applying event:", EVENT)
-		this.apply(EVENT)
-	}
-}
-func (this *Aggregate) TransferResults() []interface{} {
-	RESULTS := this.results
-	this.results = nil
-	return RESULTS
 }
