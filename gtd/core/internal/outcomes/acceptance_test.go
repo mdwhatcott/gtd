@@ -515,3 +515,50 @@ func (this *Fixture) TestDeclareOutcomeDeferred_OutcomeNotFound_ErrorReturned() 
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
+func (this *Fixture) TestDeclareOutcomeUncertain_PublishedOutcomeUncertain() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+	)
+	COMMAND := &commands.DeclareOutcomeUncertain{OutcomeID: "1"}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.OutcomeUncertainV1{
+			Timestamp: this.now,
+			OutcomeID: "1",
+		},
+	)
+}
+func (this *Fixture) TestDeclareOutcomeUncertain_AlreadyUncertain_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeUncertainV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeclareOutcomeUncertain{OutcomeID: "1"}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeclareOutcomeUncertain_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeUncertainV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeclareOutcomeUncertain{OutcomeID: "1"}
+	this.handle(COMMAND)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}

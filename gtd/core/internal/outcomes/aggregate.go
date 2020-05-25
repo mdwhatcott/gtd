@@ -142,6 +142,18 @@ func (this *Aggregate) DeclareOutcomeDeferred() error {
 		OutcomeID: this.id,
 	})
 }
+func (this *Aggregate) DeclareOutcomeUncertain() error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	if this.status == "UNCERTAIN" {
+		return core.ErrOutcomeUnchanged
+	}
+	return this.raise(events.OutcomeUncertainV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+	})
+}
 
 func (this *Aggregate) apply(_event interface{}) {
 	switch EVENT := _event.(type) {
@@ -161,6 +173,9 @@ func (this *Aggregate) apply(_event interface{}) {
 
 	case events.OutcomeDeferredV1:
 		this.status = "DEFERRED"
+
+	case events.OutcomeUncertainV1:
+		this.status = "UNCERTAIN"
 
 	case events.OutcomeTitleUpdatedV1:
 		this.title = EVENT.UpdatedTitle

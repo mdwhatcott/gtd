@@ -107,6 +107,9 @@ func (this *Task) processInstructions() {
 
 		case *commands.DeclareOutcomeDeferred:
 			COMMAND.Result.Error = this.aggregate(COMMAND).DeclareOutcomeDeferred()
+
+		case *commands.DeclareOutcomeUncertain:
+			COMMAND.Result.Error = this.aggregate(COMMAND).DeclareOutcomeUncertain()
 		}
 	}
 }

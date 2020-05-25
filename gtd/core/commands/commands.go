@@ -39,7 +39,7 @@ type DeclareOutcomeDeferred struct {
 	OutcomeID string
 	Result    Result
 }
-type DeclareOutcomeUncertain struct { // joyride
+type DeclareOutcomeUncertain struct {
 	OutcomeID string
 	Result    Result
 }
