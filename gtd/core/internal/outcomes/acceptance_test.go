@@ -421,3 +421,50 @@ func (this *Fixture) TestDeclareOutcomeRealized_OutcomeNotFound_ErrorReturned() 
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
+func (this *Fixture) TestDeclareOutcomeAbandoned_PublishedOutcomeAbandoned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+	)
+	COMMAND := &commands.DeclareOutcomeAbandoned{OutcomeID: "1"}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.OutcomeAbandonedV1{
+			Timestamp: this.now,
+			OutcomeID: "1",
+		},
+	)
+}
+func (this *Fixture) TestDeclareOutcomeAbandoned_AlreadyAbandoned_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeAbandonedV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeclareOutcomeAbandoned{OutcomeID: "1"}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeclareOutcomeAbandoned_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeAbandonedV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeclareOutcomeAbandoned{OutcomeID: "1"}
+	this.handle(COMMAND)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}

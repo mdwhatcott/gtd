@@ -101,6 +101,9 @@ func (this *Task) processInstructions() {
 
 		case *commands.DeclareOutcomeFixed:
 			COMMAND.Result.Error = this.aggregate(COMMAND).DeclareOutcomeFixed()
+
+		case *commands.DeclareOutcomeAbandoned:
+			COMMAND.Result.Error = this.aggregate(COMMAND).DeclareOutcomeAbandoned()
 		}
 	}
 }

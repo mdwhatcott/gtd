@@ -46,10 +46,7 @@ type DeclareOutcomeUncertain struct { // joyride
 type TrackAction struct { // joyride
 	OutcomeID   string
 	Description string
-	Result      struct {
-		Error    error
-		ActionID string
-	}
+	Result      CreateResult
 }
 type ReorderAction struct { // joyride
 	OutcomeID string
