@@ -110,6 +110,13 @@ func (this *Task) processInstructions() {
 
 		case *commands.DeclareOutcomeUncertain:
 			COMMAND.Result.Error = this.aggregate(COMMAND).DeclareOutcomeUncertain()
+
+		case *commands.TrackAction:
+			ID := this.nextID()
+			COMMAND.Result.Error = this.aggregate(COMMAND).TrackAction(ID, COMMAND.Description)
+			if COMMAND.Result.Error == nil {
+				COMMAND.Result.ID = ID
+			}
 		}
 	}
 }

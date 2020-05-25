@@ -562,3 +562,49 @@ func (this *Fixture) TestDeclareOutcomeUncertain_OutcomeNotFound_ErrorReturned()
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
+func (this *Fixture) TestTrackAction_PublishActionTracked() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.OutcomeFixedV1{
+			OutcomeID: "outcome",
+		},
+	)
+
+	COMMAND := &commands.TrackAction{
+		OutcomeID:   "outcome",
+		Description: "description",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result, should.Resemble, commands.CreateResult{
+		ID:    "1",
+		Error: nil,
+	})
+	this.AssertOutput(
+		events.ActionTrackedV1{
+			Timestamp:   this.now,
+			OutcomeID:   "outcome",
+			ActionID:    "1",
+			Description: "description",
+			Contexts:    nil,
+			Status:      "",
+			Strategy:    "",
+			Sequence:    0,
+		},
+	)
+}
+func (this *Fixture) TestTrackAction_OutcomeNotFound_ErrorReturned() {
+	COMMAND := &commands.TrackAction{
+		OutcomeID:   "outcome",
+		Description: "description",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result, should.Resemble, commands.CreateResult{
+		Error: core.ErrOutcomeNotFound,
+	})
+	this.AssertNoOutput()
+}

@@ -43,7 +43,7 @@ type DeclareOutcomeUncertain struct {
 	OutcomeID string
 	Result    Result
 }
-type TrackAction struct { // joyride
+type TrackAction struct {
 	OutcomeID   string
 	Description string
 	Result      CreateResult
@@ -54,7 +54,7 @@ type UpdateActionDescription struct { // joyride
 	NewDescription string
 	Result         Result
 }
-type ChangeActionDisplayOrder struct { // joyride
+type ReorderAction struct { // joyride
 	OutcomeID string
 	ActionID  string
 	NewOrder  float64

@@ -17,7 +17,7 @@ type Aggregate struct {
 	title       string
 	explanation string
 	description string
-	status      string
+	status      core.OutcomeStatus
 	deleted     bool
 
 	results []interface{}
@@ -57,19 +57,19 @@ func (this *Aggregate) apply(_event interface{}) {
 		this.title = EVENT.Title
 
 	case events.OutcomeFixedV1:
-		this.status = "FIXED"
+		this.status = core.OutcomeStatusFixed
 
 	case events.OutcomeRealizedV1:
-		this.status = "REALIZED"
+		this.status = core.OutcomeStatusRealized
 
 	case events.OutcomeAbandonedV1:
-		this.status = "ABANDONED"
+		this.status = core.OutcomeStatusAbandoned
 
 	case events.OutcomeDeferredV1:
-		this.status = "DEFERRED"
+		this.status = core.OutcomeStatusDeferred
 
 	case events.OutcomeUncertainV1:
-		this.status = "UNCERTAIN"
+		this.status = core.OutcomeStatusUncertain
 
 	case events.OutcomeTitleUpdatedV1:
 		this.title = EVENT.UpdatedTitle
@@ -153,7 +153,7 @@ func (this *Aggregate) DeclareOutcomeRealized() error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	if this.status == "REALIZED" {
+	if this.status == core.OutcomeStatusRealized {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeRealizedV1{
@@ -165,7 +165,7 @@ func (this *Aggregate) DeclareOutcomeFixed() error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	if this.status == "FIXED" {
+	if this.status == core.OutcomeStatusFixed {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeFixedV1{
@@ -177,7 +177,7 @@ func (this *Aggregate) DeclareOutcomeAbandoned() error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	if this.status == "ABANDONED" {
+	if this.status == core.OutcomeStatusAbandoned {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeAbandonedV1{
@@ -189,7 +189,7 @@ func (this *Aggregate) DeclareOutcomeDeferred() error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	if this.status == "DEFERRED" {
+	if this.status == core.OutcomeStatusDeferred {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeDeferredV1{
@@ -201,11 +201,26 @@ func (this *Aggregate) DeclareOutcomeUncertain() error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	if this.status == "UNCERTAIN" {
+	if this.status == core.OutcomeStatusUncertain {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeUncertainV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
+	})
+}
+func (this *Aggregate) TrackAction(_id, _description string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	return this.raise(events.ActionTrackedV1{
+		Timestamp:   this.now,
+		OutcomeID:   this.id,
+		ActionID:    _id,
+		Description: _description,
+		Contexts:    nil,
+		Status:      "",
+		Strategy:    "",
+		Sequence:    0,
 	})
 }
