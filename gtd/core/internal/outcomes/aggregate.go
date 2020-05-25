@@ -19,6 +19,7 @@ type Aggregate struct {
 	description string
 	status      core.OutcomeStatus
 	deleted     bool
+	actions     []interface{}
 
 	results []interface{}
 }
@@ -49,6 +50,10 @@ func (this *Aggregate) Replay(events ...interface{}) {
 		this.apply(EVENT)
 	}
 }
+
+type Action struct {
+}
+
 func (this *Aggregate) apply(_event interface{}) {
 	switch EVENT := _event.(type) {
 
@@ -82,11 +87,14 @@ func (this *Aggregate) apply(_event interface{}) {
 
 	case events.OutcomeDeletedV1:
 		this.deleted = true
+
+	case events.ActionTrackedV1:
+		this.actions = append(this.actions, Action{})
 	}
 }
 
-func (this *Aggregate) TrackOutcome(_outcomeID, _title string) error {
-	return this.raise(
+func (this *Aggregate) TrackOutcome(_outcomeID, _title string) {
+	_ = this.raise(
 		events.OutcomeTrackedV1{
 			Timestamp: this.now,
 			OutcomeID: _outcomeID,
@@ -218,9 +226,7 @@ func (this *Aggregate) TrackAction(_id, _description string) error {
 		OutcomeID:   this.id,
 		ActionID:    _id,
 		Description: _description,
-		Contexts:    nil,
-		Status:      "",
-		Strategy:    "",
-		Sequence:    0,
+		Contexts:    gatherContexts(_description),
+		Sequence:    float64(len(this.actions)),
 	})
 }

@@ -80,9 +80,8 @@ func (this *Task) processInstructions() {
 		switch COMMAND := MESSAGE.(type) {
 
 		case *commands.TrackOutcome:
-			ID := this.nextID()
-			COMMAND.Result.ID = ID
-			COMMAND.Result.Error = this.createAggregate(ID).TrackOutcome(ID, COMMAND.Title)
+			COMMAND.Result.ID = this.nextID()
+			this.createAggregate(COMMAND.Result.ID).TrackOutcome(COMMAND.Result.ID, COMMAND.Title)
 
 		case *commands.UpdateOutcomeTitle:
 			COMMAND.Result.Error = this.aggregate(COMMAND).UpdateOutcomeTitle(COMMAND.UpdatedTitle)

@@ -34,6 +34,6 @@ const (
 type ActionStrategy string
 
 const (
-	ActionStrategySequential ActionStrategy = "SEQUENTIAL"
 	ActionStrategyConcurrent ActionStrategy = "CONCURRENT"
+	ActionStrategySequential ActionStrategy = "SEQUENTIAL"
 )

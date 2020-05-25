@@ -50,15 +50,13 @@ type ActionTrackedV1 struct {
 	ActionID    string   `json:"action_id"`
 	Description string   `json:"definition"`
 	Contexts    []string `json:"contexts"`
-	Status      string   `json:"status"`
-	Strategy    string   `json:"strategy"`
 	Sequence    float64  `json:"sequence"`
 }
 type ActionReorderedV1 struct {
-	Timestamp   Time    `json:"timestamp"`
-	OutcomeID   string  `json:"outcome_id"`
-	ActionID    string  `json:"action_id"`
-	NewSequence float64 `json:"new_definition"`
+	Timestamp Time    `json:"timestamp"`
+	OutcomeID string  `json:"outcome_id"`
+	ActionID  string  `json:"action_id"`
+	NewOrder  float64 `json:"new_order"`
 }
 type ActionDescriptionUpdatedV1 struct {
 	Timestamp          Time     `json:"timestamp"`

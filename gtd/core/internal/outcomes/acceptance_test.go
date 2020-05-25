@@ -568,14 +568,11 @@ func (this *Fixture) TestTrackAction_PublishActionTracked() {
 			OutcomeID: "outcome",
 			Title:     "title",
 		},
-		events.OutcomeFixedV1{
-			OutcomeID: "outcome",
-		},
 	)
 
 	COMMAND := &commands.TrackAction{
 		OutcomeID:   "outcome",
-		Description: "description",
+		Description: "description @context1 @context2 @context1",
 	}
 	this.handle(COMMAND)
 
@@ -588,10 +585,8 @@ func (this *Fixture) TestTrackAction_PublishActionTracked() {
 			Timestamp:   this.now,
 			OutcomeID:   "outcome",
 			ActionID:    "1",
-			Description: "description",
-			Contexts:    nil,
-			Status:      "",
-			Strategy:    "",
+			Description: "description @context1 @context2 @context1",
+			Contexts:    []string{"context1", "context2"},
 			Sequence:    0,
 		},
 	)
@@ -607,4 +602,40 @@ func (this *Fixture) TestTrackAction_OutcomeNotFound_ErrorReturned() {
 		Error: core.ErrOutcomeNotFound,
 	})
 	this.AssertNoOutput()
+}
+func (this *Fixture) TestTrackAction_IncrementSequence_PublishActionTracked() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+	)
+
+	COMMAND := &commands.TrackAction{
+		OutcomeID:   "outcome",
+		Description: "description1",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result, should.Resemble, commands.CreateResult{
+		ID:    "1",
+		Error: nil,
+	})
+	this.AssertOutput(
+		events.ActionTrackedV1{
+			Timestamp:   this.now,
+			OutcomeID:   "outcome",
+			ActionID:    "1",
+			Description: "description1",
+			Contexts:    nil,
+			Sequence:    1,
+		},
+	)
 }
