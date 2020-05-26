@@ -1,3 +1,7 @@
+ID:      12341234-1234-1234-1234-123412341234
+Created: 2020-02-02 (6 months ago)
+Fixed:   2020-02-02 (6 months ago)
+
 # The borfins have been frobducated
 
 > It's very important that our borfins get frobducated 
