@@ -125,6 +125,12 @@ func (this *Task) processInstructions() {
 
 		case *commands.MarkActionStatusLatent:
 			COMMAND.Result.Error = this.aggregate(COMMAND).MarkActionStatusLatent(COMMAND.ActionID)
+
+		case *commands.MarkActionStatusIncomplete:
+			COMMAND.Result.Error = this.aggregate(COMMAND).MarkActionStatusIncomplete(COMMAND.ActionID)
+
+		case *commands.MarkActionStatusComplete:
+			COMMAND.Result.Error = this.aggregate(COMMAND).MarkActionStatusComplete(COMMAND.ActionID)
 		}
 	}
 }

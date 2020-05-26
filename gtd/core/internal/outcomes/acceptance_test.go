@@ -940,3 +940,169 @@ func (this *Fixture) TestMarkActionStatusLatent_AlreadyMarkedLatent_ErrorReturne
 	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
+func (this *Fixture) TestMarkActionStatusIncomplete_PublishActionStatusMarkedIncomplete() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStatusIncomplete{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.ActionStatusMarkedIncompleteV1{
+			Timestamp: this.now,
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+}
+func (this *Fixture) TestMarkActionStatusIncomplete_ActionNotFound_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStatusIncomplete{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStatusIncomplete_OutcomeNotFound_ErrorReturned() {
+	COMMAND := &commands.MarkActionStatusIncomplete{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStatusIncomplete_AlreadyMarkedIncomplete_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+		events.ActionStatusMarkedIncompleteV1{
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStatusIncomplete{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStatusComplete_PublishActionStatusMarkedComplete() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStatusComplete{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.ActionStatusMarkedCompleteV1{
+			Timestamp: this.now,
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+}
+func (this *Fixture) TestMarkActionStatusComplete_ActionNotFound_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStatusComplete{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStatusComplete_OutcomeNotFound_ErrorReturned() {
+	COMMAND := &commands.MarkActionStatusComplete{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStatusComplete_AlreadyMarkedComplete_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+		events.ActionStatusMarkedCompleteV1{
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStatusComplete{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}

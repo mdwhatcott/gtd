@@ -64,12 +64,12 @@ type MarkActionStatusLatent struct {
 	ActionID  string
 	Result    Result
 }
-type MarkActionStatusIncomplete struct { // joyride
+type MarkActionStatusIncomplete struct {
 	OutcomeID string
 	ActionID  string
 	Result    Result
 }
-type MarkActionStatusComplete struct { // joyride
+type MarkActionStatusComplete struct {
 	OutcomeID string
 	ActionID  string
 	Result    Result

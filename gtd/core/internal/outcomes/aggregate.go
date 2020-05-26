@@ -96,6 +96,12 @@ func (this *Aggregate) apply(_event interface{}) {
 
 	case events.ActionStatusMarkedLatentV1:
 		this.action(EVENT.ActionID).Status = core.ActionStatusLatent
+
+	case events.ActionStatusMarkedIncompleteV1:
+		this.action(EVENT.ActionID).Status = core.ActionStatusIncomplete
+
+	case events.ActionStatusMarkedCompleteV1:
+		this.action(EVENT.ActionID).Status = core.ActionStatusComplete
 	}
 }
 
@@ -300,6 +306,42 @@ func (this *Aggregate) MarkActionStatusLatent(_id string) error {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.ActionStatusMarkedLatentV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+		ActionID:  _id,
+	})
+}
+
+func (this *Aggregate) MarkActionStatusIncomplete(_id string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	action := this.action(_id)
+	if action == nil {
+		return core.ErrActionNotFound
+	}
+	if action.Status == core.ActionStatusIncomplete {
+		return core.ErrOutcomeUnchanged
+	}
+	return this.raise(events.ActionStatusMarkedIncompleteV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+		ActionID:  _id,
+	})
+}
+
+func (this *Aggregate) MarkActionStatusComplete(_id string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	action := this.action(_id)
+	if action == nil {
+		return core.ErrActionNotFound
+	}
+	if action.Status == core.ActionStatusComplete {
+		return core.ErrOutcomeUnchanged
+	}
+	return this.raise(events.ActionStatusMarkedCompleteV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
 		ActionID:  _id,
