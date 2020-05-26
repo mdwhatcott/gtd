@@ -714,12 +714,17 @@ func (this *Fixture) TestUpdateActionDescription_DescriptionUnchanged_ErrorRetur
 			Contexts:    nil,
 			Sequence:    0,
 		},
+		events.ActionDescriptionUpdatedV1{
+			OutcomeID:          "outcome",
+			ActionID:           "action",
+			UpdatedDescription: "updated description",
+		},
 	)
 
 	COMMAND := &commands.UpdateActionDescription{
 		OutcomeID:      "outcome",
 		ActionID:       "action",
-		NewDescription: "description",
+		NewDescription: "updated description",
 	}
 	this.handle(COMMAND)
 

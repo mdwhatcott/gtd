@@ -90,6 +90,10 @@ func (this *Aggregate) apply(_event interface{}) {
 			ID:          EVENT.ActionID,
 			Description: EVENT.Description,
 		})
+
+	case events.ActionDescriptionUpdatedV1:
+		this.action(EVENT.ActionID).Description = EVENT.UpdatedDescription
+
 	case events.ActionStatusMarkedLatentV1:
 		this.action(EVENT.ActionID).Status = core.ActionStatusLatent
 	}
