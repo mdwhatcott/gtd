@@ -10,6 +10,7 @@ type IDFunc func() string
 
 var (
 	ErrOutcomeNotFound  = errors.New("outcome not found")
+	ErrActionNotFound   = errors.New("action not found")
 	ErrOutcomeUnchanged = errors.New("outcome unchanged")
 )
 

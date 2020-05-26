@@ -116,6 +116,12 @@ func (this *Task) processInstructions() {
 			if COMMAND.Result.Error == nil {
 				COMMAND.Result.ID = ID
 			}
+
+		case *commands.UpdateActionDescription:
+			COMMAND.Result.Error = this.aggregate(COMMAND).UpdateActionDescription(COMMAND.ActionID, COMMAND.NewDescription)
+
+		case *commands.ReorderActions:
+			COMMAND.Result.Error = this.aggregate(COMMAND).ReorderActions(COMMAND.NewIDOrder)
 		}
 	}
 }

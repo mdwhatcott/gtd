@@ -639,3 +639,216 @@ func (this *Fixture) TestTrackAction_IncrementSequence_PublishActionTracked() {
 		},
 	)
 }
+func (this *Fixture) TestUpdateActionDescription_PublishActionDescriptionUpdated() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+	)
+
+	COMMAND := &commands.UpdateActionDescription{
+		OutcomeID:      "outcome",
+		ActionID:       "action",
+		NewDescription: "description @context1",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.ActionDescriptionUpdatedV1{
+			Timestamp:          this.now,
+			OutcomeID:          "outcome",
+			ActionID:           "action",
+			UpdatedDescription: "description @context1",
+			UpdatedContexts:    []string{"context1"},
+		},
+	)
+}
+func (this *Fixture) TestUpdateActionDescription_ActionNotFound_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+	)
+
+	COMMAND := &commands.UpdateActionDescription{
+		OutcomeID:      "outcome",
+		ActionID:       "action",
+		NewDescription: "description @context1",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestUpdateActionDescription_OutcomeNotFound_ErrorReturned() {
+	COMMAND := &commands.UpdateActionDescription{
+		OutcomeID:      "outcome",
+		ActionID:       "action",
+		NewDescription: "description @context1",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestUpdateActionDescription_DescriptionUnchanged_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+	)
+
+	COMMAND := &commands.UpdateActionDescription{
+		OutcomeID:      "outcome",
+		ActionID:       "action",
+		NewDescription: "description",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestReorderActions_PublishActionReordered() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action0",
+			Description: "description0",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action1",
+			Description: "description1",
+			Contexts:    nil,
+			Sequence:    1,
+		},
+	)
+
+	COMMAND := &commands.ReorderActions{
+		OutcomeID:  "outcome",
+		NewIDOrder: []string{"action1", "action0"},
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.ActionsReorderedV1{
+			Timestamp:  this.now,
+			OutcomeID:  "outcome",
+			NewIDOrder: []string{"action1", "action0"},
+		},
+	)
+}
+func (this *Fixture) TestReorderActions_OutcomeNotFound_ErrorReturned() {
+	COMMAND := &commands.ReorderActions{
+		OutcomeID:  "outcome",
+		NewIDOrder: []string{"action1", "action0"},
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestReorderActions_AnyActionNotFound_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action0",
+			Description: "description0",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action1",
+			Description: "description1",
+			Contexts:    nil,
+			Sequence:    1,
+		},
+	)
+
+	COMMAND := &commands.ReorderActions{
+		OutcomeID:  "outcome",
+		NewIDOrder: []string{"action1", "action0", "action-not-found"},
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestReorderActions_AnyActionMissing_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action0",
+			Description: "description0",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action1",
+			Description: "description1",
+			Contexts:    nil,
+			Sequence:    1,
+		},
+	)
+
+	COMMAND := &commands.ReorderActions{
+		OutcomeID:  "outcome",
+		NewIDOrder: []string{"action1"},
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestReorderActions_NoActions_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+	)
+
+	COMMAND := &commands.ReorderActions{
+		OutcomeID:  "outcome",
+		NewIDOrder: nil,
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}

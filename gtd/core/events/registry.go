@@ -14,7 +14,7 @@ var types = []reflect.Type{
 	reflect.TypeOf(OutcomeDeferredV1{}),
 	reflect.TypeOf(OutcomeUncertainV1{}),
 	reflect.TypeOf(ActionTrackedV1{}),
-	reflect.TypeOf(ActionReorderedV1{}),
+	reflect.TypeOf(ActionsReorderedV1{}),
 	reflect.TypeOf(ActionDescriptionUpdatedV1{}),
 	reflect.TypeOf(ActionStatusMarkedLatentV1{}),
 	reflect.TypeOf(ActionStatusMarkedIncompleteV1{}),

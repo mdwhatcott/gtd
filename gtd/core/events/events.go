@@ -52,11 +52,10 @@ type ActionTrackedV1 struct {
 	Contexts    []string `json:"contexts"`
 	Sequence    float64  `json:"sequence"`
 }
-type ActionReorderedV1 struct {
-	Timestamp Time    `json:"timestamp"`
-	OutcomeID string  `json:"outcome_id"`
-	ActionID  string  `json:"action_id"`
-	NewOrder  float64 `json:"new_order"`
+type ActionsReorderedV1 struct {
+	Timestamp  Time     `json:"timestamp"`
+	OutcomeID  string   `json:"outcome_id"`
+	NewIDOrder []string `json:"new_id_order"`
 }
 type ActionDescriptionUpdatedV1 struct {
 	Timestamp          Time     `json:"timestamp"`

@@ -19,7 +19,7 @@ type Aggregate struct {
 	description string
 	status      core.OutcomeStatus
 	deleted     bool
-	actions     []interface{}
+	actions     []*Action
 
 	results []interface{}
 }
@@ -49,9 +49,6 @@ func (this *Aggregate) Replay(events ...interface{}) {
 		this.log.Println("applying event:", EVENT)
 		this.apply(EVENT)
 	}
-}
-
-type Action struct {
 }
 
 func (this *Aggregate) apply(_event interface{}) {
@@ -89,7 +86,10 @@ func (this *Aggregate) apply(_event interface{}) {
 		this.deleted = true
 
 	case events.ActionTrackedV1:
-		this.actions = append(this.actions, Action{})
+		this.actions = append(this.actions, &Action{
+			ID:          EVENT.ActionID,
+			Description: EVENT.Description,
+		})
 	}
 }
 
@@ -228,5 +228,56 @@ func (this *Aggregate) TrackAction(_id, _description string) error {
 		Description: _description,
 		Contexts:    gatherContexts(_description),
 		Sequence:    float64(len(this.actions)),
+	})
+}
+
+func (this *Aggregate) UpdateActionDescription(_id, _description string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	action := this.action(_id)
+	if action == nil {
+		return core.ErrActionNotFound
+	}
+	if action.Description == _description {
+		return core.ErrOutcomeUnchanged
+	}
+	return this.raise(events.ActionDescriptionUpdatedV1{
+		Timestamp:          this.now,
+		OutcomeID:          this.id,
+		ActionID:           _id,
+		UpdatedDescription: _description,
+		UpdatedContexts:    gatherContexts(_description),
+	})
+}
+
+func (this *Aggregate) action(_id string) *Action {
+	for _, action := range this.actions {
+		if action.ID == _id {
+			return action
+		}
+	}
+	return nil
+}
+
+func (this *Aggregate) ReorderActions(newIDOrder []string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	if len(this.actions) == 0 {
+		return core.ErrActionNotFound
+	}
+	if len(newIDOrder) != len(this.actions) {
+		return core.ErrActionNotFound
+	}
+	for _, id := range newIDOrder {
+		if this.action(id) == nil {
+			return core.ErrActionNotFound
+		}
+	}
+	return this.raise(events.ActionsReorderedV1{
+		Timestamp:  this.now,
+		OutcomeID:  this.id,
+		NewIDOrder: newIDOrder,
 	})
 }

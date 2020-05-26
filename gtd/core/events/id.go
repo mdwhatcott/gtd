@@ -11,7 +11,7 @@ func (this OutcomeAbandonedV1) ID() string               { return this.OutcomeID
 func (this OutcomeDeferredV1) ID() string                { return this.OutcomeID }
 func (this OutcomeUncertainV1) ID() string               { return this.OutcomeID }
 func (this ActionTrackedV1) ID() string                  { return this.OutcomeID }
-func (this ActionReorderedV1) ID() string                { return this.OutcomeID }
+func (this ActionsReorderedV1) ID() string               { return this.OutcomeID }
 func (this ActionDescriptionUpdatedV1) ID() string       { return this.OutcomeID }
 func (this ActionStatusMarkedLatentV1) ID() string       { return this.OutcomeID }
 func (this ActionStatusMarkedIncompleteV1) ID() string   { return this.OutcomeID }
