@@ -94,60 +94,6 @@ func (this *Fixture) TestTrackOutcome_PublishOutcomeTrackedAndFixed_ReturnOutcom
 			OutcomeID: "1",
 			Title:     "title",
 		},
-		events.OutcomeFixedV1{
-			Timestamp: this.now,
-			OutcomeID: "1",
-		},
-	)
-}
-func (this *Fixture) TestDeclareOutcomeFixed_AlreadyFixed_ErrorReturned() {
-	this.PrepareReadResults("1",
-		events.OutcomeTrackedV1{
-			OutcomeID: "1",
-			Title:     "title",
-		},
-		events.OutcomeFixedV1{
-			OutcomeID: "1",
-		},
-	)
-
-	COMMAND := &commands.DeclareOutcomeFixed{OutcomeID: "1"}
-	this.handle(COMMAND)
-
-	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
-	this.AssertNoOutput()
-}
-func (this *Fixture) TestDeclareOutcomeFixed_OutcomeNotFound_ErrorReturned() {
-	this.PrepareReadResults("1",
-		events.OutcomeFixedV1{
-			OutcomeID: "1",
-		},
-	)
-
-	COMMAND := &commands.DeclareOutcomeFixed{OutcomeID: "1"}
-	this.handle(COMMAND)
-	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
-	this.AssertNoOutput()
-}
-func (this *Fixture) TestDeclareOutcomeFixed_AfterOutcomeRealized_PublishOutcomeFixed() {
-	this.PrepareReadResults("1",
-		events.OutcomeTrackedV1{
-			OutcomeID: "1",
-			Title:     "title",
-		},
-		events.OutcomeRealizedV1{
-			OutcomeID: "1",
-		},
-	)
-
-	COMMAND := &commands.DeclareOutcomeFixed{OutcomeID: "1"}
-	this.handle(COMMAND)
-
-	this.AssertOutput(
-		events.OutcomeFixedV1{
-			Timestamp: this.now,
-			OutcomeID: "1",
-		},
 	)
 }
 func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
@@ -373,6 +319,56 @@ func (this *Fixture) TestDeleteOutcome_AlreadyDeleted_ErrorReturned() {
 
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeclareOutcomeFixed_AlreadyFixed_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeFixedV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeclareOutcomeFixed{OutcomeID: "1"}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeclareOutcomeFixed_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeFixedV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeclareOutcomeFixed{OutcomeID: "1"}
+	this.handle(COMMAND)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeclareOutcomeFixed_AfterOutcomeRealized_PublishOutcomeFixed() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeRealizedV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.DeclareOutcomeFixed{OutcomeID: "1"}
+	this.handle(COMMAND)
+
+	this.AssertOutput(
+		events.OutcomeFixedV1{
+			Timestamp: this.now,
+			OutcomeID: "1",
+		},
+	)
 }
 func (this *Fixture) TestDeclareOutcomeRealized_PublishedOutcomeRealized() {
 	this.PrepareReadResults("1",

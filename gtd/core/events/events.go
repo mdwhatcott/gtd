@@ -50,7 +50,7 @@ type ActionTrackedV1 struct {
 	ActionID    string   `json:"action_id"`
 	Description string   `json:"definition"`
 	Contexts    []string `json:"contexts"`
-	Sequence    float64  `json:"sequence"`
+	Sequence    int      `json:"sequence"`
 }
 type ActionsReorderedV1 struct {
 	Timestamp  Time     `json:"timestamp"`
