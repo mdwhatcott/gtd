@@ -52,6 +52,16 @@ func (this *Aggregate) Replay(events ...interface{}) {
 	}
 }
 
+func (this *Aggregate) exists() bool {
+	if len(this.id) == 0 {
+		return false
+	}
+	if this.deleted {
+		return false
+	}
+	return true
+}
+
 func (this *Aggregate) apply(_event interface{}) {
 	switch EVENT := _event.(type) {
 
@@ -84,7 +94,7 @@ func (this *Aggregate) apply(_event interface{}) {
 		this.description = EVENT.UpdatedDescription
 
 	case events.OutcomeDeletedV1:
-		this.deleted = true // TODO: restrict any and all behavior once this is set to true
+		this.deleted = true
 
 	case events.ActionTrackedV1:
 		this.actions[EVENT.ActionID] = &Action{Description: EVENT.Description}
@@ -113,7 +123,7 @@ func (this *Aggregate) TrackOutcome(_outcomeID, _title string) {
 	)
 }
 func (this *Aggregate) UpdateOutcomeTitle(_title string) error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if _title == this.title {
@@ -126,7 +136,7 @@ func (this *Aggregate) UpdateOutcomeTitle(_title string) error {
 	})
 }
 func (this *Aggregate) UpdateOutcomeExplanation(_explanation string) error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if _explanation == this.explanation {
@@ -139,7 +149,7 @@ func (this *Aggregate) UpdateOutcomeExplanation(_explanation string) error {
 	})
 }
 func (this *Aggregate) UpdateOutcomeDescription(_description string) error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if _description == this.description {
@@ -152,11 +162,8 @@ func (this *Aggregate) UpdateOutcomeDescription(_description string) error {
 	})
 }
 func (this *Aggregate) DeleteOutcome() error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
-	}
-	if this.deleted {
-		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeDeletedV1{
 		Timestamp: this.now,
@@ -164,7 +171,7 @@ func (this *Aggregate) DeleteOutcome() error {
 	})
 }
 func (this *Aggregate) DeclareOutcomeRealized() error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if this.status == core.OutcomeStatusRealized {
@@ -176,7 +183,7 @@ func (this *Aggregate) DeclareOutcomeRealized() error {
 	})
 }
 func (this *Aggregate) DeclareOutcomeFixed() error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if this.status == core.OutcomeStatusFixed {
@@ -188,7 +195,7 @@ func (this *Aggregate) DeclareOutcomeFixed() error {
 	})
 }
 func (this *Aggregate) DeclareOutcomeAbandoned() error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if this.status == core.OutcomeStatusAbandoned {
@@ -200,7 +207,7 @@ func (this *Aggregate) DeclareOutcomeAbandoned() error {
 	})
 }
 func (this *Aggregate) DeclareOutcomeDeferred() error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if this.status == core.OutcomeStatusDeferred {
@@ -212,7 +219,7 @@ func (this *Aggregate) DeclareOutcomeDeferred() error {
 	})
 }
 func (this *Aggregate) DeclareOutcomeUncertain() error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if this.status == core.OutcomeStatusUncertain {
@@ -224,7 +231,7 @@ func (this *Aggregate) DeclareOutcomeUncertain() error {
 	})
 }
 func (this *Aggregate) TrackAction(_id, _description string) error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	return this.raise(events.ActionTrackedV1{
@@ -237,7 +244,7 @@ func (this *Aggregate) TrackAction(_id, _description string) error {
 	})
 }
 func (this *Aggregate) UpdateActionDescription(_id, _description string) error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	action := this.actions[_id]
@@ -256,7 +263,7 @@ func (this *Aggregate) UpdateActionDescription(_id, _description string) error {
 	})
 }
 func (this *Aggregate) ReorderActions(_newIDOrder []string) error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if len(this.actions) == 0 {
@@ -277,7 +284,7 @@ func (this *Aggregate) ReorderActions(_newIDOrder []string) error {
 	})
 }
 func (this *Aggregate) MarkActionStatusLatent(_id string) error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	action := this.actions[_id]
@@ -294,7 +301,7 @@ func (this *Aggregate) MarkActionStatusLatent(_id string) error {
 	})
 }
 func (this *Aggregate) MarkActionStatusIncomplete(_id string) error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	action := this.actions[_id]
@@ -311,7 +318,7 @@ func (this *Aggregate) MarkActionStatusIncomplete(_id string) error {
 	})
 }
 func (this *Aggregate) MarkActionStatusComplete(_id string) error {
-	if len(this.id) == 0 {
+	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	action := this.actions[_id]

@@ -118,7 +118,6 @@ func (this *Fixture) TestUpdateOutcomeTitle_PublishOutcomeTitleUpdated() {
 	)
 }
 func (this *Fixture) TestUpdateOutcomeTitle_OutcomeNotFound_ErrorReturned() {
-	this.PrepareReadResults("1", nil)
 	COMMAND := &commands.UpdateOutcomeTitle{
 		OutcomeID:    "1",
 		UpdatedTitle: "new-title",
@@ -189,7 +188,15 @@ func (this *Fixture) TestUpdateOutcomeExplanation_PublishOutcomeExplanationUpdat
 	)
 }
 func (this *Fixture) TestUpdateOutcomeExplanation_OutcomeNotFound_ErrorReturned() {
-	this.PrepareReadResults("1", nil)
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
 	COMMAND := &commands.UpdateOutcomeExplanation{
 		OutcomeID:          "1",
 		UpdatedExplanation: "new-explanation",
@@ -243,7 +250,15 @@ func (this *Fixture) TestUpdateOutcomeDescription_PublishOutcomeDescriptionUpdat
 	)
 }
 func (this *Fixture) TestUpdateOutcomeDescription_OutcomeNotFound_ErrorReturned() {
-	this.PrepareReadResults("1", nil)
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
 	COMMAND := &commands.UpdateOutcomeDescription{
 		OutcomeID:          "1",
 		UpdatedDescription: "new-description",
@@ -294,9 +309,17 @@ func (this *Fixture) TestDeleteOutcome_PublishedOutcomeDeleted() {
 	)
 }
 func (this *Fixture) TestDeleteOutcome_OutcomeNotFound_ErrorReturned() {
-	this.PrepareReadResults("1", nil)
-	COMMAND := &commands.DeleteOutcome{OutcomeID: "1"}
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
 
+	COMMAND := &commands.DeleteOutcome{OutcomeID: "1"}
 	this.handle(COMMAND)
 
 	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
@@ -317,7 +340,7 @@ func (this *Fixture) TestDeleteOutcome_AlreadyDeleted_ErrorReturned() {
 
 	this.handle(COMMAND)
 
-	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeUnchanged)
+	this.So(COMMAND.Result.Error, should.Equal, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
 func (this *Fixture) TestDeclareOutcomeFixed_AlreadyFixed_ErrorReturned() {
@@ -339,7 +362,11 @@ func (this *Fixture) TestDeclareOutcomeFixed_AlreadyFixed_ErrorReturned() {
 }
 func (this *Fixture) TestDeclareOutcomeFixed_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1",
-		events.OutcomeFixedV1{
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
 			OutcomeID: "1",
 		},
 	)
@@ -407,7 +434,11 @@ func (this *Fixture) TestDeclareOutcomeRealized_AlreadyRealized_ErrorReturned() 
 }
 func (this *Fixture) TestDeclareOutcomeRealized_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1",
-		events.OutcomeRealizedV1{
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
 			OutcomeID: "1",
 		},
 	)
@@ -454,7 +485,11 @@ func (this *Fixture) TestDeclareOutcomeAbandoned_AlreadyAbandoned_ErrorReturned(
 }
 func (this *Fixture) TestDeclareOutcomeAbandoned_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1",
-		events.OutcomeAbandonedV1{
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
 			OutcomeID: "1",
 		},
 	)
@@ -501,7 +536,11 @@ func (this *Fixture) TestDeclareOutcomeDeferred_AlreadyDeferred_ErrorReturned() 
 }
 func (this *Fixture) TestDeclareOutcomeDeferred_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1",
-		events.OutcomeDeferredV1{
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
 			OutcomeID: "1",
 		},
 	)
@@ -548,7 +587,11 @@ func (this *Fixture) TestDeclareOutcomeUncertain_AlreadyUncertain_ErrorReturned(
 }
 func (this *Fixture) TestDeclareOutcomeUncertain_OutcomeNotFound_ErrorReturned() {
 	this.PrepareReadResults("1",
-		events.OutcomeUncertainV1{
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
 			OutcomeID: "1",
 		},
 	)
@@ -588,8 +631,18 @@ func (this *Fixture) TestTrackAction_PublishActionTracked() {
 	)
 }
 func (this *Fixture) TestTrackAction_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
+
 	COMMAND := &commands.TrackAction{
-		OutcomeID:   "outcome",
+		OutcomeID:   "1",
 		Description: "description",
 	}
 	this.handle(COMMAND)
@@ -687,8 +740,18 @@ func (this *Fixture) TestUpdateActionDescription_ActionNotFound_ErrorReturned() 
 	this.AssertNoOutput()
 }
 func (this *Fixture) TestUpdateActionDescription_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
+
 	COMMAND := &commands.UpdateActionDescription{
-		OutcomeID:      "outcome",
+		OutcomeID:      "1",
 		ActionID:       "action",
 		NewDescription: "description @context1",
 	}
@@ -765,8 +828,18 @@ func (this *Fixture) TestReorderActions_PublishActionReordered() {
 	)
 }
 func (this *Fixture) TestReorderActions_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
+
 	COMMAND := &commands.ReorderActions{
-		OutcomeID:  "outcome",
+		OutcomeID:  "1",
 		NewIDOrder: []string{"action1", "action0"},
 	}
 	this.handle(COMMAND)
@@ -899,8 +972,18 @@ func (this *Fixture) TestMarkActionStatusLatent_ActionNotFound_ErrorReturned() {
 	this.AssertNoOutput()
 }
 func (this *Fixture) TestMarkActionStatusLatent_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
+
 	COMMAND := &commands.MarkActionStatusLatent{
-		OutcomeID: "outcome",
+		OutcomeID: "1",
 		ActionID:  "action",
 	}
 	this.handle(COMMAND)
@@ -982,8 +1065,18 @@ func (this *Fixture) TestMarkActionStatusIncomplete_ActionNotFound_ErrorReturned
 	this.AssertNoOutput()
 }
 func (this *Fixture) TestMarkActionStatusIncomplete_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
+
 	COMMAND := &commands.MarkActionStatusIncomplete{
-		OutcomeID: "outcome",
+		OutcomeID: "1",
 		ActionID:  "action",
 	}
 	this.handle(COMMAND)
@@ -1065,8 +1158,18 @@ func (this *Fixture) TestMarkActionStatusComplete_ActionNotFound_ErrorReturned()
 	this.AssertNoOutput()
 }
 func (this *Fixture) TestMarkActionStatusComplete_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
+
 	COMMAND := &commands.MarkActionStatusComplete{
-		OutcomeID: "outcome",
+		OutcomeID: "1",
 		ActionID:  "action",
 	}
 	this.handle(COMMAND)
