@@ -19,16 +19,16 @@ type Aggregate struct {
 	description string
 	status      core.OutcomeStatus
 	deleted     bool
-	actions2    map[string]*Action
+	actions     map[string]*Action
 
 	results []interface{}
 }
 
 func NewAggregate(_now time.Time, _log *logging.Logger) *Aggregate {
 	return &Aggregate{
-		now:      _now,
-		log:      _log,
-		actions2: make(map[string]*Action),
+		now:     _now,
+		log:     _log,
+		actions: make(map[string]*Action),
 	}
 }
 
@@ -87,19 +87,19 @@ func (this *Aggregate) apply(_event interface{}) {
 		this.deleted = true // TODO: restrict any and all behavior once this is set to true
 
 	case events.ActionTrackedV1:
-		this.actions2[EVENT.ActionID] = &Action{Description: EVENT.Description}
+		this.actions[EVENT.ActionID] = &Action{Description: EVENT.Description}
 
 	case events.ActionDescriptionUpdatedV1:
-		this.actions2[EVENT.ActionID].Description = EVENT.UpdatedDescription
+		this.actions[EVENT.ActionID].Description = EVENT.UpdatedDescription
 
 	case events.ActionStatusMarkedLatentV1:
-		this.actions2[EVENT.ActionID].Status = core.ActionStatusLatent
+		this.actions[EVENT.ActionID].Status = core.ActionStatusLatent
 
 	case events.ActionStatusMarkedIncompleteV1:
-		this.actions2[EVENT.ActionID].Status = core.ActionStatusIncomplete
+		this.actions[EVENT.ActionID].Status = core.ActionStatusIncomplete
 
 	case events.ActionStatusMarkedCompleteV1:
-		this.actions2[EVENT.ActionID].Status = core.ActionStatusComplete
+		this.actions[EVENT.ActionID].Status = core.ActionStatusComplete
 	}
 }
 
@@ -233,14 +233,14 @@ func (this *Aggregate) TrackAction(_id, _description string) error {
 		ActionID:    _id,
 		Description: _description,
 		Contexts:    gatherContexts(_description),
-		Sequence:    len(this.actions2),
+		Sequence:    len(this.actions),
 	})
 }
 func (this *Aggregate) UpdateActionDescription(_id, _description string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions2[_id]
+	action := this.actions[_id]
 	if action == nil {
 		return core.ErrActionNotFound
 	}
@@ -259,14 +259,14 @@ func (this *Aggregate) ReorderActions(_newIDOrder []string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	if len(this.actions2) == 0 {
+	if len(this.actions) == 0 {
 		return core.ErrActionNotFound
 	}
-	if len(_newIDOrder) != len(this.actions2) {
+	if len(_newIDOrder) != len(this.actions) {
 		return core.ErrActionNotFound
 	}
 	for _, ID := range _newIDOrder {
-		if this.actions2[ID] == nil {
+		if this.actions[ID] == nil {
 			return core.ErrActionNotFound
 		}
 	}
@@ -280,7 +280,7 @@ func (this *Aggregate) MarkActionStatusLatent(_id string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions2[_id]
+	action := this.actions[_id]
 	if action == nil {
 		return core.ErrActionNotFound
 	}
@@ -297,7 +297,7 @@ func (this *Aggregate) MarkActionStatusIncomplete(_id string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions2[_id]
+	action := this.actions[_id]
 	if action == nil {
 		return core.ErrActionNotFound
 	}
@@ -314,7 +314,7 @@ func (this *Aggregate) MarkActionStatusComplete(_id string) error {
 	if len(this.id) == 0 {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions2[_id]
+	action := this.actions[_id]
 	if action == nil {
 		return core.ErrActionNotFound
 	}
