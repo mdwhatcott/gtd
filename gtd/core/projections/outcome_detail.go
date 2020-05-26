@@ -6,7 +6,7 @@ import (
 	"github.com/mdwhatcott/gtd/gtd/core/events"
 )
 
-type Outcome struct {
+type OutcomeDetail struct {
 	Updated     time.Time
 	ID          string
 	Title       string
@@ -15,11 +15,11 @@ type Outcome struct {
 	Description string
 }
 
-func NewOutcome() *Outcome {
-	return &Outcome{}
+func NewOutcomeDetail() *OutcomeDetail {
+	return &OutcomeDetail{}
 }
 
-func (this *Outcome) Apply(_messages ...interface{}) {
+func (this *OutcomeDetail) Apply(_messages ...interface{}) {
 	for _, MESSAGE := range _messages {
 		switch EVENT := MESSAGE.(type) {
 		case events.OutcomeTrackedV1:

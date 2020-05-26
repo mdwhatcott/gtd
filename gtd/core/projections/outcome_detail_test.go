@@ -17,15 +17,15 @@ func TestOutcomeFixture(t *testing.T) {
 
 type OutcomeFixture struct {
 	*gunit.Fixture
-	projection *Outcome
+	projection *OutcomeDetail
 }
 
 func (this *OutcomeFixture) Setup() {
-	this.projection = NewOutcome()
+	this.projection = NewOutcomeDetail()
 }
 
 func (this *OutcomeFixture) TestBlankWhenFirstInstantiated() {
-	this.So(this.projection, should.Resemble, &Outcome{
+	this.So(this.projection, should.Resemble, &OutcomeDetail{
 		Updated:     time.Time{},
 		ID:          "",
 		Title:       "",
@@ -40,7 +40,7 @@ func (this *OutcomeFixture) TestOutcomeTracked() {
 		Title:     "title",
 	})
 
-	this.So(this.projection, should.Resemble, &Outcome{
+	this.So(this.projection, should.Resemble, &OutcomeDetail{
 		Updated:     date.YMD(2020, 1, 1),
 		ID:          "id-1",
 		Title:       "title",
@@ -61,7 +61,7 @@ func (this *OutcomeFixture) TestOutcomeFixed() {
 		},
 	)
 
-	this.So(this.projection, should.Resemble, &Outcome{
+	this.So(this.projection, should.Resemble, &OutcomeDetail{
 		Updated:     date.YMD(2020, 1, 1),
 		ID:          "id-1",
 		Title:       "title",
