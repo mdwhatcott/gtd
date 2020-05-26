@@ -131,6 +131,15 @@ func (this *Task) processInstructions() {
 
 		case *commands.MarkActionStatusComplete:
 			COMMAND.Result.Error = this.aggregate(COMMAND).MarkActionStatusComplete(COMMAND.ActionID)
+
+		case *commands.MarkActionStrategySequential:
+			COMMAND.Result.Error = this.aggregate(COMMAND).MarkActionStrategySequential(COMMAND.ActionID)
+
+		case *commands.MarkActionStrategyConcurrent:
+			COMMAND.Result.Error = this.aggregate(COMMAND).MarkActionStrategyConcurrent(COMMAND.ActionID)
+
+		case *commands.DeleteAction:
+			COMMAND.Result.Error = this.aggregate(COMMAND).DeleteAction(COMMAND.ActionID)
 		}
 	}
 }

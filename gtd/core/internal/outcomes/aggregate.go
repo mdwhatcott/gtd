@@ -110,6 +110,15 @@ func (this *Aggregate) apply(_event interface{}) {
 
 	case events.ActionStatusMarkedCompleteV1:
 		this.actions[EVENT.ActionID].Status = core.ActionStatusComplete
+
+	case events.ActionStrategyMarkedSequentialV1:
+		this.actions[EVENT.ActionID].Strategy = core.ActionStrategySequential
+
+	case events.ActionStrategyMarkedConcurrentV1:
+		this.actions[EVENT.ActionID].Strategy = core.ActionStrategyConcurrent
+
+	case events.ActionDeletedV1:
+		delete(this.actions, EVENT.ActionID)
 	}
 }
 
@@ -329,6 +338,54 @@ func (this *Aggregate) MarkActionStatusComplete(_id string) error {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.ActionStatusMarkedCompleteV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+		ActionID:  _id,
+	})
+}
+func (this *Aggregate) MarkActionStrategySequential(_id string) error {
+	if !this.exists() {
+		return core.ErrOutcomeNotFound
+	}
+	action := this.actions[_id]
+	if action == nil {
+		return core.ErrActionNotFound
+	}
+	if action.Strategy == core.ActionStrategySequential {
+		return core.ErrOutcomeUnchanged
+	}
+	return this.raise(events.ActionStrategyMarkedSequentialV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+		ActionID:  _id,
+	})
+}
+func (this *Aggregate) MarkActionStrategyConcurrent(_id string) error {
+	if !this.exists() {
+		return core.ErrOutcomeNotFound
+	}
+	action := this.actions[_id]
+	if action == nil {
+		return core.ErrActionNotFound
+	}
+	if action.Strategy == core.ActionStrategyConcurrent {
+		return core.ErrOutcomeUnchanged
+	}
+	return this.raise(events.ActionStrategyMarkedConcurrentV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+		ActionID:  _id,
+	})
+}
+func (this *Aggregate) DeleteAction(_id string) error {
+	if !this.exists() {
+		return core.ErrOutcomeNotFound
+	}
+	action := this.actions[_id]
+	if action == nil {
+		return core.ErrActionNotFound
+	}
+	return this.raise(events.ActionDeletedV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
 		ActionID:  _id,

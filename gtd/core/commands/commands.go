@@ -74,17 +74,17 @@ type MarkActionStatusComplete struct {
 	ActionID  string
 	Result    Result
 }
-type MarkActionStrategySequential struct { // joyride
+type MarkActionStrategySequential struct {
 	OutcomeID string
 	ActionID  string
 	Result    Result
 }
-type MarkActionStrategyConcurrent struct { // joyride
+type MarkActionStrategyConcurrent struct {
 	OutcomeID string
 	ActionID  string
 	Result    Result
 }
-type DeleteAction struct { // joyride
+type DeleteAction struct {
 	OutcomeID string
 	ActionID  string
 	Result    Result

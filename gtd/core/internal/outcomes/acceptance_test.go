@@ -1205,3 +1205,274 @@ func (this *Fixture) TestMarkActionStatusComplete_AlreadyMarkedComplete_ErrorRet
 	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeUnchanged)
 	this.AssertNoOutput()
 }
+func (this *Fixture) TestMarkActionStrategySequential_PublishActionStrategyMarkedSequential() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStrategySequential{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.ActionStrategyMarkedSequentialV1{
+			Timestamp: this.now,
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+}
+func (this *Fixture) TestMarkActionStrategySequential_ActionNotFound_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStrategySequential{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStrategySequential_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStrategySequential{
+		OutcomeID: "1",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStrategySequential_AlreadyMarkedSequential_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+		events.ActionStrategyMarkedSequentialV1{
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStrategySequential{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStrategyConcurrent_PublishActionStrategyMarkedConcurrent() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStrategyConcurrent{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.ActionStrategyMarkedConcurrentV1{
+			Timestamp: this.now,
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+}
+func (this *Fixture) TestMarkActionStrategyConcurrent_ActionNotFound_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStrategyConcurrent{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStrategyConcurrent_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1",
+		events.OutcomeTrackedV1{
+			OutcomeID: "1",
+			Title:     "title",
+		},
+		events.OutcomeDeletedV1{
+			OutcomeID: "1",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStrategyConcurrent{
+		OutcomeID: "1",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStrategyConcurrent_AlreadyMarkedConcurrent_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+		events.ActionStrategyMarkedConcurrentV1{
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStrategyConcurrent{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeleteAction_PublishActionDeleted() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+		},
+	)
+
+	COMMAND := &commands.DeleteAction{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.ActionDeletedV1{
+			Timestamp: this.now,
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+}
+func (this *Fixture) TestDeleteAction_ActionNotFound_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+	)
+
+	COMMAND := &commands.DeleteAction{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeleteAction_OutcomeNotFound_ErrorReturned() {
+	this.PrepareReadResults("1")
+
+	COMMAND := &commands.DeleteAction{
+		OutcomeID: "1",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestDeleteAction_AlreadyDeleted_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+		events.ActionDeletedV1{
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+
+	COMMAND := &commands.DeleteAction{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
