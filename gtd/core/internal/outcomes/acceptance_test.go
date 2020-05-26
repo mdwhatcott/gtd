@@ -797,7 +797,7 @@ func (this *Fixture) TestReorderActions_AnyActionNotFound_ErrorReturned() {
 
 	COMMAND := &commands.ReorderActions{
 		OutcomeID:  "outcome",
-		NewIDOrder: []string{"action1", "action0", "action-not-found"},
+		NewIDOrder: []string{"action1", "action-not-found"},
 	}
 	this.handle(COMMAND)
 
