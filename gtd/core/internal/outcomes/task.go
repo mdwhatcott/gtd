@@ -122,6 +122,9 @@ func (this *Task) processInstructions() {
 
 		case *commands.ReorderActions:
 			COMMAND.Result.Error = this.aggregate(COMMAND).ReorderActions(COMMAND.NewIDOrder)
+
+		case *commands.MarkActionStatusLatent:
+			COMMAND.Result.Error = this.aggregate(COMMAND).MarkActionStatusLatent(COMMAND.ActionID)
 		}
 	}
 }

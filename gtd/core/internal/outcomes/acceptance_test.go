@@ -852,3 +852,86 @@ func (this *Fixture) TestReorderActions_NoActions_ErrorReturned() {
 	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
 	this.AssertNoOutput()
 }
+func (this *Fixture) TestMarkActionStatusLatent_PublishActionStatusMarkedLatent() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStatusLatent{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.BeNil)
+	this.AssertOutput(
+		events.ActionStatusMarkedLatentV1{
+			Timestamp: this.now,
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+}
+func (this *Fixture) TestMarkActionStatusLatent_ActionNotFound_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStatusLatent{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStatusLatent_OutcomeNotFound_ErrorReturned() {
+	COMMAND := &commands.MarkActionStatusLatent{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeNotFound)
+	this.AssertNoOutput()
+}
+func (this *Fixture) TestMarkActionStatusLatent_AlreadyMarkedLatent_ErrorReturned() {
+	this.PrepareReadResults("outcome",
+		events.OutcomeTrackedV1{
+			OutcomeID: "outcome",
+			Title:     "title",
+		},
+		events.ActionTrackedV1{
+			OutcomeID:   "outcome",
+			ActionID:    "action",
+			Description: "description",
+			Contexts:    nil,
+			Sequence:    0,
+		},
+		events.ActionStatusMarkedLatentV1{
+			OutcomeID: "outcome",
+			ActionID:  "action",
+		},
+	)
+
+	COMMAND := &commands.MarkActionStatusLatent{
+		OutcomeID: "outcome",
+		ActionID:  "action",
+	}
+	this.handle(COMMAND)
+
+	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeUnchanged)
+	this.AssertNoOutput()
+}

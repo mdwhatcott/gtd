@@ -59,7 +59,7 @@ type ReorderActions struct {
 	NewIDOrder []string
 	Result     Result
 }
-type MarkActionStatusLatent struct { // joyride
+type MarkActionStatusLatent struct {
 	OutcomeID string
 	ActionID  string
 	Result    Result

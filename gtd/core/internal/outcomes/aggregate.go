@@ -90,6 +90,8 @@ func (this *Aggregate) apply(_event interface{}) {
 			ID:          EVENT.ActionID,
 			Description: EVENT.Description,
 		})
+	case events.ActionStatusMarkedLatentV1:
+		this.action(EVENT.ActionID).Status = core.ActionStatusLatent
 	}
 }
 
@@ -100,7 +102,7 @@ func (this *Aggregate) TrackOutcome(_outcomeID, _title string) {
 			OutcomeID: _outcomeID,
 			Title:     _title,
 		},
-		events.OutcomeFixedV1{
+		events.OutcomeFixedV1{ // todo: don't publish this
 			Timestamp: this.now,
 			OutcomeID: _outcomeID,
 		},
@@ -279,5 +281,23 @@ func (this *Aggregate) ReorderActions(newIDOrder []string) error {
 		Timestamp:  this.now,
 		OutcomeID:  this.id,
 		NewIDOrder: newIDOrder,
+	})
+}
+
+func (this *Aggregate) MarkActionStatusLatent(_id string) error {
+	if len(this.id) == 0 {
+		return core.ErrOutcomeNotFound
+	}
+	action := this.action(_id)
+	if action == nil {
+		return core.ErrActionNotFound
+	}
+	if action.Status == core.ActionStatusLatent {
+		return core.ErrOutcomeUnchanged
+	}
+	return this.raise(events.ActionStatusMarkedLatentV1{
+		Timestamp: this.now,
+		OutcomeID: this.id,
+		ActionID:  _id,
 	})
 }
