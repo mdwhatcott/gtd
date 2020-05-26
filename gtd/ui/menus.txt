@@ -1,0 +1,16 @@
+# Opening Menu
+
+1. Random Action
+2. Review Actions
+3. Review Outcomes
+4. Track New Outcome
+
+# Random Action Menu
+
+Active Contexts:
+
+1. computer
+2. email
+3. jen
+
+Select your current context:
