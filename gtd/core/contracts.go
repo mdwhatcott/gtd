@@ -6,6 +6,11 @@ type Handler interface {
 	Handle(...interface{})
 }
 
+type Projector interface {
+	Apply(events ...interface{})
+	Projection() interface{}
+}
+
 type IDFunc func() string
 
 var (

@@ -52,39 +52,39 @@ type ActionTrackedV1 struct {
 	Contexts    []string `json:"contexts"`
 	Sequence    int      `json:"sequence"`
 }
-type ActionsReorderedV1 struct {
+type ActionsReorderedV1 struct { // TODO: outcome details
 	Timestamp  Time     `json:"timestamp"`
 	OutcomeID  string   `json:"outcome_id"`
 	NewIDOrder []string `json:"new_id_order"`
 }
-type ActionDescriptionUpdatedV1 struct {
+type ActionDescriptionUpdatedV1 struct { // TODO: outcome details
 	Timestamp          Time     `json:"timestamp"`
 	OutcomeID          string   `json:"outcome_id"`
 	ActionID           string   `json:"action_id"`
 	UpdatedDescription string   `json:"updated_definition"`
 	UpdatedContexts    []string `json:"updated_contexts"`
 }
-type ActionStatusMarkedLatentV1 struct {
+type ActionStatusMarkedLatentV1 struct { // TODO: outcome details
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
 	ActionID  string `json:"action_id"`
 }
-type ActionStatusMarkedIncompleteV1 struct {
+type ActionStatusMarkedIncompleteV1 struct { // TODO: outcome details
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
 	ActionID  string `json:"action_id"`
 }
-type ActionStatusMarkedCompleteV1 struct {
+type ActionStatusMarkedCompleteV1 struct { // TODO: outcome details
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
 	ActionID  string `json:"action_id"`
 }
-type ActionStrategyMarkedSequentialV1 struct {
+type ActionStrategyMarkedSequentialV1 struct { // TODO: outcome details
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
 	ActionID  string `json:"action_id"`
 }
-type ActionStrategyMarkedConcurrentV1 struct {
+type ActionStrategyMarkedConcurrentV1 struct { // TODO: outcome details
 	Timestamp Time   `json:"timestamp"`
 	OutcomeID string `json:"outcome_id"`
 	ActionID  string `json:"action_id"`
