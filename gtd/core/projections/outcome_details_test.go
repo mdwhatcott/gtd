@@ -117,3 +117,40 @@ func (this *OutcomeDetailsFixture) TestActionDeleted_NotPreviouslyTracked_Panic(
 	action := func() { this.apply(events.ActionDeletedV1{ActionID: "not-found"}) }
 	this.So(action, should.Panic)
 }
+func (this *OutcomeDetailsFixture) TestActionDescriptionUpdated() {
+	this.apply(
+		events.OutcomeTrackedV1{Title: "title"},
+		events.ActionTrackedV1{
+			ActionID:    "0",
+			Description: "action-description0",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    0,
+		},
+		events.ActionTrackedV1{
+			ActionID:    "1",
+			Description: "action-description1",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    0,
+		},
+		events.ActionDescriptionUpdatedV1{
+			ActionID:           "1",
+			UpdatedDescription: "updated-description",
+			UpdatedContexts:    []string{"updated", "contexts"},
+		},
+	)
+	this.assert(OutcomeDetails{
+		Title: "title",
+		Actions: []*ActionDetails{
+			{
+				ID:          "0",
+				Description: "action-description0",
+				Contexts:    []string{"context1", "context2"},
+			},
+			{
+				ID:          "1",
+				Description: "updated-description",
+				Contexts:    []string{"updated", "contexts"},
+			},
+		},
+	})
+}

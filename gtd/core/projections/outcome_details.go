@@ -45,6 +45,9 @@ func (this *OutcomeDetailsProjector) Apply(_messages ...interface{}) {
 		case events.ActionsReorderedV1:
 
 		case events.ActionDescriptionUpdatedV1:
+			action := this.Actions[this.findAction(EVENT.ActionID)]
+			action.Contexts = EVENT.UpdatedContexts
+			action.Description = EVENT.UpdatedDescription
 
 		case events.ActionStatusMarkedLatentV1:
 
@@ -62,10 +65,6 @@ func (this *OutcomeDetailsProjector) Apply(_messages ...interface{}) {
 		}
 	}
 }
-func (this *OutcomeDetailsProjector) deleteAction(i int) {
-	this.Actions[i] = nil
-	this.Actions = append(this.Actions[:i], this.Actions[i+1:]...)
-}
 
 type OutcomeDetails struct {
 	Title       string
@@ -81,6 +80,11 @@ func (this *OutcomeDetails) findAction(_id string) int {
 		}
 	}
 	panic("SHOULD NOT HAPPEN")
+}
+
+func (this *OutcomeDetails) deleteAction(i int) {
+	this.Actions[i] = nil
+	this.Actions = append(this.Actions[:i], this.Actions[i+1:]...)
 }
 
 type ActionDetails struct {
