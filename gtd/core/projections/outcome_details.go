@@ -1,16 +1,14 @@
 package projections
 
-import "github.com/mdwhatcott/gtd/gtd/core/events"
+import (
+	"github.com/mdwhatcott/gtd/gtd/core"
+	"github.com/mdwhatcott/gtd/gtd/core/events"
+)
 
-type OutcomeDetailsProjector struct {
-	OutcomeDetails
-	//actions map[string]*ActionDetails
-}
+type OutcomeDetailsProjector struct{ OutcomeDetails }
 
 func NewOutcomeDetailsProjector() *OutcomeDetailsProjector {
-	return &OutcomeDetailsProjector{
-		//actions: make(map[string]*ActionDetails),
-	}
+	return &OutcomeDetailsProjector{}
 }
 
 func (this *OutcomeDetailsProjector) Projection() interface{} {
@@ -34,30 +32,36 @@ func (this *OutcomeDetailsProjector) Apply(_messages ...interface{}) {
 			this.Explanation = EVENT.UpdatedExplanation
 
 		case events.ActionTrackedV1:
-			action := &ActionDetails{
+			this.Actions = append(this.Actions, &ActionDetails{
 				ID:          EVENT.ActionID,
 				Description: EVENT.Description,
 				Contexts:    EVENT.Contexts,
-			}
-			//this.actions[EVENT.ActionID] = action
-			this.Actions = append(this.Actions, action)
+				Status:      core.ActionStatusLatent,
+				Strategy:    core.ActionStrategyConcurrent,
+			})
 
 		case events.ActionsReorderedV1:
+			this.Actions = this.reorderActions(EVENT.NewIDOrder)
 
 		case events.ActionDescriptionUpdatedV1:
-			action := this.Actions[this.findAction(EVENT.ActionID)]
+			action := this.getAction(EVENT.ActionID)
 			action.Contexts = EVENT.UpdatedContexts
 			action.Description = EVENT.UpdatedDescription
 
 		case events.ActionStatusMarkedLatentV1:
+			this.getAction(EVENT.ActionID).Status = core.ActionStatusLatent
 
 		case events.ActionStatusMarkedIncompleteV1:
+			this.getAction(EVENT.ActionID).Status = core.ActionStatusIncomplete
 
 		case events.ActionStatusMarkedCompleteV1:
+			this.getAction(EVENT.ActionID).Status = core.ActionStatusComplete
 
 		case events.ActionStrategyMarkedSequentialV1:
+			this.getAction(EVENT.ActionID).Strategy = core.ActionStrategySequential
 
 		case events.ActionStrategyMarkedConcurrentV1:
+			this.getAction(EVENT.ActionID).Strategy = core.ActionStrategyConcurrent
 
 		case events.ActionDeletedV1:
 			this.deleteAction(this.findAction(EVENT.ActionID))
@@ -66,11 +70,22 @@ func (this *OutcomeDetailsProjector) Apply(_messages ...interface{}) {
 	}
 }
 
+func (this *OutcomeDetailsProjector) reorderActions(_newOrder []string) (reordered_ []*ActionDetails) {
+	for _, ID := range _newOrder {
+		reordered_ = append(reordered_, this.getAction(ID))
+	}
+	return reordered_
+}
+
 type OutcomeDetails struct {
 	Title       string
 	Explanation string
 	Description string
 	Actions     []*ActionDetails
+}
+
+func (this *OutcomeDetails) getAction(_id string) *ActionDetails {
+	return this.Actions[this.findAction(_id)]
 }
 
 func (this *OutcomeDetails) findAction(_id string) int {
@@ -91,4 +106,6 @@ type ActionDetails struct {
 	ID          string
 	Description string
 	Contexts    []string
+	Status      core.ActionStatus
+	Strategy    core.ActionStrategy
 }

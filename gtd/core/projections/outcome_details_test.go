@@ -3,6 +3,7 @@ package projections
 import (
 	"testing"
 
+	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
 
@@ -73,11 +74,15 @@ func (this *OutcomeDetailsFixture) TestActionTracked() {
 					ID:          "0",
 					Description: "action-description0",
 					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
 				},
 				{
 					ID:          "1",
 					Description: "action-description1",
 					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
 				},
 			},
 		},
@@ -108,6 +113,8 @@ func (this *OutcomeDetailsFixture) TestActionDeleted() {
 					ID:          "0",
 					Description: "action-description0",
 					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
 				},
 			},
 		},
@@ -145,12 +152,258 @@ func (this *OutcomeDetailsFixture) TestActionDescriptionUpdated() {
 				ID:          "0",
 				Description: "action-description0",
 				Contexts:    []string{"context1", "context2"},
+				Status:      core.ActionStatusLatent,
+				Strategy:    core.ActionStrategyConcurrent,
 			},
 			{
 				ID:          "1",
 				Description: "updated-description",
 				Contexts:    []string{"updated", "contexts"},
+				Status:      core.ActionStatusLatent,
+				Strategy:    core.ActionStrategyConcurrent,
 			},
 		},
 	})
+}
+func (this *OutcomeDetailsFixture) TestActionStatusMarkedIncomplete() {
+	this.apply(
+		events.OutcomeTrackedV1{Title: "title"},
+		events.ActionTrackedV1{
+			ActionID:    "0",
+			Description: "action-description0",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    0,
+		},
+		events.ActionTrackedV1{
+			ActionID:    "1",
+			Description: "action-description1",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    1,
+		},
+		events.ActionStatusMarkedIncompleteV1{ActionID: "1"},
+	)
+	this.assert(
+		OutcomeDetails{
+			Title: "title",
+			Actions: []*ActionDetails{
+				{
+					ID:          "0",
+					Description: "action-description0",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+				{
+					ID:          "1",
+					Description: "action-description1",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusIncomplete,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+			},
+		},
+	)
+}
+func (this *OutcomeDetailsFixture) TestActionStatusMarkedComplete() {
+	this.apply(
+		events.OutcomeTrackedV1{Title: "title"},
+		events.ActionTrackedV1{
+			ActionID:    "0",
+			Description: "action-description0",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    0,
+		},
+		events.ActionTrackedV1{
+			ActionID:    "1",
+			Description: "action-description1",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    1,
+		},
+		events.ActionStatusMarkedCompleteV1{ActionID: "1"},
+	)
+	this.assert(
+		OutcomeDetails{
+			Title: "title",
+			Actions: []*ActionDetails{
+				{
+					ID:          "0",
+					Description: "action-description0",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+				{
+					ID:          "1",
+					Description: "action-description1",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusComplete,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+			},
+		},
+	)
+}
+func (this *OutcomeDetailsFixture) TestActionStatusMarkedLatent() {
+	this.apply(
+		events.OutcomeTrackedV1{Title: "title"},
+		events.ActionTrackedV1{
+			ActionID:    "0",
+			Description: "action-description0",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    0,
+		},
+		events.ActionTrackedV1{
+			ActionID:    "1",
+			Description: "action-description1",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    1,
+		},
+		events.ActionStatusMarkedCompleteV1{ActionID: "1"},
+		events.ActionStatusMarkedLatentV1{ActionID: "1"},
+	)
+	this.assert(
+		OutcomeDetails{
+			Title: "title",
+			Actions: []*ActionDetails{
+				{
+					ID:          "0",
+					Description: "action-description0",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+				{
+					ID:          "1",
+					Description: "action-description1",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+			},
+		},
+	)
+}
+func (this *OutcomeDetailsFixture) TestActionStrategyMarkedSequential() {
+	this.apply(
+		events.OutcomeTrackedV1{Title: "title"},
+		events.ActionTrackedV1{
+			ActionID:    "0",
+			Description: "action-description0",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    0,
+		},
+		events.ActionTrackedV1{
+			ActionID:    "1",
+			Description: "action-description1",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    1,
+		},
+		events.ActionStrategyMarkedSequentialV1{ActionID: "1"},
+	)
+	this.assert(
+		OutcomeDetails{
+			Title: "title",
+			Actions: []*ActionDetails{
+				{
+					ID:          "0",
+					Description: "action-description0",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+				{
+					ID:          "1",
+					Description: "action-description1",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategySequential,
+				},
+			},
+		},
+	)
+}
+func (this *OutcomeDetailsFixture) TestActionStrategyMarkedConcurrent() {
+	this.apply(
+		events.OutcomeTrackedV1{Title: "title"},
+		events.ActionTrackedV1{
+			ActionID:    "0",
+			Description: "action-description0",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    0,
+		},
+		events.ActionTrackedV1{
+			ActionID:    "1",
+			Description: "action-description1",
+			Contexts:    []string{"context1", "context2"},
+			Sequence:    1,
+		},
+		events.ActionStrategyMarkedSequentialV1{ActionID: "1"},
+		events.ActionStrategyMarkedConcurrentV1{ActionID: "1"},
+	)
+	this.assert(
+		OutcomeDetails{
+			Title: "title",
+			Actions: []*ActionDetails{
+				{
+					ID:          "0",
+					Description: "action-description0",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+				{
+					ID:          "1",
+					Description: "action-description1",
+					Contexts:    []string{"context1", "context2"},
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+			},
+		},
+	)
+}
+func (this *OutcomeDetailsFixture) TestActionsReordered() {
+	this.apply(
+		events.OutcomeTrackedV1{Title: "title"},
+		events.ActionTrackedV1{
+			ActionID:    "0",
+			Description: "action-description0",
+		},
+		events.ActionTrackedV1{
+			ActionID:    "1",
+			Description: "action-description1",
+		},
+		events.ActionTrackedV1{
+			ActionID:    "2",
+			Description: "action-description2",
+		},
+		events.ActionsReorderedV1{
+			NewIDOrder: []string{"2", "0", "1"},
+		},
+	)
+	this.assert(
+		OutcomeDetails{
+			Title: "title",
+			Actions: []*ActionDetails{
+				{
+					ID:          "2",
+					Description: "action-description2",
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+				{
+					ID:          "0",
+					Description: "action-description0",
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+				{
+					ID:          "1",
+					Description: "action-description1",
+					Status:      core.ActionStatusLatent,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+			},
+		},
+	)
 }
