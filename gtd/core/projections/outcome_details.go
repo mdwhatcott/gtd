@@ -4,12 +4,12 @@ import "github.com/mdwhatcott/gtd/gtd/core/events"
 
 type OutcomeDetailsProjector struct {
 	OutcomeDetails
-	actions map[string]*ActionDetails
+	//actions map[string]*ActionDetails
 }
 
 func NewOutcomeDetailsProjector() *OutcomeDetailsProjector {
 	return &OutcomeDetailsProjector{
-		actions: make(map[string]*ActionDetails),
+		//actions: make(map[string]*ActionDetails),
 	}
 }
 
