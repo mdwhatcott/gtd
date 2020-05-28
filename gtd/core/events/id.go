@@ -1,5 +1,7 @@
 package events
 
+type Identifiable interface{ ID() string }
+
 func (this OutcomeTrackedV1) ID() string                 { return this.OutcomeID }
 func (this OutcomeTitleUpdatedV1) ID() string            { return this.OutcomeID }
 func (this OutcomeExplanationUpdatedV1) ID() string      { return this.OutcomeID }

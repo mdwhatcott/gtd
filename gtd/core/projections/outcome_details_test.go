@@ -3,9 +3,10 @@ package projections
 import (
 	"testing"
 
-	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
+
+	"github.com/mdwhatcott/gtd/gtd/core"
 
 	"github.com/mdwhatcott/gtd/gtd/core/events"
 )
@@ -50,6 +51,34 @@ func (this *OutcomeDetailsFixture) TestOutcomeExplanationUpdated() {
 	)
 	this.assert(OutcomeDetails{Title: "title", Explanation: "explanation"})
 }
+func (this *OutcomeDetailsFixture) TestOutcomeFixed() {
+	this.apply(
+		events.OutcomeTrackedV1{},
+		events.OutcomeFixedV1{},
+	)
+	this.assert(OutcomeDetails{Status: core.OutcomeStatusFixed})
+}
+func (this *OutcomeDetailsFixture) TestOutcomeDeferred() {
+	this.apply(
+		events.OutcomeTrackedV1{},
+		events.OutcomeDeferredV1{},
+	)
+	this.assert(OutcomeDetails{Status: core.OutcomeStatusDeferred})
+}
+func (this *OutcomeDetailsFixture) TestOutcomeUncertain() {
+	this.apply(
+		events.OutcomeTrackedV1{},
+		events.OutcomeUncertainV1{},
+	)
+	this.assert(OutcomeDetails{Status: core.OutcomeStatusUncertain})
+}
+func (this *OutcomeDetailsFixture) TestOutcomeAbandoned() {
+	this.apply(
+		events.OutcomeTrackedV1{},
+		events.OutcomeAbandonedV1{},
+	)
+	this.assert(OutcomeDetails{Status: core.OutcomeStatusAbandoned})
+}
 func (this *OutcomeDetailsFixture) TestActionTracked() {
 	this.apply(
 		events.OutcomeTrackedV1{Title: "title"},
@@ -57,13 +86,11 @@ func (this *OutcomeDetailsFixture) TestActionTracked() {
 			ActionID:    "0",
 			Description: "action-description0",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			ActionID:    "1",
 			Description: "action-description1",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 	)
 	this.assert(
@@ -74,14 +101,14 @@ func (this *OutcomeDetailsFixture) TestActionTracked() {
 					ID:          "0",
 					Description: "action-description0",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 				{
 					ID:          "1",
 					Description: "action-description1",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 			},
@@ -95,13 +122,11 @@ func (this *OutcomeDetailsFixture) TestActionDeleted() {
 			ActionID:    "0",
 			Description: "action-description0",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			ActionID:    "1",
 			Description: "action-description1",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionDeletedV1{ActionID: "1"},
 	)
@@ -113,7 +138,7 @@ func (this *OutcomeDetailsFixture) TestActionDeleted() {
 					ID:          "0",
 					Description: "action-description0",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 			},
@@ -131,13 +156,11 @@ func (this *OutcomeDetailsFixture) TestActionDescriptionUpdated() {
 			ActionID:    "0",
 			Description: "action-description0",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			ActionID:    "1",
 			Description: "action-description1",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionDescriptionUpdatedV1{
 			ActionID:           "1",
@@ -152,14 +175,14 @@ func (this *OutcomeDetailsFixture) TestActionDescriptionUpdated() {
 				ID:          "0",
 				Description: "action-description0",
 				Contexts:    []string{"context1", "context2"},
-				Status:      core.ActionStatusLatent,
+				Status:      core.ActionStatusIncomplete,
 				Strategy:    core.ActionStrategyConcurrent,
 			},
 			{
 				ID:          "1",
 				Description: "updated-description",
 				Contexts:    []string{"updated", "contexts"},
-				Status:      core.ActionStatusLatent,
+				Status:      core.ActionStatusIncomplete,
 				Strategy:    core.ActionStrategyConcurrent,
 			},
 		},
@@ -172,14 +195,13 @@ func (this *OutcomeDetailsFixture) TestActionStatusMarkedIncomplete() {
 			ActionID:    "0",
 			Description: "action-description0",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			ActionID:    "1",
 			Description: "action-description1",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    1,
 		},
+		events.ActionStatusMarkedCompleteV1{ActionID: "1"},
 		events.ActionStatusMarkedIncompleteV1{ActionID: "1"},
 	)
 	this.assert(
@@ -190,7 +212,7 @@ func (this *OutcomeDetailsFixture) TestActionStatusMarkedIncomplete() {
 					ID:          "0",
 					Description: "action-description0",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 				{
@@ -211,13 +233,11 @@ func (this *OutcomeDetailsFixture) TestActionStatusMarkedComplete() {
 			ActionID:    "0",
 			Description: "action-description0",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			ActionID:    "1",
 			Description: "action-description1",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    1,
 		},
 		events.ActionStatusMarkedCompleteV1{ActionID: "1"},
 	)
@@ -229,7 +249,7 @@ func (this *OutcomeDetailsFixture) TestActionStatusMarkedComplete() {
 					ID:          "0",
 					Description: "action-description0",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 				{
@@ -250,15 +270,12 @@ func (this *OutcomeDetailsFixture) TestActionStatusMarkedLatent() {
 			ActionID:    "0",
 			Description: "action-description0",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			ActionID:    "1",
 			Description: "action-description1",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    1,
 		},
-		events.ActionStatusMarkedCompleteV1{ActionID: "1"},
 		events.ActionStatusMarkedLatentV1{ActionID: "1"},
 	)
 	this.assert(
@@ -269,7 +286,7 @@ func (this *OutcomeDetailsFixture) TestActionStatusMarkedLatent() {
 					ID:          "0",
 					Description: "action-description0",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 				{
@@ -290,13 +307,11 @@ func (this *OutcomeDetailsFixture) TestActionStrategyMarkedSequential() {
 			ActionID:    "0",
 			Description: "action-description0",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			ActionID:    "1",
 			Description: "action-description1",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    1,
 		},
 		events.ActionStrategyMarkedSequentialV1{ActionID: "1"},
 	)
@@ -308,14 +323,14 @@ func (this *OutcomeDetailsFixture) TestActionStrategyMarkedSequential() {
 					ID:          "0",
 					Description: "action-description0",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 				{
 					ID:          "1",
 					Description: "action-description1",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategySequential,
 				},
 			},
@@ -329,13 +344,11 @@ func (this *OutcomeDetailsFixture) TestActionStrategyMarkedConcurrent() {
 			ActionID:    "0",
 			Description: "action-description0",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			ActionID:    "1",
 			Description: "action-description1",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    1,
 		},
 		events.ActionStrategyMarkedSequentialV1{ActionID: "1"},
 		events.ActionStrategyMarkedConcurrentV1{ActionID: "1"},
@@ -348,14 +361,14 @@ func (this *OutcomeDetailsFixture) TestActionStrategyMarkedConcurrent() {
 					ID:          "0",
 					Description: "action-description0",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 				{
 					ID:          "1",
 					Description: "action-description1",
 					Contexts:    []string{"context1", "context2"},
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 			},
@@ -388,19 +401,19 @@ func (this *OutcomeDetailsFixture) TestActionsReordered() {
 				{
 					ID:          "2",
 					Description: "action-description2",
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 				{
 					ID:          "0",
 					Description: "action-description0",
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 				{
 					ID:          "1",
 					Description: "action-description1",
-					Status:      core.ActionStatusLatent,
+					Status:      core.ActionStatusIncomplete,
 					Strategy:    core.ActionStrategyConcurrent,
 				},
 			},

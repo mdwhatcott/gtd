@@ -249,7 +249,6 @@ func (this *Aggregate) TrackAction(_id, _description string) error {
 		ActionID:    _id,
 		Description: _description,
 		Contexts:    gatherContexts(_description),
-		Sequence:    len(this.actions),
 	})
 }
 func (this *Aggregate) UpdateActionDescription(_id, _description string) error {

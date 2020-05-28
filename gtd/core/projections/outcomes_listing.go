@@ -24,7 +24,7 @@ func (this *OutcomesListingProjector) Projection() interface{} {
 }
 
 func (this *OutcomesListingProjector) Apply(_messages ...interface{}) {
-	defer this.rebuild()
+	defer this.buildProjection()
 
 	for _, MESSAGE := range _messages {
 		switch EVENT := MESSAGE.(type) {
@@ -32,18 +32,18 @@ func (this *OutcomesListingProjector) Apply(_messages ...interface{}) {
 			this.all[EVENT.OutcomeID] = &OutcomesListingItem{
 				ID:     EVENT.OutcomeID,
 				Title:  EVENT.Title,
-				status: core.OutcomeStatusFixed,
+				Status: core.OutcomeStatusFixed,
 			}
 		case events.OutcomeTitleUpdatedV1:
 			this.all[EVENT.OutcomeID].Title = EVENT.UpdatedTitle
 		case events.OutcomeFixedV1:
-			this.all[EVENT.OutcomeID].status = core.OutcomeStatusFixed
+			this.all[EVENT.OutcomeID].Status = core.OutcomeStatusFixed
 		case events.OutcomeDeferredV1:
-			this.all[EVENT.OutcomeID].status = core.OutcomeStatusDeferred
+			this.all[EVENT.OutcomeID].Status = core.OutcomeStatusDeferred
 		case events.OutcomeUncertainV1:
-			this.all[EVENT.OutcomeID].status = core.OutcomeStatusUncertain
+			this.all[EVENT.OutcomeID].Status = core.OutcomeStatusUncertain
 		case events.OutcomeAbandonedV1:
-			this.all[EVENT.OutcomeID].status = core.OutcomeStatusAbandoned
+			this.all[EVENT.OutcomeID].Status = core.OutcomeStatusAbandoned
 		case events.OutcomeRealizedV1:
 			delete(this.all, EVENT.OutcomeID)
 		case events.OutcomeDeletedV1:
@@ -52,7 +52,7 @@ func (this *OutcomesListingProjector) Apply(_messages ...interface{}) {
 	}
 }
 
-func (this *OutcomesListingProjector) rebuild() {
+func (this *OutcomesListingProjector) buildProjection() {
 	this.Fixed = this.filter(core.OutcomeStatusFixed)
 	this.Deferred = this.filter(core.OutcomeStatusDeferred)
 	this.Uncertain = this.filter(core.OutcomeStatusUncertain)
@@ -61,7 +61,7 @@ func (this *OutcomesListingProjector) rebuild() {
 
 func (this *OutcomesListingProjector) filter(status core.OutcomeStatus) (filtered []*OutcomesListingItem) {
 	for _, item := range this.all {
-		if item.status == status {
+		if item.Status == status {
 			filtered = append(filtered, item)
 		}
 	}
@@ -69,17 +69,4 @@ func (this *OutcomesListingProjector) filter(status core.OutcomeStatus) (filtere
 		return filtered[i].Title < filtered[j].Title
 	})
 	return filtered
-}
-
-type OutcomesListing struct {
-	Fixed     []*OutcomesListingItem
-	Deferred  []*OutcomesListingItem
-	Uncertain []*OutcomesListingItem
-	Abandoned []*OutcomesListingItem
-}
-
-type OutcomesListingItem struct {
-	ID     string
-	Title  string
-	status core.OutcomeStatus
 }

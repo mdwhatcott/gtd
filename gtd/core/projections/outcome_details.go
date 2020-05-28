@@ -31,12 +31,24 @@ func (this *OutcomeDetailsProjector) Apply(_messages ...interface{}) {
 		case events.OutcomeExplanationUpdatedV1:
 			this.Explanation = EVENT.UpdatedExplanation
 
+		case events.OutcomeFixedV1:
+			this.Status = core.OutcomeStatusFixed
+
+		case events.OutcomeDeferredV1:
+			this.Status = core.OutcomeStatusDeferred
+
+		case events.OutcomeUncertainV1:
+			this.Status = core.OutcomeStatusUncertain
+
+		case events.OutcomeAbandonedV1:
+			this.Status = core.OutcomeStatusAbandoned
+
 		case events.ActionTrackedV1:
 			this.Actions = append(this.Actions, &ActionDetails{
 				ID:          EVENT.ActionID,
 				Description: EVENT.Description,
 				Contexts:    EVENT.Contexts,
-				Status:      core.ActionStatusLatent,
+				Status:      core.ActionStatusIncomplete,
 				Strategy:    core.ActionStrategyConcurrent,
 			})
 
@@ -77,14 +89,7 @@ func (this *OutcomeDetailsProjector) reorderActions(_newOrder []string) (reorder
 	return reordered_
 }
 
-type OutcomeDetails struct {
-	Title       string
-	Explanation string
-	Description string
-	Actions     []*ActionDetails
-}
-
-func (this *OutcomeDetails) getAction(_id string) *ActionDetails {
+func (this *OutcomeDetailsProjector) getAction(_id string) *ActionDetails {
 	return this.Actions[this.findAction(_id)]
 }
 
@@ -97,15 +102,7 @@ func (this *OutcomeDetails) findAction(_id string) int {
 	panic("SHOULD NOT HAPPEN")
 }
 
-func (this *OutcomeDetails) deleteAction(i int) {
+func (this *OutcomeDetailsProjector) deleteAction(i int) {
 	this.Actions[i] = nil
 	this.Actions = append(this.Actions[:i], this.Actions[i+1:]...)
-}
-
-type ActionDetails struct {
-	ID          string
-	Description string
-	Contexts    []string
-	Status      core.ActionStatus
-	Strategy    core.ActionStrategy
 }

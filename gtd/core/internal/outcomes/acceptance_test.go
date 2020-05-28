@@ -626,7 +626,6 @@ func (this *Fixture) TestTrackAction_PublishActionTracked() {
 			ActionID:    "1",
 			Description: "description @context1 @context2 @context1",
 			Contexts:    []string{"context1", "context2"},
-			Sequence:    0,
 		},
 	)
 }
@@ -663,7 +662,6 @@ func (this *Fixture) TestTrackAction_IncrementSequence_PublishActionTracked() {
 			ActionID:    "action",
 			Description: "description",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 	)
 
@@ -684,7 +682,6 @@ func (this *Fixture) TestTrackAction_IncrementSequence_PublishActionTracked() {
 			ActionID:    "1",
 			Description: "description1",
 			Contexts:    nil,
-			Sequence:    1,
 		},
 	)
 }
@@ -699,7 +696,6 @@ func (this *Fixture) TestUpdateActionDescription_PublishActionDescriptionUpdated
 			ActionID:    "action",
 			Description: "description",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 	)
 
@@ -771,7 +767,6 @@ func (this *Fixture) TestUpdateActionDescription_DescriptionUnchanged_ErrorRetur
 			ActionID:    "action",
 			Description: "description",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionDescriptionUpdatedV1{
 			OutcomeID:          "outcome",
@@ -801,14 +796,12 @@ func (this *Fixture) TestReorderActions_PublishActionReordered() {
 			ActionID:    "action0",
 			Description: "description0",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			OutcomeID:   "outcome",
 			ActionID:    "action1",
 			Description: "description1",
 			Contexts:    nil,
-			Sequence:    1,
 		},
 	)
 
@@ -858,14 +851,12 @@ func (this *Fixture) TestReorderActions_AnyActionNotFound_ErrorReturned() {
 			ActionID:    "action0",
 			Description: "description0",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			OutcomeID:   "outcome",
 			ActionID:    "action1",
 			Description: "description1",
 			Contexts:    nil,
-			Sequence:    1,
 		},
 	)
 
@@ -889,14 +880,12 @@ func (this *Fixture) TestReorderActions_AnyActionMissing_ErrorReturned() {
 			ActionID:    "action0",
 			Description: "description0",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionTrackedV1{
 			OutcomeID:   "outcome",
 			ActionID:    "action1",
 			Description: "description1",
 			Contexts:    nil,
-			Sequence:    1,
 		},
 	)
 
@@ -1002,7 +991,6 @@ func (this *Fixture) TestMarkActionStatusLatent_AlreadyMarkedLatent_ErrorReturne
 			ActionID:    "action",
 			Description: "description",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionStatusMarkedLatentV1{
 			OutcomeID: "outcome",
@@ -1095,7 +1083,6 @@ func (this *Fixture) TestMarkActionStatusIncomplete_AlreadyMarkedIncomplete_Erro
 			ActionID:    "action",
 			Description: "description",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionStatusMarkedIncompleteV1{
 			OutcomeID: "outcome",
@@ -1188,7 +1175,6 @@ func (this *Fixture) TestMarkActionStatusComplete_AlreadyMarkedComplete_ErrorRet
 			ActionID:    "action",
 			Description: "description",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionStatusMarkedCompleteV1{
 			OutcomeID: "outcome",
@@ -1281,7 +1267,6 @@ func (this *Fixture) TestMarkActionStrategySequential_AlreadyMarkedSequential_Er
 			ActionID:    "action",
 			Description: "description",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionStrategyMarkedSequentialV1{
 			OutcomeID: "outcome",
@@ -1374,7 +1359,6 @@ func (this *Fixture) TestMarkActionStrategyConcurrent_AlreadyMarkedConcurrent_Er
 			ActionID:    "action",
 			Description: "description",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionStrategyMarkedConcurrentV1{
 			OutcomeID: "outcome",
@@ -1459,7 +1443,6 @@ func (this *Fixture) TestDeleteAction_AlreadyDeleted_ErrorReturned() {
 			ActionID:    "action",
 			Description: "description",
 			Contexts:    nil,
-			Sequence:    0,
 		},
 		events.ActionDeletedV1{
 			OutcomeID: "outcome",

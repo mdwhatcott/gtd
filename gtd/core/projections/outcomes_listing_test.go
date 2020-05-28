@@ -3,9 +3,10 @@ package projections
 import (
 	"testing"
 
+	"github.com/smartystreets/gunit"
+
 	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/events"
-	"github.com/smartystreets/gunit"
 )
 
 func TestOutcomesListingFixture(t *testing.T) {
@@ -24,7 +25,7 @@ func (this *OutcomesListingFixture) Setup() {
 func (this *OutcomesListingFixture) TestOutcomeTracked() {
 	this.apply(events.OutcomeTrackedV1{OutcomeID: "1", Title: "title"})
 	this.assert(OutcomesListing{
-		Fixed: []*OutcomesListingItem{{ID: "1", Title: "title", status: core.OutcomeStatusFixed}},
+		Fixed: []*OutcomesListingItem{{ID: "1", Title: "title", Status: core.OutcomeStatusFixed}},
 	})
 }
 func (this *OutcomesListingFixture) TestOutcomeTitleUpdated() {
@@ -33,7 +34,7 @@ func (this *OutcomesListingFixture) TestOutcomeTitleUpdated() {
 		events.OutcomeTitleUpdatedV1{OutcomeID: "1", UpdatedTitle: "updated-title"},
 	)
 	this.assert(OutcomesListing{
-		Fixed: []*OutcomesListingItem{{ID: "1", Title: "updated-title", status: core.OutcomeStatusFixed}},
+		Fixed: []*OutcomesListingItem{{ID: "1", Title: "updated-title", Status: core.OutcomeStatusFixed}},
 	})
 }
 func (this *OutcomesListingFixture) TestOutcomeFixed() {
@@ -43,7 +44,7 @@ func (this *OutcomesListingFixture) TestOutcomeFixed() {
 		events.OutcomeFixedV1{OutcomeID: "1"},
 	)
 	this.assert(OutcomesListing{
-		Fixed: []*OutcomesListingItem{{ID: "1", Title: "title", status: core.OutcomeStatusFixed}},
+		Fixed: []*OutcomesListingItem{{ID: "1", Title: "title", Status: core.OutcomeStatusFixed}},
 	})
 }
 func (this *OutcomesListingFixture) TestOutcomeDeferred() {
@@ -52,7 +53,7 @@ func (this *OutcomesListingFixture) TestOutcomeDeferred() {
 		events.OutcomeDeferredV1{OutcomeID: "1"},
 	)
 	this.assert(OutcomesListing{
-		Deferred: []*OutcomesListingItem{{ID: "1", Title: "title", status: core.OutcomeStatusDeferred}},
+		Deferred: []*OutcomesListingItem{{ID: "1", Title: "title", Status: core.OutcomeStatusDeferred}},
 	})
 }
 func (this *OutcomesListingFixture) TestOutcomeUncertain() {
@@ -61,7 +62,7 @@ func (this *OutcomesListingFixture) TestOutcomeUncertain() {
 		events.OutcomeUncertainV1{OutcomeID: "1"},
 	)
 	this.assert(OutcomesListing{
-		Uncertain: []*OutcomesListingItem{{ID: "1", Title: "title", status: core.OutcomeStatusUncertain}},
+		Uncertain: []*OutcomesListingItem{{ID: "1", Title: "title", Status: core.OutcomeStatusUncertain}},
 	})
 }
 func (this *OutcomesListingFixture) TestOutcomeAbandoned() {
@@ -70,7 +71,7 @@ func (this *OutcomesListingFixture) TestOutcomeAbandoned() {
 		events.OutcomeAbandonedV1{OutcomeID: "1"},
 	)
 	this.assert(OutcomesListing{
-		Abandoned: []*OutcomesListingItem{{ID: "1", Title: "title", status: core.OutcomeStatusAbandoned}},
+		Abandoned: []*OutcomesListingItem{{ID: "1", Title: "title", Status: core.OutcomeStatusAbandoned}},
 	})
 }
 func (this *OutcomesListingFixture) TestOutcomeRealized() {
@@ -117,20 +118,20 @@ func (this *OutcomesListingFixture) TestSortingOfListings() {
 	)
 	this.assert(OutcomesListing{
 		Fixed: []*OutcomesListingItem{
-			{ID: "9", Title: "a", status: core.OutcomeStatusFixed},
-			{ID: "0", Title: "j", status: core.OutcomeStatusFixed},
+			{ID: "9", Title: "a", Status: core.OutcomeStatusFixed},
+			{ID: "0", Title: "j", Status: core.OutcomeStatusFixed},
 		},
 		Deferred: []*OutcomesListingItem{
-			{ID: "8", Title: "b", status: core.OutcomeStatusDeferred},
-			{ID: "1", Title: "i", status: core.OutcomeStatusDeferred},
+			{ID: "8", Title: "b", Status: core.OutcomeStatusDeferred},
+			{ID: "1", Title: "i", Status: core.OutcomeStatusDeferred},
 		},
 		Uncertain: []*OutcomesListingItem{
-			{ID: "7", Title: "c", status: core.OutcomeStatusUncertain},
-			{ID: "2", Title: "h", status: core.OutcomeStatusUncertain},
+			{ID: "7", Title: "c", Status: core.OutcomeStatusUncertain},
+			{ID: "2", Title: "h", Status: core.OutcomeStatusUncertain},
 		},
 		Abandoned: []*OutcomesListingItem{
-			{ID: "6", Title: "d", status: core.OutcomeStatusAbandoned},
-			{ID: "3", Title: "g", status: core.OutcomeStatusAbandoned},
+			{ID: "6", Title: "d", Status: core.OutcomeStatusAbandoned},
+			{ID: "3", Title: "g", Status: core.OutcomeStatusAbandoned},
 		},
 	})
 }
