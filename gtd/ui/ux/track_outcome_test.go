@@ -46,12 +46,59 @@ func (this *TrackOutcomeFixture) TestHappyPath() {
 	this.assertResult(
 		&commands.TrackOutcome{Title: "The Title", Result: commands.CreateResult{ID: "0"}},
 		&commands.UpdateOutcomeExplanation{OutcomeID: "0", UpdatedExplanation: "The Explanation"},
-		&commands.TrackAction{OutcomeID: "0", Description: "concurrent complete   @context1 @context2"},
-		&commands.TrackAction{OutcomeID: "0", Description: "concurrent incomplete @context1 @context2"},
-		&commands.TrackAction{OutcomeID: "0", Description: "concurrent latent     @context1 @context2"},
-		&commands.TrackAction{OutcomeID: "0", Description: "sequential complete   @context1 @context2"},
-		&commands.TrackAction{OutcomeID: "0", Description: "sequential incomplete @context1 @context2"},
-		&commands.TrackAction{OutcomeID: "0", Description: "sequential latent     @context1 @context2"},
+
+		&commands.TrackAction{
+			OutcomeID:   "0",
+			Description: "concurrent complete   @context1 @context2",
+			Result:      commands.CreateResult{ID: "1"},
+		},
+		&commands.MarkActionStrategyConcurrent{OutcomeID: "0", ActionID: "1"},
+		&commands.MarkActionStatusComplete{OutcomeID: "0", ActionID: "1"},
+
+		&commands.TrackAction{
+			OutcomeID:   "0",
+			Description: "concurrent incomplete @context1 @context2",
+			Result:      commands.CreateResult{ID: "2"},
+		},
+		&commands.MarkActionStrategyConcurrent{OutcomeID: "0", ActionID: "2"},
+		&commands.MarkActionStatusIncomplete{OutcomeID: "0", ActionID: "2"},
+
+		&commands.TrackAction{
+			OutcomeID:   "0",
+			Description: "concurrent latent     @context1 @context2",
+			Result:      commands.CreateResult{ID: "3"},
+		},
+		&commands.MarkActionStrategyConcurrent{OutcomeID: "0", ActionID: "3"},
+		&commands.MarkActionStatusLatent{OutcomeID: "0", ActionID: "3"},
+
+		&commands.TrackAction{
+			OutcomeID:   "0",
+			Description: "sequential complete   @context1 @context2",
+			Result:      commands.CreateResult{ID: "4"},
+		},
+		&commands.MarkActionStrategySequential{OutcomeID: "0", ActionID: "4"},
+		&commands.MarkActionStatusComplete{OutcomeID: "0", ActionID: "4"},
+
+		&commands.TrackAction{
+			OutcomeID:   "0",
+			Description: "sequential incomplete @context1 @context2",
+			Result:      commands.CreateResult{ID: "5"},
+		},
+		&commands.MarkActionStrategySequential{OutcomeID: "0", ActionID: "5"},
+		&commands.MarkActionStatusIncomplete{OutcomeID: "0", ActionID: "5"},
+
+		&commands.TrackAction{
+			OutcomeID:   "0",
+			Description: "sequential latent     @context1 @context2",
+			Result:      commands.CreateResult{ID: "6"},
+		},
+		&commands.MarkActionStrategySequential{OutcomeID: "0", ActionID: "6"},
+		&commands.MarkActionStatusLatent{OutcomeID: "0", ActionID: "6"},
+
+		&commands.UpdateOutcomeDescription{
+			OutcomeID:          "0",
+			UpdatedDescription: "\nThe Description\n",
+		},
 	)
 }
 
@@ -63,12 +110,12 @@ const (
 
 ## Actions:
 
--  [X] concurrent complete   @context1 @context2
--  [ ] concurrent incomplete @context1 @context2
--  [?] concurrent latent     @context1 @context2
-1. [X] sequential complete   @context1 @context2
-1. [ ] sequential incomplete @context1 @context2
-1. [?] sequential latent     @context1 @context2
+- [X]   concurrent complete   @context1 @context2
+-  []   concurrent incomplete @context1 @context2
+-  [?]  concurrent latent     @context1 @context2
+1. [x]  sequential complete   @context1 @context2
+2. [ ]  sequential incomplete @context1 @context2
+10. [?] sequential latent     @context1 @context2
 
 
 ## Support Materials:
@@ -111,6 +158,8 @@ func (this *FakeHandler) Handle(messages ...interface{}) {
 	for _, message := range messages {
 		switch message := message.(type) {
 		case *commands.TrackOutcome:
+			message.Result.ID, message.Result.Error = this.Next()
+		case *commands.TrackAction:
 			message.Result.ID, message.Result.Error = this.Next()
 		}
 	}
