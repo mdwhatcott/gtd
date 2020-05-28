@@ -1,32 +1,34 @@
-package main
+package temp
 
 import (
-	"fmt"
+	"io"
 	"io/ioutil"
 	"log"
 	"os"
 	"os/exec"
 )
 
-func main() {
-	name := createTempFile()
-	fmt.Println(name)
+type Editor struct{}
 
-	all := editFile(name)
-	fmt.Println(all)
-
-	deleteFile(name)
-
+func (*Editor) EditTempFile(initialContent string) (resultContent string) {
+	name := createTempFile(initialContent)
+	defer deleteFile(name)
+	return editFile(name)
 }
 
-func createTempFile() string {
+func createTempFile(content string) string {
 	file, err := ioutil.TempFile("", "")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err2 := file.Close()
+	_, err2 := io.WriteString(file, content)
 	if err2 != nil {
+		log.Fatal(err2)
+	}
+
+	err3 := file.Close()
+	if err3 != nil {
 		log.Fatal(err2)
 	}
 
