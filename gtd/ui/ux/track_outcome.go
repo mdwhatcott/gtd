@@ -66,7 +66,20 @@ func (this *TrackOutcomeExperience) parseExplanation() {
 		})
 	}
 }
-func (this *TrackOutcomeExperience) parseAction()      {}
+func (this *TrackOutcomeExperience) parseAction() {
+	if this.line == "## Support Materials:" {
+		this.parse = this.parseDescription
+	}
+	if this.line == "" {
+		return
+	}
+	if strings.HasPrefix(this.line, "-  [") || strings.HasPrefix(this.line, "1. [") {
+		this.handler.Handle(&commands.TrackAction{
+			OutcomeID:   this.outcome.Result.ID,
+			Description: this.line[7:],
+		})
+	}
+}
 func (this *TrackOutcomeExperience) parseDescription() {}
 
 const trackOutcomeTemplate = `# {TITLE}
