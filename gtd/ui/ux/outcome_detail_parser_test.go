@@ -27,7 +27,7 @@ func (this *OutcomeDetailParserFixture) Setup() {
 	this.actionIDs = make(map[string]bool)
 }
 
-func (this *OutcomeDetailParserFixture) assertResult(expected ...interface{}) {
+func (this *OutcomeDetailParserFixture) parseAndAssertResult(expected ...interface{}) {
 	parser := NewOutcomeDetailParser(this.handler, this.outcomeID, this.actionIDs, this.content)
 
 	err := parser.Parse()
@@ -38,13 +38,13 @@ func (this *OutcomeDetailParserFixture) assertResult(expected ...interface{}) {
 
 func (this *OutcomeDetailParserFixture) TestNoChange_NoEvents_NoError() {
 	this.content = trackOutcomeTemplate
-	this.assertResult()
+	this.parseAndAssertResult()
 }
 
-func (this *OutcomeDetailParserFixture) TestTrackOutcome_HappyPath() {
+func (this *OutcomeDetailParserFixture) TestTrackNewOutcome_HappyPath() {
 	this.content = happyPath
 
-	this.assertResult(
+	this.parseAndAssertResult(
 		&commands.TrackOutcome{Title: "The Title", Result: commands.CreateResult{ID: "0"}},
 		&commands.UpdateOutcomeExplanation{OutcomeID: "0", UpdatedExplanation: "The Explanation"},
 
@@ -101,6 +101,18 @@ func (this *OutcomeDetailParserFixture) TestTrackOutcome_HappyPath() {
 			UpdatedDescription: "\nThe Description\n",
 		},
 	)
+}
+
+func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome() {
+	// TODO
+}
+
+func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome_EverythingDeletedExceptTitle() {
+	// TODO
+}
+
+func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome_EverythingDeleted_ERROR() {
+	// TODO
 }
 
 const (
