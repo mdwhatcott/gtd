@@ -8,64 +8,70 @@ import (
 
 	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
-	"github.com/mdwhatcott/gtd/gtd/ui"
 )
 
-type TrackOutcomeExperience struct {
-	handler core.Handler
-	scanner *bufio.Scanner
-	line    string
-	words   []string
-	parse   func()
+type OutcomeDetailParser struct {
+	handler   core.Handler
+	scanner   *bufio.Scanner
+	line      string
+	words     []string
+	parseLine func()
 
-	outcome     *commands.TrackOutcome
+	outcomeID   string
 	description *strings.Builder
+	actionIDs   map[string]bool
 }
 
-func NewTrackOutcomeExperience(handler core.Handler, editor ui.Editor) *TrackOutcomeExperience {
-	content := editor.EditTempFile(trackOutcomeTemplate)
-	scanner := bufio.NewScanner(strings.NewReader(content))
-	ux := &TrackOutcomeExperience{
+func NewOutcomeDetailParser(
+	handler core.Handler,
+	outcomeID string,
+	actionIDs map[string]bool,
+	modifiedContent string,
+) *OutcomeDetailParser {
+	ux := &OutcomeDetailParser{
 		handler:     handler,
-		scanner:     scanner,
+		scanner:     bufio.NewScanner(strings.NewReader(modifiedContent)),
+		outcomeID:   outcomeID,
+		actionIDs:   actionIDs,
 		description: new(strings.Builder),
 	}
-	ux.parse = ux.parseTitleLine
+	ux.parseLine = ux.parseTitleLine
 	return ux
 }
 
-func (this *TrackOutcomeExperience) Engage() error {
+func (this *OutcomeDetailParser) Parse() error {
 	for this.scanner.Scan() {
 		this.line = this.scanner.Text()
 		this.words = strings.Fields(this.line)
-		this.parse()
-		if this.outcome == nil {
+		this.parseLine()
+		if this.outcomeID == "" {
 			break
 		}
 	}
 	if this.description.Len() > 0 {
 		this.handler.Handle(&commands.UpdateOutcomeDescription{
-			OutcomeID:          this.outcome.Result.ID,
+			OutcomeID:          this.outcomeID,
 			UpdatedDescription: this.description.String(),
 		})
 	}
 	return nil
 }
 
-func (this *TrackOutcomeExperience) parseTitleLine() {
+func (this *OutcomeDetailParser) parseTitleLine() {
 	if !strings.HasPrefix(this.line, "# ") {
 		return
 	}
 	if this.line == "# {TITLE}" {
 		return
 	}
-	this.outcome = &commands.TrackOutcome{Title: this.line[2:]}
-	this.handler.Handle(this.outcome)
-	this.parse = this.parseExplanationLine
+	command := &commands.TrackOutcome{Title: this.line[2:]}
+	this.handler.Handle(command)
+	this.outcomeID = command.Result.ID
+	this.parseLine = this.parseExplanationLine
 }
-func (this *TrackOutcomeExperience) parseExplanationLine() {
+func (this *OutcomeDetailParser) parseExplanationLine() {
 	if this.line == "## Actions:" {
-		this.parse = this.parseActionLine
+		this.parseLine = this.parseActionLine
 		return
 	}
 	if this.line == "" {
@@ -73,14 +79,14 @@ func (this *TrackOutcomeExperience) parseExplanationLine() {
 	}
 	if strings.HasPrefix(this.line, "> ") {
 		this.handler.Handle(&commands.UpdateOutcomeExplanation{
-			OutcomeID:          this.outcome.Result.ID,
+			OutcomeID:          this.outcomeID,
 			UpdatedExplanation: this.line[2:],
 		})
 	}
 }
-func (this *TrackOutcomeExperience) parseActionLine() {
+func (this *OutcomeDetailParser) parseActionLine() {
 	if this.line == "## Support Materials:" {
-		this.parse = this.parseOutcomeDescriptionLine
+		this.parseLine = this.parseOutcomeDescriptionLine
 	}
 	if this.line == "" {
 		return
@@ -91,9 +97,9 @@ func (this *TrackOutcomeExperience) parseActionLine() {
 
 	this.parseAction()
 }
-func (this *TrackOutcomeExperience) parseAction() {
+func (this *OutcomeDetailParser) parseAction() {
 	action := &commands.TrackAction{
-		OutcomeID:   this.outcome.Result.ID,
+		OutcomeID:   this.outcomeID,
 		Description: this.parseActionDescription(),
 	}
 	this.handler.Handle(action)
@@ -101,63 +107,63 @@ func (this *TrackOutcomeExperience) parseAction() {
 	this.parseActionStrategy(action.Result.ID)
 	this.parseActionStatus(action.Result.ID)
 }
-func (this *TrackOutcomeExperience) parseActionStatus(actionID string) {
+func (this *OutcomeDetailParser) parseActionStatus(actionID string) {
 	if this.isCompletedTask() {
 		this.handler.Handle(&commands.MarkActionStatusComplete{
-			OutcomeID: this.outcome.Result.ID,
+			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
 	} else if this.isIncompleteTask() {
 		this.handler.Handle(&commands.MarkActionStatusIncomplete{
-			OutcomeID: this.outcome.Result.ID,
+			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
 	} else if this.isLatentTask() {
 		this.handler.Handle(&commands.MarkActionStatusLatent{
-			OutcomeID: this.outcome.Result.ID,
+			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
 	}
 }
-func (this *TrackOutcomeExperience) parseActionStrategy(actionID string) {
+func (this *OutcomeDetailParser) parseActionStrategy(actionID string) {
 	if this.isConcurrentTask() {
 		this.handler.Handle(&commands.MarkActionStrategyConcurrent{
-			OutcomeID: this.outcome.Result.ID,
+			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
 	} else if this.isParallelTask() {
 		this.handler.Handle(&commands.MarkActionStrategySequential{
-			OutcomeID: this.outcome.Result.ID,
+			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
 	}
 }
-func (this *TrackOutcomeExperience) currentLineIsAction() bool {
+func (this *OutcomeDetailParser) currentLineIsAction() bool {
 	return this.isConcurrentTask() || this.isParallelTask()
 }
-func (this *TrackOutcomeExperience) isConcurrentTask() bool {
+func (this *OutcomeDetailParser) isConcurrentTask() bool {
 	return this.words[0] == "-"
 }
-func (this *TrackOutcomeExperience) isParallelTask() bool {
+func (this *OutcomeDetailParser) isParallelTask() bool {
 	first := this.words[0]
 	first = strings.TrimRight(first, ".")
 	number, _ := strconv.Atoi(first)
 	return number > 0
 }
-func (this *TrackOutcomeExperience) isCompletedTask() bool {
+func (this *OutcomeDetailParser) isCompletedTask() bool {
 	return this.words[1] == "[X]" || this.words[1] == "[x]"
 }
-func (this *TrackOutcomeExperience) isLatentTask() bool {
+func (this *OutcomeDetailParser) isLatentTask() bool {
 	return this.words[1] == "[?]"
 }
-func (this *TrackOutcomeExperience) isIncompleteTask() bool {
+func (this *OutcomeDetailParser) isIncompleteTask() bool {
 	return this.words[1] == "[]" || (this.words[1] == "[" && this.words[2] == "]")
 }
-func (this *TrackOutcomeExperience) parseActionDescription() string {
+func (this *OutcomeDetailParser) parseActionDescription() string {
 	start := strings.Index(this.line, "]") + 1
 	return strings.TrimSpace(this.line[start:])
 }
-func (this *TrackOutcomeExperience) parseOutcomeDescriptionLine() {
+func (this *OutcomeDetailParser) parseOutcomeDescriptionLine() {
 	_, _ = io.WriteString(this.description, this.line)
 	_, _ = io.WriteString(this.description, "\n")
 }

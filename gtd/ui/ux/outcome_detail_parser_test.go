@@ -10,37 +10,38 @@ import (
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
 )
 
-func TestTrackOutcomeFixture(t *testing.T) {
-	gunit.Run(new(TrackOutcomeFixture), t)
+func TestOutcomeDetailParserFixture(t *testing.T) {
+	gunit.Run(new(OutcomeDetailParserFixture), t)
 }
 
-type TrackOutcomeFixture struct {
+type OutcomeDetailParserFixture struct {
 	*gunit.Fixture
-	handler *FakeHandler
-	content string
+	handler   *FakeHandler
+	outcomeID string
+	actionIDs map[string]bool
+	content   string
 }
 
-func (this *TrackOutcomeFixture) Setup() {
+func (this *OutcomeDetailParserFixture) Setup() {
 	this.handler = NewFakeHandler()
+	this.actionIDs = make(map[string]bool)
 }
 
-func (this *TrackOutcomeFixture) assertResult(expected ...interface{}) {
-	editor := NewFakeEditor()
-	editor.resultContent = this.content
-	ux := NewTrackOutcomeExperience(this.handler, editor)
+func (this *OutcomeDetailParserFixture) assertResult(expected ...interface{}) {
+	parser := NewOutcomeDetailParser(this.handler, this.outcomeID, this.actionIDs, this.content)
 
-	err := ux.Engage()
+	err := parser.Parse()
 
 	this.So(err, should.BeNil)
 	this.So(this.handler.handled, should.Resemble, expected)
 }
 
-func (this *TrackOutcomeFixture) TestNoChange_NoEvents_NoError() {
+func (this *OutcomeDetailParserFixture) TestNoChange_NoEvents_NoError() {
 	this.content = trackOutcomeTemplate
 	this.assertResult()
 }
 
-func (this *TrackOutcomeFixture) TestHappyPath() {
+func (this *OutcomeDetailParserFixture) TestTrackOutcome_HappyPath() {
 	this.content = happyPath
 
 	this.assertResult(
@@ -123,22 +124,6 @@ const (
 The Description
 `
 )
-
-////////////////////////////////////////////////////////////////////
-
-type FakeEditor struct {
-	initialContent string
-	resultContent  string
-}
-
-func NewFakeEditor() *FakeEditor {
-	return &FakeEditor{}
-}
-
-func (this *FakeEditor) EditTempFile(initialContent string) (resultContent string) {
-	this.initialContent = initialContent
-	return this.resultContent
-}
 
 /////////////////////////////////////////////////////////////////////
 
