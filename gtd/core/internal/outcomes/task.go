@@ -118,10 +118,10 @@ func (this *Task) processInstructions() {
 			}
 
 		case *commands.UpdateActionDescription:
-			COMMAND.Result.Error = this.aggregate(COMMAND).UpdateActionDescription(COMMAND.ActionID, COMMAND.NewDescription)
+			COMMAND.Result.Error = this.aggregate(COMMAND).UpdateActionDescription(COMMAND.ActionID, COMMAND.UpdatedDescription)
 
 		case *commands.ReorderActions:
-			COMMAND.Result.Error = this.aggregate(COMMAND).ReorderActions(COMMAND.NewIDOrder)
+			COMMAND.Result.Error = this.aggregate(COMMAND).ReorderActions(COMMAND.ReorderedIDs)
 
 		case *commands.MarkActionStatusLatent:
 			COMMAND.Result.Error = this.aggregate(COMMAND).MarkActionStatusLatent(COMMAND.ActionID)

@@ -700,9 +700,9 @@ func (this *Fixture) TestUpdateActionDescription_PublishActionDescriptionUpdated
 	)
 
 	COMMAND := &commands.UpdateActionDescription{
-		OutcomeID:      "outcome",
-		ActionID:       "action",
-		NewDescription: "description @context1",
+		OutcomeID:          "outcome",
+		ActionID:           "action",
+		UpdatedDescription: "description @context1",
 	}
 	this.handle(COMMAND)
 
@@ -726,9 +726,9 @@ func (this *Fixture) TestUpdateActionDescription_ActionNotFound_ErrorReturned() 
 	)
 
 	COMMAND := &commands.UpdateActionDescription{
-		OutcomeID:      "outcome",
-		ActionID:       "action",
-		NewDescription: "description @context1",
+		OutcomeID:          "outcome",
+		ActionID:           "action",
+		UpdatedDescription: "description @context1",
 	}
 	this.handle(COMMAND)
 
@@ -747,9 +747,9 @@ func (this *Fixture) TestUpdateActionDescription_OutcomeNotFound_ErrorReturned()
 	)
 
 	COMMAND := &commands.UpdateActionDescription{
-		OutcomeID:      "1",
-		ActionID:       "action",
-		NewDescription: "description @context1",
+		OutcomeID:          "1",
+		ActionID:           "action",
+		UpdatedDescription: "description @context1",
 	}
 	this.handle(COMMAND)
 
@@ -776,9 +776,9 @@ func (this *Fixture) TestUpdateActionDescription_DescriptionUnchanged_ErrorRetur
 	)
 
 	COMMAND := &commands.UpdateActionDescription{
-		OutcomeID:      "outcome",
-		ActionID:       "action",
-		NewDescription: "updated description",
+		OutcomeID:          "outcome",
+		ActionID:           "action",
+		UpdatedDescription: "updated description",
 	}
 	this.handle(COMMAND)
 
@@ -806,17 +806,17 @@ func (this *Fixture) TestReorderActions_PublishActionReordered() {
 	)
 
 	COMMAND := &commands.ReorderActions{
-		OutcomeID:  "outcome",
-		NewIDOrder: []string{"action1", "action0"},
+		OutcomeID:    "outcome",
+		ReorderedIDs: []string{"action1", "action0"},
 	}
 	this.handle(COMMAND)
 
 	this.So(COMMAND.Result.Error, should.BeNil)
 	this.AssertOutput(
 		events.ActionsReorderedV1{
-			Timestamp:  this.now,
-			OutcomeID:  "outcome",
-			NewIDOrder: []string{"action1", "action0"},
+			Timestamp:    this.now,
+			OutcomeID:    "outcome",
+			ReorderedIDs: []string{"action1", "action0"},
 		},
 	)
 }
@@ -832,8 +832,8 @@ func (this *Fixture) TestReorderActions_OutcomeNotFound_ErrorReturned() {
 	)
 
 	COMMAND := &commands.ReorderActions{
-		OutcomeID:  "1",
-		NewIDOrder: []string{"action1", "action0"},
+		OutcomeID:    "1",
+		ReorderedIDs: []string{"action1", "action0"},
 	}
 	this.handle(COMMAND)
 
@@ -861,8 +861,8 @@ func (this *Fixture) TestReorderActions_AnyActionNotFound_ErrorReturned() {
 	)
 
 	COMMAND := &commands.ReorderActions{
-		OutcomeID:  "outcome",
-		NewIDOrder: []string{"action1", "action-not-found"},
+		OutcomeID:    "outcome",
+		ReorderedIDs: []string{"action1", "action-not-found"},
 	}
 	this.handle(COMMAND)
 
@@ -890,8 +890,8 @@ func (this *Fixture) TestReorderActions_AnyActionMissing_ErrorReturned() {
 	)
 
 	COMMAND := &commands.ReorderActions{
-		OutcomeID:  "outcome",
-		NewIDOrder: []string{"action1"},
+		OutcomeID:    "outcome",
+		ReorderedIDs: []string{"action1"},
 	}
 	this.handle(COMMAND)
 
@@ -907,8 +907,8 @@ func (this *Fixture) TestReorderActions_NoActions_ErrorReturned() {
 	)
 
 	COMMAND := &commands.ReorderActions{
-		OutcomeID:  "outcome",
-		NewIDOrder: nil,
+		OutcomeID:    "outcome",
+		ReorderedIDs: nil,
 	}
 	this.handle(COMMAND)
 

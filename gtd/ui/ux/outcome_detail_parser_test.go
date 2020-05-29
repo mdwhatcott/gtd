@@ -119,49 +119,49 @@ func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome() {
 		&commands.UpdateOutcomeExplanation{OutcomeID: "0", UpdatedExplanation: "The Explanation"},
 
 		&commands.UpdateActionDescription{
-			OutcomeID:      "0",
-			ActionID:       "1",
-			NewDescription: "concurrent complete   @context1 @context2",
+			OutcomeID:          "0",
+			ActionID:           "1",
+			UpdatedDescription: "concurrent complete   @context1 @context2",
 		},
 		&commands.MarkActionStrategyConcurrent{OutcomeID: "0", ActionID: "1"},
 		&commands.MarkActionStatusComplete{OutcomeID: "0", ActionID: "1"},
 
 		&commands.UpdateActionDescription{
-			OutcomeID:      "0",
-			ActionID:       "2",
-			NewDescription: "concurrent incomplete @context1 @context2",
+			OutcomeID:          "0",
+			ActionID:           "2",
+			UpdatedDescription: "concurrent incomplete @context1 @context2",
 		},
 		&commands.MarkActionStrategyConcurrent{OutcomeID: "0", ActionID: "2"},
 		&commands.MarkActionStatusIncomplete{OutcomeID: "0", ActionID: "2"},
 
 		&commands.UpdateActionDescription{
-			OutcomeID:      "0",
-			ActionID:       "3",
-			NewDescription: "concurrent latent     @context1 @context2",
+			OutcomeID:          "0",
+			ActionID:           "3",
+			UpdatedDescription: "concurrent latent     @context1 @context2",
 		},
 		&commands.MarkActionStrategyConcurrent{OutcomeID: "0", ActionID: "3"},
 		&commands.MarkActionStatusLatent{OutcomeID: "0", ActionID: "3"},
 
 		&commands.UpdateActionDescription{
-			OutcomeID:      "0",
-			ActionID:       "4",
-			NewDescription: "sequential complete   @context1 @context2",
+			OutcomeID:          "0",
+			ActionID:           "4",
+			UpdatedDescription: "sequential complete   @context1 @context2",
 		},
 		&commands.MarkActionStrategySequential{OutcomeID: "0", ActionID: "4"},
 		&commands.MarkActionStatusComplete{OutcomeID: "0", ActionID: "4"},
 
 		&commands.UpdateActionDescription{
-			OutcomeID:      "0",
-			ActionID:       "5",
-			NewDescription: "sequential incomplete @context1 @context2",
+			OutcomeID:          "0",
+			ActionID:           "5",
+			UpdatedDescription: "sequential incomplete @context1 @context2",
 		},
 		&commands.MarkActionStrategySequential{OutcomeID: "0", ActionID: "5"},
 		&commands.MarkActionStatusIncomplete{OutcomeID: "0", ActionID: "5"},
 
 		&commands.UpdateActionDescription{
-			OutcomeID:      "0",
-			ActionID:       "6",
-			NewDescription: "sequential latent     @context1 @context2",
+			OutcomeID:          "0",
+			ActionID:           "6",
+			UpdatedDescription: "sequential latent     @context1 @context2",
 		},
 		&commands.MarkActionStrategySequential{OutcomeID: "0", ActionID: "6"},
 		&commands.MarkActionStatusLatent{OutcomeID: "0", ActionID: "6"},

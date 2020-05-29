@@ -391,7 +391,7 @@ func (this *OutcomeDetailsFixture) TestActionsReordered() {
 			Description: "action-description2",
 		},
 		events.ActionsReorderedV1{
-			NewIDOrder: []string{"2", "0", "1"},
+			ReorderedIDs: []string{"2", "0", "1"},
 		},
 	)
 	this.assert(

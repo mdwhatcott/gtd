@@ -53,7 +53,7 @@ func (this *OutcomeDetailsProjector) Apply(_messages ...interface{}) {
 			})
 
 		case events.ActionsReorderedV1:
-			this.Actions = this.reorderActions(EVENT.NewIDOrder)
+			this.Actions = this.reorderActions(EVENT.ReorderedIDs)
 
 		case events.ActionDescriptionUpdatedV1:
 			action := this.getAction(EVENT.ActionID)

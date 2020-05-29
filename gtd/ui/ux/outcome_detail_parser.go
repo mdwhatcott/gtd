@@ -103,9 +103,9 @@ func (this *OutcomeDetailParser) parseAction() {
 	if this.isExistingAction() {
 		actionID = this.extractActionID()
 		action := &commands.UpdateActionDescription{
-			OutcomeID:      this.outcomeID,
-			ActionID:       actionID,
-			NewDescription: this.parseActionDescription(),
+			OutcomeID:          this.outcomeID,
+			ActionID:           actionID,
+			UpdatedDescription: this.parseActionDescription(),
 		}
 		this.handler.Handle(action)
 		this.actionIDs[actionID] = false

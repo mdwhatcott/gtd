@@ -8,7 +8,7 @@ type OutcomeTrackedV1 struct {
 type OutcomeTitleUpdatedV1 struct {
 	Timestamp    Time   `json:"timestamp"`
 	OutcomeID    string `json:"outcome_id"`
-	UpdatedTitle string `json:"new_title"`
+	UpdatedTitle string `json:"updated_title"`
 }
 type OutcomeExplanationUpdatedV1 struct {
 	Timestamp          Time   `json:"timestamp"`
@@ -52,9 +52,9 @@ type ActionTrackedV1 struct {
 	Contexts    []string `json:"contexts"`
 }
 type ActionsReorderedV1 struct {
-	Timestamp  Time     `json:"timestamp"`
-	OutcomeID  string   `json:"outcome_id"`
-	NewIDOrder []string `json:"new_id_order"`
+	Timestamp    Time     `json:"timestamp"`
+	OutcomeID    string   `json:"outcome_id"`
+	ReorderedIDs []string `json:"reordered_ids"`
 }
 type ActionDescriptionUpdatedV1 struct {
 	Timestamp          Time     `json:"timestamp"`

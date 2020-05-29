@@ -49,15 +49,15 @@ type TrackAction struct {
 	Result      CreateResult
 }
 type UpdateActionDescription struct {
-	OutcomeID      string
-	ActionID       string
-	NewDescription string // TODO: rename: UpdatedDescription
-	Result         Result
+	OutcomeID          string
+	ActionID           string
+	UpdatedDescription string
+	Result             Result
 }
 type ReorderActions struct {
-	OutcomeID  string
-	NewIDOrder []string
-	Result     Result
+	OutcomeID    string
+	ReorderedIDs []string
+	Result       Result
 }
 type MarkActionStatusLatent struct {
 	OutcomeID string

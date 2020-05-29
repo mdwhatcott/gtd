@@ -286,9 +286,9 @@ func (this *Aggregate) ReorderActions(_newIDOrder []string) error {
 		}
 	}
 	return this.raise(events.ActionsReorderedV1{
-		Timestamp:  this.now,
-		OutcomeID:  this.id,
-		NewIDOrder: _newIDOrder,
+		Timestamp:    this.now,
+		OutcomeID:    this.id,
+		ReorderedIDs: _newIDOrder,
 	})
 }
 func (this *Aggregate) MarkActionStatusLatent(_id string) error {
