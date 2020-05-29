@@ -48,12 +48,8 @@ func (this *OutcomeDetailParser) Parse() error {
 			break
 		}
 	}
-	if this.description.Len() > 0 {
-		this.handler.Handle(&commands.UpdateOutcomeDescription{
-			OutcomeID:          this.outcomeID,
-			UpdatedDescription: this.description.String(),
-		})
-	}
+	this.deleteRemovedActions()
+	this.updateDescription()
 	return nil
 }
 
@@ -64,9 +60,14 @@ func (this *OutcomeDetailParser) parseTitleLine() {
 	if this.line == "# {TITLE}" {
 		return
 	}
-	command := &commands.TrackOutcome{Title: this.line[2:]}
-	this.handler.Handle(command)
-	this.outcomeID = command.Result.ID
+	if this.outcomeID == "" {
+		command := &commands.TrackOutcome{Title: this.line[2:]}
+		this.handler.Handle(command)
+		this.outcomeID = command.Result.ID
+	} else {
+		this.handler.Handle(&commands.UpdateOutcomeTitle{UpdatedTitle: this.line[2:]})
+	}
+
 	this.parseLine = this.parseExplanationLine
 }
 func (this *OutcomeDetailParser) parseExplanationLine() {
@@ -98,27 +99,57 @@ func (this *OutcomeDetailParser) parseActionLine() {
 	this.parseAction()
 }
 func (this *OutcomeDetailParser) parseAction() {
-	action := &commands.TrackAction{
-		OutcomeID:   this.outcomeID,
-		Description: this.parseActionDescription(),
+	var actionID string
+	if this.isExistingAction() {
+		actionID = this.extractActionID()
+		action := &commands.UpdateActionDescription{
+			OutcomeID:      this.outcomeID,
+			ActionID:       actionID,
+			NewDescription: this.parseActionDescription(),
+		}
+		this.handler.Handle(action)
+		this.actionIDs[actionID] = false
+	} else {
+		action := &commands.TrackAction{
+			OutcomeID:   this.outcomeID,
+			Description: this.parseActionDescription(),
+		}
+		this.handler.Handle(action)
+		actionID = action.Result.ID
 	}
-	this.handler.Handle(action)
 
-	this.parseActionStrategy(action.Result.ID)
-	this.parseActionStatus(action.Result.ID)
+	this.parseActionStrategy(actionID)
+	this.parseActionStatus(actionID)
+}
+func (this *OutcomeDetailParser) isExistingAction() bool {
+	return this.actionLineHasID() && this.actionIDs[this.extractActionID()]
+}
+func (this *OutcomeDetailParser) actionLineHasID() bool {
+	return strings.Contains(this.line, " `0x")
+}
+func (this *OutcomeDetailParser) extractActionID() string {
+	start := strings.Index(this.line, " `0x") + 4
+	end := start + strings.Index(this.line[start:], "` ")
+	prefix := this.line[start:end]
+	for id := range this.actionIDs {
+		if strings.HasPrefix(id, prefix) {
+			return id
+		}
+	}
+	return prefix
 }
 func (this *OutcomeDetailParser) parseActionStatus(actionID string) {
-	if this.isCompletedTask() {
+	if this.isCompletedAction() {
 		this.handler.Handle(&commands.MarkActionStatusComplete{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
-	} else if this.isIncompleteTask() {
+	} else if this.isIncompleteAction() {
 		this.handler.Handle(&commands.MarkActionStatusIncomplete{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
-	} else if this.isLatentTask() {
+	} else if this.isLatentAction() {
 		this.handler.Handle(&commands.MarkActionStatusLatent{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
@@ -126,12 +157,12 @@ func (this *OutcomeDetailParser) parseActionStatus(actionID string) {
 	}
 }
 func (this *OutcomeDetailParser) parseActionStrategy(actionID string) {
-	if this.isConcurrentTask() {
+	if this.isConcurrentAction() {
 		this.handler.Handle(&commands.MarkActionStrategyConcurrent{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
-	} else if this.isParallelTask() {
+	} else if this.isParallelAction() {
 		this.handler.Handle(&commands.MarkActionStrategySequential{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
@@ -139,35 +170,60 @@ func (this *OutcomeDetailParser) parseActionStrategy(actionID string) {
 	}
 }
 func (this *OutcomeDetailParser) currentLineIsAction() bool {
-	return this.isConcurrentTask() || this.isParallelTask()
+	return this.isConcurrentAction() || this.isParallelAction()
 }
-func (this *OutcomeDetailParser) isConcurrentTask() bool {
+func (this *OutcomeDetailParser) isConcurrentAction() bool {
 	return this.words[0] == "-"
 }
-func (this *OutcomeDetailParser) isParallelTask() bool {
+func (this *OutcomeDetailParser) isParallelAction() bool {
 	first := this.words[0]
 	first = strings.TrimRight(first, ".")
 	number, _ := strconv.Atoi(first)
 	return number > 0
 }
-func (this *OutcomeDetailParser) isCompletedTask() bool {
+func (this *OutcomeDetailParser) isCompletedAction() bool {
 	return this.words[1] == "[X]" || this.words[1] == "[x]"
 }
-func (this *OutcomeDetailParser) isLatentTask() bool {
+func (this *OutcomeDetailParser) isLatentAction() bool {
 	return this.words[1] == "[?]"
 }
-func (this *OutcomeDetailParser) isIncompleteTask() bool {
+func (this *OutcomeDetailParser) isIncompleteAction() bool {
 	return this.words[1] == "[]" || (this.words[1] == "[" && this.words[2] == "]")
 }
 func (this *OutcomeDetailParser) parseActionDescription() string {
 	start := strings.Index(this.line, "]") + 1
+	if this.actionLineHasID() {
+		open := strings.Index(this.line, " `0x") + 4
+		end := open + strings.Index(this.line[open:], "` ")
+		start = end + 1
+	}
 	return strings.TrimSpace(this.line[start:])
 }
 func (this *OutcomeDetailParser) parseOutcomeDescriptionLine() {
 	_, _ = io.WriteString(this.description, this.line)
 	_, _ = io.WriteString(this.description, "\n")
 }
+func (this *OutcomeDetailParser) updateDescription() {
+	if this.description.Len() > 0 {
+		this.handler.Handle(&commands.UpdateOutcomeDescription{
+			OutcomeID:          this.outcomeID,
+			UpdatedDescription: this.description.String(),
+		})
+	}
+}
 
+func (this *OutcomeDetailParser) deleteRemovedActions() {
+	for id, removed := range this.actionIDs {
+		if removed {
+			this.handler.Handle(&commands.DeleteAction{
+				OutcomeID: this.outcomeID,
+				ActionID:  id,
+			})
+		}
+	}
+}
+
+// TODO: move elsewhere
 const trackOutcomeTemplate = `# {TITLE}
 
 > {EXPLANATION}

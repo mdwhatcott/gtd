@@ -51,7 +51,7 @@ type TrackAction struct {
 type UpdateActionDescription struct {
 	OutcomeID      string
 	ActionID       string
-	NewDescription string
+	NewDescription string // TODO: rename: UpdatedDescription
 	Result         Result
 }
 type ReorderActions struct {

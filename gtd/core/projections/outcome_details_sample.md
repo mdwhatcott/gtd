@@ -5,11 +5,11 @@
 
 ## Actions:
 
--  [ ] `520b1fab` do this anytime @home
--  [ ] `d2e4d9b9` ALSO DO THIS @COMPUTER ANYTIME
--  [?] `612459b6` I'm not sure if this will be necessary or not, best wait and see
-1. [x] `76ca05c3` this should happen before any subsequent numbered steps
-1. [ ] `5dbb4aa9` **this can't happen until after all previous numbered steps**
+-  [ ] `0x520b1fab` do this anytime @home
+-  [ ] `0xd2e4d9b9` ALSO DO THIS @COMPUTER ANYTIME
+-  [?] `0x612459b6` I'm not sure if this will be necessary or not, best wait and see
+1. [x] `0x76ca05c3` this should happen before any subsequent numbered steps
+1. [ ] `0x5dbb4aa9` **this can't happen until after all previous numbered steps**
 
 ## Support Materials
 
