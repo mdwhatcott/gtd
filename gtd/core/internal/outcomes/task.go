@@ -1,6 +1,8 @@
 package outcomes
 
 import (
+	"reflect"
+
 	"github.com/smartystreets/clock"
 	"github.com/smartystreets/joyride/v2"
 	"github.com/smartystreets/logging"
@@ -140,11 +142,21 @@ func (this *Task) processInstructions() {
 
 		case *commands.DeleteAction:
 			COMMAND.Result.Error = this.aggregate(COMMAND).DeleteAction(COMMAND.ActionID)
+
+		default:
+			this.log.Println("Unrecognized instruction:", reflect.TypeOf(COMMAND).String())
+			continue
 		}
+
+		this.log.Println("Received instruction:", reflect.TypeOf(MESSAGE).String())
 	}
 }
 func (this *Task) publishResults() {
 	for _, AGGREGATE := range this.aggregates {
-		this.AddPendingWrites(AGGREGATE.Results()...)
+		results := AGGREGATE.Results()
+		for _, result := range results {
+			this.log.Println("Publishing result:", reflect.TypeOf(result).String())
+			this.AddPendingWrites(result)
+		}
 	}
 }

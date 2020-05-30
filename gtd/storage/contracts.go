@@ -1,6 +1,8 @@
 package storage
 
-import "io"
+import (
+	"io"
+)
 
 type EncoderFunc func(io.Writer) Encoder
 type DecoderFunc func(io.Reader) Decoder

@@ -5,14 +5,11 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/google/uuid"
-
-	/*****/
 	core "github.com/mdwhatcott/gtd/gtd/core/wireup"
-	/**/ storage "github.com/mdwhatcott/gtd/gtd/storage/wireup"
-	/**********/ "github.com/mdwhatcott/gtd/gtd/ui"
-	/**********/ "github.com/mdwhatcott/gtd/gtd/ui/tempfile"
-	/**********/ "github.com/mdwhatcott/gtd/gtd/ui/ux"
+	storage "github.com/mdwhatcott/gtd/gtd/storage/wireup"
+	"github.com/mdwhatcott/gtd/gtd/ui"
+	"github.com/mdwhatcott/gtd/gtd/ui/tempfile"
+	"github.com/mdwhatcott/gtd/gtd/ui/ux"
 )
 
 func main() {
@@ -25,7 +22,7 @@ func main() {
 
 	PATH := filepath.Join(gtdPath, "events.json")
 	HANDLER := core.BuildOutcomesHandler(core.Requirements{
-		IDFunc: ID,
+		IDFunc: storage.GenerateID,
 		Reader: storage.BuildEventStoreReader(PATH),
 		Writer: storage.BuildEventStoreWriter(PATH),
 	})
@@ -35,8 +32,4 @@ func main() {
 	if ERR != nil {
 		log.Panic(ERR)
 	}
-}
-
-func ID() string {
-	return uuid.New().String()
 }

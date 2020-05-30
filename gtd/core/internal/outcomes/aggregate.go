@@ -43,7 +43,6 @@ func (this *Aggregate) raise(_events ...interface{}) error {
 	return nil
 }
 func (this *Aggregate) Replay(events ...interface{}) {
-	this.log.Println("stream:", len(events))
 	for _, EVENT := range events {
 		this.apply(EVENT)
 	}

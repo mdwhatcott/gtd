@@ -4,6 +4,7 @@ import (
 	"io"
 	"os"
 
+	"github.com/google/uuid"
 	"github.com/smartystreets/joyride/v2"
 
 	"github.com/mdwhatcott/gtd/gtd/core/events"
@@ -31,4 +32,8 @@ func open(_path string) *os.File {
 		panic(ERR)
 	}
 	return FILE
+}
+
+func GenerateID() string {
+	return uuid.New().String()
 }

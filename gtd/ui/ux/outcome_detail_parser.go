@@ -44,9 +44,6 @@ func NewOutcomeDetailParser(
 }
 
 func (this *OutcomeDetailParser) handle(instructions ...interface{}) {
-	for _, instruction := range instructions {
-		this.log.Println(instruction)
-	}
 	this.handler.Handle(instructions...)
 }
 
