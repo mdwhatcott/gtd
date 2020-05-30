@@ -16,6 +16,7 @@ type OutcomesListingParser struct {
 	status   core.OutcomeStatus
 	line     string
 	words    []string
+	edits    []string
 }
 
 func NewOutcomesListingParser(
@@ -30,7 +31,7 @@ func NewOutcomesListingParser(
 	}
 }
 
-func (this *OutcomesListingParser) Parse() error {
+func (this *OutcomesListingParser) Parse() (edits []string) {
 	for this.scanner.Scan() {
 		this.line = this.scanner.Text()
 		if len(this.line) == 0 {
@@ -42,7 +43,7 @@ func (this *OutcomesListingParser) Parse() error {
 			this.parseLine()
 		}
 	}
-	return nil
+	return this.edits
 }
 
 func (this *OutcomesListingParser) updateStatus() bool {
@@ -57,24 +58,33 @@ func (this *OutcomesListingParser) parseLine() {
 	idPrefix := this.words[1]
 	idPrefix = strings.TrimPrefix(idPrefix, "`0x")
 	idPrefix = strings.TrimSuffix(idPrefix, "`")
-	this.sendInstruction(this.findID(idPrefix))
+	id, status := this.findID(idPrefix)
+	if status != this.status {
+		this.changeStatus(id)
+	}
+	if strings.HasPrefix(this.line, "\t") {
+		this.edits = append(this.edits, id)
+	}
 }
 
-func (this *OutcomesListingParser) findID(prefix string) string {
-	var all []*projections.OutcomesListingItem
+func (this *OutcomesListingParser) findID(prefix string) (string, core.OutcomeStatus) {
+	for _, outcome := range this.combinedListings() {
+		if strings.HasPrefix(outcome.ID, prefix) {
+			return outcome.ID, outcome.Status
+		}
+	}
+	return prefix, ""
+}
+
+func (this *OutcomesListingParser) combinedListings() (all []*projections.OutcomesListingItem) {
 	all = append(all, this.listings.Fixed...)
 	all = append(all, this.listings.Deferred...)
 	all = append(all, this.listings.Uncertain...)
 	all = append(all, this.listings.Abandoned...)
-	for _, outcome := range all {
-		if strings.HasPrefix(outcome.ID, prefix) {
-			return outcome.ID
-		}
-	}
-	return prefix
+	return all
 }
 
-func (this *OutcomesListingParser) sendInstruction(id string) {
+func (this *OutcomesListingParser) changeStatus(id string) {
 	switch this.status {
 
 	case core.OutcomeStatusRealized:

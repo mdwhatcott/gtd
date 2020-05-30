@@ -7,6 +7,7 @@ import (
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
 
+	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
 	"github.com/mdwhatcott/gtd/gtd/core/projections"
 )
@@ -27,46 +28,60 @@ func (this *OutcomesListingParserFixture) Setup() {
 }
 
 func (this *OutcomesListingParserFixture) Test() {
-	this.listings.Fixed = append(this.listings.Fixed, &projections.OutcomesListingItem{ID: "000111", Title: "1"})
-	this.listings.Deferred = append(this.listings.Deferred, &projections.OutcomesListingItem{ID: "000222", Title: "2"})
-	this.listings.Uncertain = append(this.listings.Uncertain, &projections.OutcomesListingItem{ID: "000333", Title: "3"})
+	this.listings.Fixed = append(this.listings.Fixed,
+		&projections.OutcomesListingItem{ID: "000111", Title: "1", Status: core.OutcomeStatusFixed},
+		&projections.OutcomesListingItem{ID: "000222", Title: "2", Status: core.OutcomeStatusFixed},
+		&projections.OutcomesListingItem{ID: "000333", Title: "3", Status: core.OutcomeStatusFixed},
+	)
+	this.listings.Deferred = append(this.listings.Deferred,
+		&projections.OutcomesListingItem{ID: "000444", Title: "4", Status: core.OutcomeStatusDeferred},
+	)
+	this.listings.Uncertain = append(this.listings.Uncertain,
+		&projections.OutcomesListingItem{ID: "000555", Title: "5", Status: core.OutcomeStatusUncertain},
+	)
 	this.listings.Abandoned = append(this.listings.Abandoned,
-		&projections.OutcomesListingItem{ID: "000444", Title: "4"},
-		&projections.OutcomesListingItem{ID: "000555", Title: "5"},
-		&projections.OutcomesListingItem{ID: "000666", Title: "6"},
+		&projections.OutcomesListingItem{ID: "000666", Title: "6", Status: core.OutcomeStatusAbandoned},
+		&projections.OutcomesListingItem{ID: "000777", Title: "7", Status: core.OutcomeStatusAbandoned},
+		&projections.OutcomesListingItem{ID: "000888", Title: "8", Status: core.OutcomeStatusAbandoned},
 	)
 	this.content = strings.Join([]string{
 		"## Realized:",
 		"- `0x0001` 1",
 
 		"## Fixed:",
-		"- `0x0002` 2",
+		"\t- `0x0002` 2",
+		"- `0x0003` 3",
 
 		"## Deferred:",
-		"- `0x0003` 3",
+		"- `0x0005` 5",
 
 		"## Uncertain:",
 		"- `0x0004` 4",
 
 		"## Abandoned:",
-		"- `0x0005` 5",
+		"- `0x0006` 6",
+		"totally bogus line",
 
 		"## Deleted:",
-		"- `0x0006` 6",
+		"- `0x0007` 7",
+		"- `0x0008` 8",
 	}, "\n")
 
 	parser := NewOutcomesListingParser(this.handler, this.listings, this.content)
 
-	err := parser.Parse()
+	requestedEdits := parser.Parse()
 
-	this.So(err, should.BeNil)
+	this.So(requestedEdits, should.Resemble, []string{"000222"})
 	this.So(this.handler.handled, should.Resemble, []interface{}{
 		&commands.DeclareOutcomeRealized{OutcomeID: "000111"},
-		&commands.DeclareOutcomeFixed{OutcomeID: "000222"},
-		&commands.DeclareOutcomeDeferred{OutcomeID: "000333"},
+		//&commands.DeclareOutcomeFixed{OutcomeID: "000222"}, // unchanged
+		//&commands.DeclareOutcomeFixed{OutcomeID: "000333"}, // unchanged
+		&commands.DeclareOutcomeDeferred{OutcomeID: "000555"},
 		&commands.DeclareOutcomeUncertain{OutcomeID: "000444"},
-		&commands.DeclareOutcomeAbandoned{OutcomeID: "000555"},
-		&commands.DeleteOutcome{OutcomeID: "000666"},
+		//&commands.DeclareOutcomeAbandoned{OutcomeID: "000666"}, // unchanged
+		&commands.DeclareOutcomeAbandoned{OutcomeID: "bogus"},
+		&commands.DeleteOutcome{OutcomeID: "000777"},
+		&commands.DeleteOutcome{OutcomeID: "000888"},
 	})
 }
 

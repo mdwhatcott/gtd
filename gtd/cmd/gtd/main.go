@@ -1,14 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/google/uuid"
 
-	"github.com/mdwhatcott/gtd/gtd/core/commands"
 	"github.com/mdwhatcott/gtd/gtd/core/events"
 	"github.com/mdwhatcott/gtd/gtd/core/wireup"
 	"github.com/mdwhatcott/gtd/gtd/storage"
@@ -25,11 +23,7 @@ func main() {
 
 	// TODO: wrap handler in (cli-)routed controller
 	HANDLER := wireup.BuildOutcomesHandler(requirements)
-	COMMAND := &commands.TrackOutcome{Title: "App Finished"}
-	HANDLER.Handle(COMMAND)
-
-	fmt.Println("ID: ", COMMAND.Result.ID)
-	fmt.Println("Err:", COMMAND.Result.Error)
+	_ = HANDLER
 }
 
 func decoding(_reader io.Reader) storage.Decoder { return json.NewDecoder(_reader, events.Registry()) }
