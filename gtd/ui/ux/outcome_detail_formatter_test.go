@@ -81,5 +81,10 @@ func (this *OutcomeDetailFormatterFixture) Test() {
 		"1. [ ] `0x0004` Action 4",
 		"1. [?] `0x0005` Action 5",
 		"1. [X] `0x0006` Action 6",
+		"",
+		"",
+		"## Support Materials:",
+		"",
+		"Description",
 	}, "\n"))
 }

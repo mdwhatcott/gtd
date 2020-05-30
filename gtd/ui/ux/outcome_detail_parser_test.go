@@ -16,14 +16,14 @@ func TestOutcomeDetailParserFixture(t *testing.T) {
 
 type OutcomeDetailParserFixture struct {
 	*gunit.Fixture
-	handler   *FakeHandler
+	handler   *OutcomeDetailParserFixtureFakeHandler
 	outcomeID string
 	actionIDs map[string]bool
 	content   string
 }
 
 func (this *OutcomeDetailParserFixture) Setup() {
-	this.handler = NewFakeHandler()
+	this.handler = NewOutcomeDetailParserFixtureFakeHandler()
 	this.actionIDs = make(map[string]bool)
 }
 
@@ -294,18 +294,18 @@ The Description
 
 /////////////////////////////////////////////////////////////////////
 
-type FakeHandler struct {
+type OutcomeDetailParserFixtureFakeHandler struct {
 	handled []interface{}
 
 	id   int
 	errs []error
 }
 
-func NewFakeHandler() *FakeHandler {
-	return &FakeHandler{}
+func NewOutcomeDetailParserFixtureFakeHandler() *OutcomeDetailParserFixtureFakeHandler {
+	return &OutcomeDetailParserFixtureFakeHandler{}
 }
 
-func (this *FakeHandler) Handle(messages ...interface{}) {
+func (this *OutcomeDetailParserFixtureFakeHandler) Handle(messages ...interface{}) {
 	this.handled = append(this.handled, messages...)
 	for _, message := range messages {
 		switch message := message.(type) {
@@ -317,7 +317,7 @@ func (this *FakeHandler) Handle(messages ...interface{}) {
 	}
 }
 
-func (this *FakeHandler) Next() (id string, err error) {
+func (this *OutcomeDetailParserFixtureFakeHandler) Next() (id string, err error) {
 	defer func() { this.id++ }()
 	if this.id < len(this.errs) {
 		err = this.errs[this.id]
