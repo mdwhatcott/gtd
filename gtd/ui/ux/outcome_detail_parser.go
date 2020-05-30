@@ -6,11 +6,15 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/smartystreets/logging"
+
 	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
 )
 
 type OutcomeDetailParser struct {
+	log *logging.Logger
+
 	handler   core.Handler
 	scanner   *bufio.Scanner
 	line      string
@@ -39,6 +43,13 @@ func NewOutcomeDetailParser(
 	return ux
 }
 
+func (this *OutcomeDetailParser) handle(instructions ...interface{}) {
+	for _, instruction := range instructions {
+		this.log.Println(instruction)
+	}
+	this.handler.Handle(instructions...)
+}
+
 func (this *OutcomeDetailParser) Parse() error {
 	for this.scanner.Scan() {
 		this.line = this.scanner.Text()
@@ -62,10 +73,10 @@ func (this *OutcomeDetailParser) parseTitleLine() {
 	}
 	if this.outcomeID == "" {
 		command := &commands.TrackOutcome{Title: this.line[2:]}
-		this.handler.Handle(command)
+		this.handle(command)
 		this.outcomeID = command.Result.ID
 	} else {
-		this.handler.Handle(&commands.UpdateOutcomeTitle{UpdatedTitle: this.line[2:]})
+		this.handle(&commands.UpdateOutcomeTitle{UpdatedTitle: this.line[2:]})
 	}
 
 	this.parseLine = this.parseExplanationLine
@@ -79,7 +90,7 @@ func (this *OutcomeDetailParser) parseExplanationLine() {
 		return
 	}
 	if strings.HasPrefix(this.line, "> ") {
-		this.handler.Handle(&commands.UpdateOutcomeExplanation{
+		this.handle(&commands.UpdateOutcomeExplanation{
 			OutcomeID:          this.outcomeID,
 			UpdatedExplanation: this.line[2:],
 		})
@@ -107,14 +118,14 @@ func (this *OutcomeDetailParser) parseAction() {
 			ActionID:           actionID,
 			UpdatedDescription: this.parseActionDescription(),
 		}
-		this.handler.Handle(action)
+		this.handle(action)
 		this.actionIDs[actionID] = false
 	} else {
 		action := &commands.TrackAction{
 			OutcomeID:   this.outcomeID,
 			Description: this.parseActionDescription(),
 		}
-		this.handler.Handle(action)
+		this.handle(action)
 		actionID = action.Result.ID
 	}
 
@@ -140,17 +151,17 @@ func (this *OutcomeDetailParser) extractActionID() string {
 }
 func (this *OutcomeDetailParser) parseActionStatus(actionID string) {
 	if this.isCompletedAction() {
-		this.handler.Handle(&commands.MarkActionStatusComplete{
+		this.handle(&commands.MarkActionStatusComplete{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
 	} else if this.isIncompleteAction() {
-		this.handler.Handle(&commands.MarkActionStatusIncomplete{
+		this.handle(&commands.MarkActionStatusIncomplete{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
 	} else if this.isLatentAction() {
-		this.handler.Handle(&commands.MarkActionStatusLatent{
+		this.handle(&commands.MarkActionStatusLatent{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
@@ -158,12 +169,12 @@ func (this *OutcomeDetailParser) parseActionStatus(actionID string) {
 }
 func (this *OutcomeDetailParser) parseActionStrategy(actionID string) {
 	if this.isConcurrentAction() {
-		this.handler.Handle(&commands.MarkActionStrategyConcurrent{
+		this.handle(&commands.MarkActionStrategyConcurrent{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
 	} else if this.isParallelAction() {
-		this.handler.Handle(&commands.MarkActionStrategySequential{
+		this.handle(&commands.MarkActionStrategySequential{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
@@ -205,7 +216,7 @@ func (this *OutcomeDetailParser) parseOutcomeDescriptionLine() {
 }
 func (this *OutcomeDetailParser) updateDescription() {
 	if this.description.Len() > 0 {
-		this.handler.Handle(&commands.UpdateOutcomeDescription{
+		this.handle(&commands.UpdateOutcomeDescription{
 			OutcomeID:          this.outcomeID,
 			UpdatedDescription: this.description.String(),
 		})
@@ -215,24 +226,10 @@ func (this *OutcomeDetailParser) updateDescription() {
 func (this *OutcomeDetailParser) deleteRemovedActions() {
 	for id, removed := range this.actionIDs {
 		if removed {
-			this.handler.Handle(&commands.DeleteAction{
+			this.handle(&commands.DeleteAction{
 				OutcomeID: this.outcomeID,
 				ActionID:  id,
 			})
 		}
 	}
 }
-
-// TODO: move elsewhere
-const trackOutcomeTemplate = `# {TITLE}
-
-> {EXPLANATION}
-
-
-## Actions:
-
--  [ ] concurrent @home
-1. [ ] sequential @home
-
-
-## Support Materials:`

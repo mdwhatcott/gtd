@@ -2,6 +2,7 @@ package main
 
 import (
 	"io"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -12,18 +13,24 @@ import (
 	"github.com/mdwhatcott/gtd/gtd/storage"
 	"github.com/mdwhatcott/gtd/gtd/storage/eventstore"
 	"github.com/mdwhatcott/gtd/gtd/storage/json"
+	"github.com/mdwhatcott/gtd/gtd/ui"
+	"github.com/mdwhatcott/gtd/gtd/ui/tempfile"
+	"github.com/mdwhatcott/gtd/gtd/ui/ux"
 )
 
 func main() {
-	requirements := wireup.Requirements{
+	HANDLER := wireup.BuildOutcomesHandler(wireup.Requirements{
 		IDFunc: func() string { return uuid.New().String() },
 		Reader: eventstore.NewReader(reading, decoding),
 		Writer: eventstore.NewWriter(encoding, writing),
+	})
+	CONTENT := tempfile.NewEditor().EditTempFile(ui.TrackOutcomeTemplate)
+	log.Println(CONTENT)
+	PARSER := ux.NewOutcomeDetailParser(HANDLER, "", nil, CONTENT)
+	ERR := PARSER.Parse()
+	if ERR != nil {
+		log.Panic(ERR)
 	}
-
-	// TODO: wrap handler in (cli-)routed controller
-	HANDLER := wireup.BuildOutcomesHandler(requirements)
-	_ = HANDLER
 }
 
 func decoding(_reader io.Reader) storage.Decoder { return json.NewDecoder(_reader, events.Registry()) }

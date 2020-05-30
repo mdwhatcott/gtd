@@ -32,10 +32,8 @@ func NewAggregate(_now time.Time, _log *logging.Logger) *Aggregate {
 	}
 }
 
-func (this *Aggregate) TransferResults() []interface{} {
-	RESULTS := this.results
-	this.results = nil
-	return RESULTS
+func (this *Aggregate) Results() []interface{} {
+	return this.results
 }
 func (this *Aggregate) raise(_events ...interface{}) error {
 	for _, EVENT := range _events {

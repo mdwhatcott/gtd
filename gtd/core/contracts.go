@@ -43,3 +43,5 @@ const (
 	ActionStrategyConcurrent ActionStrategy = "CONCURRENT"
 	ActionStrategySequential ActionStrategy = "SEQUENTIAL"
 )
+
+type Transformer func(raw map[string]interface{}) interface{}

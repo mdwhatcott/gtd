@@ -10,6 +10,10 @@ import (
 
 type Editor struct{}
 
+func NewEditor() *Editor {
+	return &Editor{}
+}
+
 func (*Editor) EditTempFile(initialContent string) (resultContent string) {
 	name := createTempFile(initialContent)
 	defer deleteFile(name)

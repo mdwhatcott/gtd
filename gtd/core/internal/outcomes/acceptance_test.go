@@ -42,12 +42,6 @@ func (this *Fixture) AssertNoOutput() {
 func (this *Fixture) AssertOutput(_expected ...interface{}) {
 	this.So(this.Writes, should.Resemble, _expected)
 }
-func (this *Fixture) assertTransferalOfResultOwnership() {
-	alreadyPUBLISHED := len(this.task.PendingWrites())
-	this.task.publishResults()
-	doublyPUBLISHED := len(this.task.PendingWrites()) - alreadyPUBLISHED
-	this.So(doublyPUBLISHED, should.Equal, 0)
-}
 
 func (this *Fixture) Setup() {
 	this.now = time.Now()
@@ -63,11 +57,9 @@ func (this *Fixture) Setup() {
 		joyride.WithStorageWriter(this.Joyride),
 	)
 }
-func (this *Fixture) Teardown() {
-	this.assertTransferalOfResultOwnership()
-}
 func (this *Fixture) handle(command interface{}) {
-	this.handler = NewHandler(this.runner, this.task)
+	this.handler = NewHandler(this.runner, this.generateID)
+	this.handler.clock = clock.Freeze(this.now)
 	this.handler.Handle(command)
 }
 func (this *Fixture) generateID() string {

@@ -145,6 +145,6 @@ func (this *Task) processInstructions() {
 }
 func (this *Task) publishResults() {
 	for _, AGGREGATE := range this.aggregates {
-		this.AddPendingWrites(AGGREGATE.TransferResults()...)
+		this.AddPendingWrites(AGGREGATE.Results()...)
 	}
 }

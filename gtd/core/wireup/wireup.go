@@ -19,6 +19,6 @@ func BuildOutcomesHandler(_requirements Requirements) core.Handler {
 			joyride.WithStorageReader(_requirements.Reader),
 			joyride.WithStorageWriter(_requirements.Writer),
 		),
-		outcomes.NewTask(_requirements.IDFunc),
+		_requirements.IDFunc,
 	)
 }

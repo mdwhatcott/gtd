@@ -1,20 +1,18 @@
 package events
 
-import "time"
+import (
+	"time"
+
+	"github.com/mdwhatcott/gtd/gtd/util/date"
+)
 
 type Time = time.Time
 
-type ActionStatus int
+var ParseDate = date.Parse
 
-const (
-	ActionLatent ActionStatus = iota
-	ActionPending
-	ActionComplete
-)
-
-type ActionStrategy int
-
-const (
-	ActionConcurrent ActionStrategy = iota
-	ActionSequential
-)
+func TransformSlice(raw []interface{}) (transformed []string) {
+	for _, item := range raw {
+		transformed = append(transformed, item.(string))
+	}
+	return transformed
+}

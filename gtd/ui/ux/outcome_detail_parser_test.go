@@ -8,6 +8,7 @@ import (
 	"github.com/smartystreets/gunit"
 
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
+	"github.com/mdwhatcott/gtd/gtd/ui"
 )
 
 func TestOutcomeDetailParserFixture(t *testing.T) {
@@ -37,7 +38,7 @@ func (this *OutcomeDetailParserFixture) parseAndAssertResult(expected ...interfa
 }
 
 func (this *OutcomeDetailParserFixture) TestNoChange_NoEvents_NoError() {
-	this.content = trackOutcomeTemplate
+	this.content = ui.TrackOutcomeTemplate
 	this.parseAndAssertResult()
 }
 
