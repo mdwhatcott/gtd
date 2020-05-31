@@ -104,5 +104,4 @@ func (this *FakeOutcomesListingParserFakeHandler) Handle(messages ...interface{}
 			message.Result.ID = "0042"
 		}
 	}
-
 }
