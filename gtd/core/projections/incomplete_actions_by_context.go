@@ -18,8 +18,12 @@ func NewIncompleteActionsByContextProjector() *IncompleteActionsByContextProject
 	}
 }
 
-func (this *IncompleteActionsByContextProjector) Projection() interface{} {
+func (this *IncompleteActionsByContextProjector) IncompleteActionsByContextProjection() IncompleteActionsByContext {
 	return this.IncompleteActionsByContext
+}
+
+func (this *IncompleteActionsByContextProjector) Projection() interface{} {
+	return this.IncompleteActionsByContextProjection()
 }
 
 func (this *IncompleteActionsByContextProjector) Apply(_messages ...interface{}) {
@@ -74,6 +78,7 @@ func (this *IncompleteActionsByContextProjector) filterOutcomeActionsByContext()
 			}
 
 			firstSequential = firstSequential || action.Strategy == core.ActionStrategySequential
+			// TODO: if len(action.Contexts) == 0 { add to a no-context context }
 			for _, context := range action.Contexts {
 				contexts[context] = append(contexts[context], &ContextualAction{
 					ActionDetails: action,
