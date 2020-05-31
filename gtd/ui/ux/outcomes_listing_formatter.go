@@ -22,7 +22,7 @@ func composeListing(header string, items []*projections.OutcomesListingItem) str
 	builder.WriteString(header)
 	builder.WriteString("\n")
 	builder.WriteString("\n")
-	IDs := shortenIDs2(outcomesListingIDs(items))
+	IDs := shortenIDs(outcomesListingIDs(items))
 	for _, outcome := range items {
 		builder.WriteString("- `0x")
 		builder.WriteString(IDs[outcome.ID])
@@ -44,7 +44,7 @@ func outcomesListingIDs(listing []*projections.OutcomesListingItem) (ids_ []stri
 	return ids_
 }
 
-func shortenIDs2(_ids []string) (fullToPrefix map[string]string) {
+func shortenIDs(_ids []string) (fullToPrefix map[string]string) {
 	var actionIDs map[string]bool
 	for length := minIDPrefixLength; len(actionIDs) < len(_ids) && length < len(_ids[0]); length++ {
 		actionIDs = make(map[string]bool)

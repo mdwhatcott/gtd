@@ -8,7 +8,7 @@ import (
 )
 
 func FormatOutcomeDetails(outcome projections.OutcomeDetails) string {
-	prefixes := shortenIDs2(actionIDs(outcome.Actions))
+	prefixes := shortenIDs(actionIDs(outcome.Actions))
 
 	builder := new(strings.Builder)
 	builder.WriteString("# ")
