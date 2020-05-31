@@ -27,8 +27,8 @@ func (this *OutcomeDetailsFixture) TestBlankWhenFirstInstantiated() {
 	this.assert(OutcomeDetails{})
 }
 func (this *OutcomeDetailsFixture) TestOutcomeTracked() {
-	this.apply(events.OutcomeTrackedV1{Title: "title"})
-	this.assert(OutcomeDetails{Title: "title"})
+	this.apply(events.OutcomeTrackedV1{OutcomeID: "ID", Title: "title"})
+	this.assert(OutcomeDetails{ID: "ID", Title: "title"})
 }
 func (this *OutcomeDetailsFixture) TestOutcomeTitleUpdated() {
 	this.apply(

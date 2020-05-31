@@ -77,6 +77,7 @@ func (this *IncompleteActionsByContextProjector) filterOutcomeActionsByContext()
 			for _, context := range action.Contexts {
 				contexts[context] = append(contexts[context], &ContextualAction{
 					ActionDetails: action,
+					OutcomeID:     outcome.ID,
 					OutcomeTitle:  outcome.Title,
 				})
 			}

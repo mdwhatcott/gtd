@@ -11,7 +11,10 @@ func NewOutcomeDetailsProjector() *OutcomeDetailsProjector {
 	return &OutcomeDetailsProjector{}
 }
 
-func (this *OutcomeDetailsProjector) Projection() OutcomeDetails {
+func (this *OutcomeDetailsProjector) Projection() interface{} {
+	return this.OutcomeDetailsProjection()
+}
+func (this *OutcomeDetailsProjector) OutcomeDetailsProjection() OutcomeDetails {
 	return this.OutcomeDetails
 }
 
@@ -20,6 +23,7 @@ func (this *OutcomeDetailsProjector) Apply(_messages ...interface{}) {
 		switch EVENT := MESSAGE.(type) {
 
 		case events.OutcomeTrackedV1:
+			this.ID = EVENT.OutcomeID
 			this.Title = EVENT.Title
 
 		case events.OutcomeTitleUpdatedV1:

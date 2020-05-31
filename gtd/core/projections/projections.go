@@ -13,10 +13,12 @@ type Context struct {
 
 type ContextualAction struct {
 	*ActionDetails
+	OutcomeID    string
 	OutcomeTitle string
 }
 
 type OutcomeDetails struct {
+	ID          string
 	Title       string
 	Explanation string
 	Description string
