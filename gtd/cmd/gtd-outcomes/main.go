@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/smartystreets/joyride/v2"
 
@@ -16,7 +17,7 @@ import (
 )
 
 func main() {
-	log.SetFlags(log.LstdFlags | log.Lshortfile)
+	log.SetFlags(log.Lmicroseconds | log.Lshortfile)
 
 	GTDPath, OK := os.LookupEnv("GTDPATH")
 	if !OK {
@@ -50,17 +51,23 @@ func main() {
 }
 
 func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesListing {
+	log.Println("Replaying outcomes listing...")
+	START := time.Now()
 	STREAM := &storage.EventStream{}
 	_reader.Read(STREAM)
 	PROJECTOR := projections.NewOutcomesListingProjector()
 	PROJECTOR.Apply(STREAM.Result.Events...)
+	log.Println("Outcomes listing replayed in:", time.Since(START))
 	return PROJECTOR.Projection()
 }
 
 func replayOutcomeDetails(_outcomeID string, _reader joyride.StorageReader) projections.OutcomeDetails {
+	log.Println("Replaying outcome details...")
+	START := time.Now()
 	STREAM := &storage.OutcomeEventStream{OutcomeID: _outcomeID}
 	_reader.Read(STREAM)
 	PROJECTOR := projections.NewOutcomeDetailsProjector()
 	PROJECTOR.Apply(STREAM.Result.Events...)
+	log.Println("Outcome details replayed in:", time.Since(START))
 	return PROJECTOR.Projection()
 }
