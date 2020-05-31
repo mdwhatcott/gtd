@@ -21,7 +21,7 @@ func (*Editor) EditTempFile(initialContent string) (resultContent string) {
 }
 
 func createTempFile(content string) string {
-	file, err := ioutil.TempFile("", "")
+	file, err := ioutil.TempFile("", "*.md")
 	if err != nil {
 		log.Fatal(err)
 	}
