@@ -7,7 +7,7 @@ import (
 	"github.com/mdwhatcott/gtd/gtd/core/projections"
 )
 
-func FormatOutcomeDetails(outcome *projections.OutcomeDetails) string {
+func FormatOutcomeDetails(outcome projections.OutcomeDetails) string {
 	prefixes := shortenIDs2(actionIDs(outcome.Actions))
 
 	builder := new(strings.Builder)

@@ -11,7 +11,7 @@ func NewOutcomeDetailsProjector() *OutcomeDetailsProjector {
 	return &OutcomeDetailsProjector{}
 }
 
-func (this *OutcomeDetailsProjector) Projection() interface{} {
+func (this *OutcomeDetailsProjector) Projection() OutcomeDetails {
 	return this.OutcomeDetails
 }
 

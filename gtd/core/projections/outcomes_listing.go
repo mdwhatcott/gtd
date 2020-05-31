@@ -19,7 +19,7 @@ func NewOutcomesListingProjector() *OutcomesListingProjector {
 	}
 }
 
-func (this *OutcomesListingProjector) Projection() interface{} {
+func (this *OutcomesListingProjector) Projection() OutcomesListing {
 	return this.OutcomesListing
 }
 

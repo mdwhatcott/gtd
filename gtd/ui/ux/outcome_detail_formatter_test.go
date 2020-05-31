@@ -21,7 +21,7 @@ type OutcomeDetailFormatterFixture struct {
 }
 
 func (this *OutcomeDetailFormatterFixture) Test() {
-	outcome := &projections.OutcomeDetails{
+	outcome := projections.OutcomeDetails{
 		Title:       "Title",
 		Explanation: "Explanation",
 		Description: "Description",

@@ -8,6 +8,7 @@ import (
 	"github.com/smartystreets/gunit"
 
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
+	"github.com/mdwhatcott/gtd/gtd/core/projections"
 	"github.com/mdwhatcott/gtd/gtd/ui"
 )
 
@@ -17,19 +18,18 @@ func TestOutcomeDetailParserFixture(t *testing.T) {
 
 type OutcomeDetailParserFixture struct {
 	*gunit.Fixture
-	handler   *OutcomeDetailParserFixtureFakeHandler
-	outcomeID string
-	actionIDs map[string]bool
-	content   string
+	handler    *OutcomeDetailParserFixtureFakeHandler
+	outcomeID  string
+	content    string
+	projection projections.OutcomeDetails
 }
 
 func (this *OutcomeDetailParserFixture) Setup() {
 	this.handler = NewOutcomeDetailParserFixtureFakeHandler()
-	this.actionIDs = make(map[string]bool)
 }
 
 func (this *OutcomeDetailParserFixture) parseAndAssertResult(expected ...interface{}) {
-	parser := NewOutcomeDetailParser(this.handler, this.outcomeID, this.actionIDs, this.content)
+	parser := NewOutcomeDetailParser(this.handler, this.outcomeID, this.projection, this.content)
 
 	err := parser.Parse()
 
@@ -48,6 +48,7 @@ func (this *OutcomeDetailParserFixture) TestTrackNewOutcome_HappyPath() {
 
 	this.parseAndAssertResult(
 		&commands.TrackOutcome{Title: "The Title", Result: commands.CreateResult{ID: "0"}},
+		&commands.DeclareOutcomeFixed{OutcomeID: "0"},
 		&commands.UpdateOutcomeExplanation{OutcomeID: "0", UpdatedExplanation: "The Explanation"},
 
 		&commands.TrackAction{
@@ -108,12 +109,14 @@ func (this *OutcomeDetailParserFixture) TestTrackNewOutcome_HappyPath() {
 func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome() {
 	this.content = allElementsAndAllExistingTasks
 	this.outcomeID = "0"
-	this.actionIDs["1"] = true
-	this.actionIDs["2"] = true
-	this.actionIDs["3"] = true
-	this.actionIDs["4"] = true
-	this.actionIDs["5"] = true
-	this.actionIDs["6"] = true
+	this.projection.Actions = append(this.projection.Actions,
+		&projections.ActionDetails{ID: "1"},
+		&projections.ActionDetails{ID: "2"},
+		&projections.ActionDetails{ID: "3"},
+		&projections.ActionDetails{ID: "4"},
+		&projections.ActionDetails{ID: "5"},
+		&projections.ActionDetails{ID: "6"},
+	)
 
 	this.parseAndAssertResult(
 		&commands.UpdateOutcomeTitle{UpdatedTitle: "The Title"},
@@ -201,7 +204,9 @@ func (this *OutcomeDetailParserFixture) TestActionTamperedWith() {
 func (this *OutcomeDetailParserFixture) TestDeletedAction() {
 	this.content = actionDeleted
 	this.outcomeID = "0"
-	this.actionIDs["1"] = true
+	this.projection.Actions = append(this.projection.Actions,
+		&projections.ActionDetails{ID: "1"},
+	)
 
 	this.parseAndAssertResult(
 		&commands.UpdateOutcomeTitle{UpdatedTitle: "The Title"},

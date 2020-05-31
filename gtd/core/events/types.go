@@ -10,8 +10,11 @@ type Time = time.Time
 
 var ParseDate = date.Parse
 
-func TransformSlice(raw []interface{}) (transformed []string) {
-	for _, item := range raw {
+func TransformSlice(raw interface{}) (transformed []string) {
+	if raw == nil {
+		return transformed
+	}
+	for _, item := range raw.([]interface{}) {
 		transformed = append(transformed, item.(string))
 	}
 	return transformed

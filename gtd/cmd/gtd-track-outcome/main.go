@@ -5,6 +5,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/mdwhatcott/gtd/gtd/core/projections"
 	core "github.com/mdwhatcott/gtd/gtd/core/wireup"
 	storage "github.com/mdwhatcott/gtd/gtd/storage/wireup"
 	"github.com/mdwhatcott/gtd/gtd/ui"
@@ -27,7 +28,7 @@ func main() {
 		Writer: storage.BuildEventStoreWriter(PATH),
 	})
 	CONTENT := tempfile.NewEditor().EditTempFile(ui.TrackOutcomeTemplate)
-	PARSER := ux.NewOutcomeDetailParser(HANDLER, "", nil, CONTENT)
+	PARSER := ux.NewOutcomeDetailParser(HANDLER, "", projections.OutcomeDetails{}, CONTENT)
 	ERR := PARSER.Parse()
 	if ERR != nil {
 		log.Panic(ERR)

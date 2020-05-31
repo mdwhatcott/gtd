@@ -70,14 +70,14 @@ func TransformActionTrackedV1(raw map[string]interface{}) interface{} {
 		OutcomeID:   raw["outcome_id"].(string),
 		ActionID:    raw["action_id"].(string),
 		Description: raw["definition"].(string),
-		Contexts:    TransformSlice(raw["contexts"].([]interface{})),
+		Contexts:    TransformSlice(raw["contexts"]),
 	}
 }
 func TransformActionsReorderedV1(raw map[string]interface{}) interface{} {
 	return ActionsReorderedV1{
 		Timestamp:    ParseDate(raw["timestamp"].(string)),
 		OutcomeID:    raw["outcome_id"].(string),
-		ReorderedIDs: TransformSlice(raw["reordered_ids"].([]interface{})),
+		ReorderedIDs: TransformSlice(raw["reordered_ids"]),
 	}
 }
 func TransformActionDescriptionUpdatedV1(raw map[string]interface{}) interface{} {
@@ -86,7 +86,7 @@ func TransformActionDescriptionUpdatedV1(raw map[string]interface{}) interface{}
 		OutcomeID:          raw["outcome_id"].(string),
 		ActionID:           raw["action_id"].(string),
 		UpdatedDescription: raw["updated_definition"].(string),
-		UpdatedContexts:    TransformSlice(raw["updated_contexts"].([]interface{})),
+		UpdatedContexts:    TransformSlice(raw["updated_contexts"]),
 	}
 }
 func TransformActionStatusMarkedLatentV1(raw map[string]interface{}) interface{} {

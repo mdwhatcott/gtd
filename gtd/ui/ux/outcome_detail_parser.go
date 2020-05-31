@@ -10,6 +10,7 @@ import (
 
 	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
+	"github.com/mdwhatcott/gtd/gtd/core/projections"
 )
 
 type OutcomeDetailParser struct {
@@ -29,18 +30,26 @@ type OutcomeDetailParser struct {
 func NewOutcomeDetailParser(
 	handler core.Handler,
 	outcomeID string,
-	actionIDs map[string]bool,
+	projection projections.OutcomeDetails,
 	modifiedContent string,
 ) *OutcomeDetailParser {
 	ux := &OutcomeDetailParser{
 		handler:     handler,
 		scanner:     bufio.NewScanner(strings.NewReader(modifiedContent)),
 		outcomeID:   outcomeID,
-		actionIDs:   actionIDs,
+		actionIDs:   actionIDMap(projection.Actions),
 		description: new(strings.Builder),
 	}
 	ux.parseLine = ux.parseTitleLine
 	return ux
+}
+
+func actionIDMap(actions []*projections.ActionDetails) map[string]bool {
+	set := make(map[string]bool)
+	for _, action := range actions {
+		set[action.ID] = true
+	}
+	return set
 }
 
 func (this *OutcomeDetailParser) handle(instructions ...interface{}) {
@@ -72,6 +81,7 @@ func (this *OutcomeDetailParser) parseTitleLine() {
 		command := &commands.TrackOutcome{Title: this.line[2:]}
 		this.handle(command)
 		this.outcomeID = command.Result.ID
+		this.handle(&commands.DeclareOutcomeFixed{OutcomeID: this.outcomeID})
 	} else {
 		this.handle(&commands.UpdateOutcomeTitle{UpdatedTitle: this.line[2:]})
 	}
