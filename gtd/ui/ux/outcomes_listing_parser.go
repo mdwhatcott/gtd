@@ -55,6 +55,21 @@ func (this *OutcomesListingParser) updateStatus() bool {
 }
 
 func (this *OutcomesListingParser) parseLine() {
+	if !strings.HasPrefix(this.words[1], "`0x") {
+		this.trackOutcome()
+	} else {
+		this.updateOutcome()
+	}
+}
+
+func (this *OutcomesListingParser) trackOutcome() {
+	command := &commands.TrackOutcome{Title: strings.TrimSpace(strings.TrimLeft(this.line, "-"))}
+	this.handler.Handle(command)
+	this.changeStatus(command.Result.ID)
+	this.edits = append(this.edits, command.Result.ID)
+}
+
+func (this *OutcomesListingParser) updateOutcome() {
 	idPrefix := this.words[1]
 	idPrefix = strings.TrimPrefix(idPrefix, "`0x")
 	idPrefix = strings.TrimSuffix(idPrefix, "`")

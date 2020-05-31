@@ -57,10 +57,10 @@ func (this *OutcomesListingParserFixture) Test() {
 
 		"## Uncertain:",
 		"- `0x0004` 4",
+		"- All New Outcome!",
 
 		"## Abandoned:",
 		"- `0x0006` 6",
-		"totally bogus line",
 
 		"## Deleted:",
 		"- `0x0007` 7",
@@ -71,15 +71,16 @@ func (this *OutcomesListingParserFixture) Test() {
 
 	requestedEdits := parser.Parse()
 
-	this.So(requestedEdits, should.Resemble, []string{"000222"})
+	this.So(requestedEdits, should.Resemble, []string{"000222", "0042"})
 	this.So(this.handler.handled, should.Resemble, []interface{}{
 		&commands.DeclareOutcomeRealized{OutcomeID: "000111"},
 		//&commands.DeclareOutcomeFixed{OutcomeID: "000222"}, // unchanged
 		//&commands.DeclareOutcomeFixed{OutcomeID: "000333"}, // unchanged
 		&commands.DeclareOutcomeDeferred{OutcomeID: "000555"},
 		&commands.DeclareOutcomeUncertain{OutcomeID: "000444"},
+		&commands.TrackOutcome{Title: "All New Outcome!", Result: commands.CreateResult{ID: "0042"}},
+		&commands.DeclareOutcomeUncertain{OutcomeID: "0042"},
 		//&commands.DeclareOutcomeAbandoned{OutcomeID: "000666"}, // unchanged
-		&commands.DeclareOutcomeAbandoned{OutcomeID: "bogus"},
 		&commands.DeleteOutcome{OutcomeID: "000777"},
 		&commands.DeleteOutcome{OutcomeID: "000888"},
 	})
@@ -97,4 +98,11 @@ func NewFakeOutcomesListingParserFakeHandler() *FakeOutcomesListingParserFakeHan
 
 func (this *FakeOutcomesListingParserFakeHandler) Handle(messages ...interface{}) {
 	this.handled = append(this.handled, messages...)
+	for _, message := range messages {
+		switch message := message.(type) {
+		case *commands.TrackOutcome:
+			message.Result.ID = "0042"
+		}
+	}
+
 }
