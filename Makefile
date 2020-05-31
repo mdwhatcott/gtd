@@ -9,5 +9,5 @@ fmt:
 build:
 	go build ./...
 
-install:
-	go install github.com/mdwhatcott/gtd/legacy/cmd/gtd
+install: test
+	go install github.com/mdwhatcott/gtd/gtd/cmd/gtd
