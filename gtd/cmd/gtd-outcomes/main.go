@@ -58,7 +58,7 @@ func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesLi
 	PROJECTOR := projections.NewOutcomesListingProjector()
 	PROJECTOR.Apply(STREAM.Result.Events...)
 	log.Println("Outcomes listing replayed in:", time.Since(START))
-	return PROJECTOR.Projection()
+	return PROJECTOR.OutcomesListingProjection()
 }
 
 func replayOutcomeDetails(_outcomeID string, _reader joyride.StorageReader) projections.OutcomeDetails {
