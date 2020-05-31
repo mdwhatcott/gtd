@@ -40,7 +40,18 @@ func main() {
 	EDITS := PARSER.Parse()
 
 	for _, EDIT := range EDITS {
-		PROJECTION := replayOutcomeDetails(EDIT, REQUIREMENTS.Reader)
+		log.Println("Replaying outcome details...")
+		START := time.Now()
+		STREAM := &storage.OutcomeEventStream{OutcomeID: EDIT}
+		REQUIREMENTS.Reader.Read(STREAM)
+		if len(STREAM.Result.Events) == 0 {
+			log.Println("No history found for requested outcome ID:", EDIT)
+			continue
+		}
+		PROJECTOR := projections.NewOutcomeDetailsProjector()
+		PROJECTOR.Apply(STREAM.Result.Events...)
+		log.Println("Outcome details replayed in:", time.Since(START))
+		PROJECTION := PROJECTOR.OutcomeDetailsProjection()
 		RESULT := EDITOR.EditTempFile(ux.FormatOutcomeDetails(PROJECTION))
 		PARSER := ux.NewOutcomeDetailParser(HANDLER, EDIT, PROJECTION, RESULT)
 		ERR := PARSER.Parse()
@@ -59,15 +70,4 @@ func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesLi
 	PROJECTOR.Apply(STREAM.Result.Events...)
 	log.Println("Outcomes listing replayed in:", time.Since(START))
 	return PROJECTOR.OutcomesListingProjection()
-}
-
-func replayOutcomeDetails(_outcomeID string, _reader joyride.StorageReader) projections.OutcomeDetails {
-	log.Println("Replaying outcome details...")
-	START := time.Now()
-	STREAM := &storage.OutcomeEventStream{OutcomeID: _outcomeID}
-	_reader.Read(STREAM)
-	PROJECTOR := projections.NewOutcomeDetailsProjector()
-	PROJECTOR.Apply(STREAM.Result.Events...)
-	log.Println("Outcome details replayed in:", time.Since(START))
-	return PROJECTOR.OutcomeDetailsProjection()
 }
