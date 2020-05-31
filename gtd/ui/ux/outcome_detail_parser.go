@@ -225,7 +225,7 @@ func (this *OutcomeDetailParser) updateDescription() {
 	if this.description.Len() > 0 {
 		this.handle(&commands.UpdateOutcomeDescription{
 			OutcomeID:          this.outcomeID,
-			UpdatedDescription: this.description.String(),
+			UpdatedDescription: strings.TrimSpace(this.description.String()),
 		})
 	}
 }

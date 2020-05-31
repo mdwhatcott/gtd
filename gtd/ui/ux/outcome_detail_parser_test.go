@@ -101,7 +101,7 @@ func (this *OutcomeDetailParserFixture) TestTrackNewOutcome_HappyPath() {
 
 		&commands.UpdateOutcomeDescription{
 			OutcomeID:          "0",
-			UpdatedDescription: "\nThe Description\n",
+			UpdatedDescription: "The Description",
 		},
 	)
 }
@@ -172,7 +172,7 @@ func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome() {
 
 		&commands.UpdateOutcomeDescription{
 			OutcomeID:          "0",
-			UpdatedDescription: "\nThe Description\n",
+			UpdatedDescription: "The Description",
 		},
 	)
 }
@@ -196,7 +196,7 @@ func (this *OutcomeDetailParserFixture) TestActionTamperedWith() {
 
 		&commands.UpdateOutcomeDescription{
 			OutcomeID:          "0",
-			UpdatedDescription: "\nThe Description\n",
+			UpdatedDescription: "The Description",
 		},
 	)
 }
@@ -214,7 +214,7 @@ func (this *OutcomeDetailParserFixture) TestDeletedAction() {
 
 		&commands.DeleteAction{OutcomeID: "0", ActionID: "1"},
 
-		&commands.UpdateOutcomeDescription{OutcomeID: "0", UpdatedDescription: "\nThe Description\n"},
+		&commands.UpdateOutcomeDescription{OutcomeID: "0", UpdatedDescription: "The Description"},
 	)
 }
 
