@@ -11,9 +11,15 @@ import (
 func REPL() {
 	APP := BuildApplication()
 
+	fmt.Println("Welcome to Getting Things Done!")
+	fmt.Println()
+	fmt.Println("Enter 'help' for instructions.")
+
 	for {
 		fmt.Print("\n-> ")
-		directive := strings.Fields(ScanLine())
+
+		directive := ScanLine()
+
 		switch directive[0] {
 
 		case "projects":
@@ -40,10 +46,11 @@ func REPL() {
 	}
 }
 
-func ScanLine() string {
+func ScanLine() []string {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
-	return scanner.Text()
+	line := scanner.Text()
+	return strings.Fields(line)
 }
 
 func Usage() {

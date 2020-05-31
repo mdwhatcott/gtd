@@ -8,7 +8,8 @@ import (
 )
 
 func FormatIncompleteActions(projection projections.IncompleteActionsByContext) string {
-	prefixes := shortenIDs(incompleteActionIDs(projection))
+	actionIDPrefixes := shortenIDs(incompleteActionIDs(projection))
+	outcomeIDPrefixes := shortenIDs(incompleteActionOutcomeIDs(projection))
 
 	builder := new(strings.Builder)
 
@@ -18,8 +19,8 @@ func FormatIncompleteActions(projection projections.IncompleteActionsByContext) 
 		for _, action := range context.Actions {
 			_, _ = fmt.Fprintf(builder,
 				"- [ ] `0x%s` %s (`0x%s` %s)\n",
-				prefixes[action.ID], action.Description,
-				prefixes[action.OutcomeID], action.OutcomeTitle,
+				actionIDPrefixes[action.ID], action.Description,
+				outcomeIDPrefixes[action.OutcomeID], action.OutcomeTitle,
 			)
 		}
 
@@ -29,11 +30,28 @@ func FormatIncompleteActions(projection projections.IncompleteActionsByContext) 
 	return strings.TrimSpace(builder.String())
 }
 
-func incompleteActionIDs(projection projections.IncompleteActionsByContext) (ids_ []string) {
+func incompleteActionOutcomeIDs(projection projections.IncompleteActionsByContext) (ids_ []string) {
+	unique := make(map[string]bool)
 	for _, context := range projection.Contexts {
 		for _, action := range context.Actions {
-			ids_ = append(ids_, action.OutcomeID, action.ID)
+			unique[action.OutcomeID] = true
 		}
+	}
+	for id := range unique {
+		ids_ = append(ids_, id)
+	}
+	return ids_
+}
+
+func incompleteActionIDs(projection projections.IncompleteActionsByContext) (ids_ []string) {
+	unique := make(map[string]bool)
+	for _, context := range projection.Contexts {
+		for _, action := range context.Actions {
+			unique[action.ID] = true
+		}
+	}
+	for id := range unique {
+		ids_ = append(ids_, id)
 	}
 	return ids_
 }

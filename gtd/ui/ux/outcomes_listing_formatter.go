@@ -45,14 +45,19 @@ func outcomesListingIDs(listing []*projections.OutcomesListingItem) (ids_ []stri
 }
 
 func shortenIDs(_ids []string) (fullToPrefix map[string]string) {
-	var actionIDs map[string]bool
-	for length := minIDPrefixLength; len(actionIDs) < len(_ids) && length < len(_ids[0]); length++ {
-		actionIDs = make(map[string]bool)
+	if len(_ids) == 0 {
+		return nil
+	}
+	for length := minIDPrefixLength; length < len(_ids[0]); length++ {
+		actionIDs := make(map[string]bool)
 		fullToPrefix = make(map[string]string)
 		for _, ID := range _ids {
 			prefix := ID[:length]
 			actionIDs[prefix] = true
 			fullToPrefix[ID] = prefix
+		}
+		if len(actionIDs) == len(_ids) {
+			break
 		}
 	}
 	return fullToPrefix
