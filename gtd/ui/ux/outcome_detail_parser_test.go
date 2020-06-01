@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
 
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
 	"github.com/mdwhatcott/gtd/gtd/core/projections"
-	"github.com/mdwhatcott/gtd/gtd/ui"
 )
 
 func TestOutcomeDetailParserFixture(t *testing.T) {
@@ -35,11 +35,6 @@ func (this *OutcomeDetailParserFixture) parseAndAssertResult(expected ...interfa
 
 	this.So(err, should.BeNil)
 	this.So(this.handler.handled, should.Resemble, expected)
-}
-
-func (this *OutcomeDetailParserFixture) TestNoChange_NoEvents_NoError() {
-	this.content = ui.TrackOutcomeTemplate
-	this.parseAndAssertResult()
 }
 
 func (this *OutcomeDetailParserFixture) TestTrackNewOutcome_HappyPath() {
@@ -111,10 +106,10 @@ func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome() {
 	this.outcomeID = "0"
 	this.projection.Actions = append(this.projection.Actions,
 		&projections.ActionDetails{ID: "1"},
-		&projections.ActionDetails{ID: "2"},
+		&projections.ActionDetails{ID: "2", Status: core.ActionStatusIncomplete, Strategy: core.ActionStrategyConcurrent, Description: "concurrent incomplete @context1 @context2"},
 		&projections.ActionDetails{ID: "3"},
 		&projections.ActionDetails{ID: "4"},
-		&projections.ActionDetails{ID: "5"},
+		&projections.ActionDetails{ID: "5", Status: core.ActionStatusIncomplete, Strategy: core.ActionStrategySequential, Description: "sequential incomplete @context1 @context2"},
 		&projections.ActionDetails{ID: "6"},
 	)
 
@@ -132,14 +127,6 @@ func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome() {
 
 		&commands.UpdateActionDescription{
 			OutcomeID:          "0",
-			ActionID:           "2",
-			UpdatedDescription: "concurrent incomplete @context1 @context2",
-		},
-		&commands.MarkActionStrategyConcurrent{OutcomeID: "0", ActionID: "2"},
-		&commands.MarkActionStatusIncomplete{OutcomeID: "0", ActionID: "2"},
-
-		&commands.UpdateActionDescription{
-			OutcomeID:          "0",
 			ActionID:           "3",
 			UpdatedDescription: "concurrent latent     @context1 @context2",
 		},
@@ -153,14 +140,6 @@ func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome() {
 		},
 		&commands.MarkActionStrategySequential{OutcomeID: "0", ActionID: "4"},
 		&commands.MarkActionStatusComplete{OutcomeID: "0", ActionID: "4"},
-
-		&commands.UpdateActionDescription{
-			OutcomeID:          "0",
-			ActionID:           "5",
-			UpdatedDescription: "sequential incomplete @context1 @context2",
-		},
-		&commands.MarkActionStrategySequential{OutcomeID: "0", ActionID: "5"},
-		&commands.MarkActionStatusIncomplete{OutcomeID: "0", ActionID: "5"},
 
 		&commands.UpdateActionDescription{
 			OutcomeID:          "0",

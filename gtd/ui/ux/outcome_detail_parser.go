@@ -16,11 +16,12 @@ import (
 type OutcomeDetailParser struct {
 	log *logging.Logger
 
-	handler   core.Handler
-	scanner   *bufio.Scanner
-	line      string
-	words     []string
-	parseLine func()
+	handler    core.Handler
+	projection projections.OutcomeDetails
+	scanner    *bufio.Scanner
+	line       string
+	words      []string
+	parseLine  func()
 
 	outcomeID   string
 	description *strings.Builder
@@ -35,6 +36,7 @@ func NewOutcomeDetailParser(
 ) *OutcomeDetailParser {
 	ux := &OutcomeDetailParser{
 		handler:     handler,
+		projection:  projection,
 		scanner:     bufio.NewScanner(strings.NewReader(modifiedContent)),
 		outcomeID:   outcomeID,
 		actionIDs:   actionIDMap(projection.Actions),
@@ -72,9 +74,6 @@ func (this *OutcomeDetailParser) Parse() error {
 
 func (this *OutcomeDetailParser) parseTitleLine() {
 	if !strings.HasPrefix(this.line, "# ") {
-		return
-	}
-	if this.line == "# {TITLE}" {
 		return
 	}
 	if this.outcomeID == "" {
@@ -120,12 +119,14 @@ func (this *OutcomeDetailParser) parseAction() {
 	var actionID string
 	if this.isExistingAction() {
 		actionID = this.extractActionID()
-		action := &commands.UpdateActionDescription{
-			OutcomeID:          this.outcomeID,
-			ActionID:           actionID,
-			UpdatedDescription: this.parseActionDescription(),
+		description := this.parseActionDescription()
+		if this.descriptionModified(actionID, description) {
+			this.handle(&commands.UpdateActionDescription{
+				OutcomeID:          this.outcomeID,
+				ActionID:           actionID,
+				UpdatedDescription: description,
+			})
 		}
-		this.handle(action)
 		this.actionIDs[actionID] = false
 	} else {
 		action := &commands.TrackAction{
@@ -139,6 +140,14 @@ func (this *OutcomeDetailParser) parseAction() {
 	this.parseActionStrategy(actionID)
 	this.parseActionStatus(actionID)
 }
+func (this *OutcomeDetailParser) descriptionModified(id string, updatedDescription string) bool {
+	for _, action := range this.projection.Actions {
+		if action.ID == id {
+			return updatedDescription != action.Description
+		}
+	}
+	return false
+}
 func (this *OutcomeDetailParser) isExistingAction() bool {
 	return this.actionLineHasID() && this.actionIDs[this.extractActionID()]
 }
@@ -146,9 +155,7 @@ func (this *OutcomeDetailParser) actionLineHasID() bool {
 	return strings.Contains(this.line, " `0x")
 }
 func (this *OutcomeDetailParser) extractActionID() string {
-	start := strings.Index(this.line, " `0x") + 4
-	end := start + strings.Index(this.line[start:], "` ")
-	prefix := this.line[start:end]
+	prefix := between(this.line, " `0x", "` ")
 	for id := range this.actionIDs {
 		if strings.HasPrefix(id, prefix) {
 			return id
@@ -157,30 +164,39 @@ func (this *OutcomeDetailParser) extractActionID() string {
 	return prefix
 }
 func (this *OutcomeDetailParser) parseActionStatus(actionID string) {
-	if this.isCompletedAction() {
+	if this.isCompletedAction() && !this.actionStatusPreviouslyMatched(actionID, core.ActionStatusComplete) {
 		this.handle(&commands.MarkActionStatusComplete{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
-	} else if this.isIncompleteAction() {
+	} else if this.isIncompleteAction() && !this.actionStatusPreviouslyMatched(actionID, core.ActionStatusIncomplete) {
 		this.handle(&commands.MarkActionStatusIncomplete{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
-	} else if this.isLatentAction() {
+	} else if this.isLatentAction() && !this.actionStatusPreviouslyMatched(actionID, core.ActionStatusLatent) {
 		this.handle(&commands.MarkActionStatusLatent{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
 	}
 }
+func (this *OutcomeDetailParser) actionStatusPreviouslyMatched(actionID string, previousStatus core.ActionStatus) bool {
+	for _, action := range this.projection.Actions {
+		if action.ID == actionID {
+			return action.Status == previousStatus
+		}
+	}
+	return false
+
+}
 func (this *OutcomeDetailParser) parseActionStrategy(actionID string) {
-	if this.isConcurrentAction() {
+	if this.isConcurrentAction() && !this.actionStrategyPreviouslyMatched(actionID, core.ActionStrategyConcurrent) {
 		this.handle(&commands.MarkActionStrategyConcurrent{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
 		})
-	} else if this.isParallelAction() {
+	} else if this.isParallelAction() && !this.actionStrategyPreviouslyMatched(actionID, core.ActionStrategySequential) {
 		this.handle(&commands.MarkActionStrategySequential{
 			OutcomeID: this.outcomeID,
 			ActionID:  actionID,
@@ -192,6 +208,14 @@ func (this *OutcomeDetailParser) currentLineIsAction() bool {
 }
 func (this *OutcomeDetailParser) isConcurrentAction() bool {
 	return this.words[0] == "-"
+}
+func (this *OutcomeDetailParser) actionStrategyPreviouslyMatched(actionID string, previousStrategy core.ActionStrategy) bool {
+	for _, action := range this.projection.Actions {
+		if action.ID == actionID {
+			return action.Strategy == previousStrategy
+		}
+	}
+	return false
 }
 func (this *OutcomeDetailParser) isParallelAction() bool {
 	first := this.words[0]
@@ -211,9 +235,7 @@ func (this *OutcomeDetailParser) isIncompleteAction() bool {
 func (this *OutcomeDetailParser) parseActionDescription() string {
 	start := strings.Index(this.line, "]") + 1
 	if this.actionLineHasID() {
-		open := strings.Index(this.line, " `0x") + 4
-		end := open + strings.Index(this.line[open:], "` ")
-		start = end + 1
+		start = strings.Index(this.line, "` ") + 1
 	}
 	return strings.TrimSpace(this.line[start:])
 }
