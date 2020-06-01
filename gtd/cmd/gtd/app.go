@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/smartystreets/joyride/v2"
@@ -46,27 +47,35 @@ type Application struct {
 }
 
 func (this *Application) editOutcomes(_ids []string) {
+	waiter := new(sync.WaitGroup)
+	waiter.Add(len(_ids))
 	for _, ID := range _ids {
-		log.Println("Replaying outcome details...")
-		START := time.Now()
-		STREAM := &storage.OutcomeEventStream{OutcomeID: ID}
-		this.reader.Read(STREAM)
-		if len(STREAM.Result.Events) == 0 {
-			log.Println("No history found for requested outcome ID:", ID)
-			continue
-		}
-		PROJECTOR := projections.NewOutcomeDetailsProjector()
-		PROJECTOR.Apply(STREAM.Result.Events...)
-		log.Println("Outcome details replayed in:", time.Since(START))
-		PROJECTION := PROJECTOR.OutcomeDetailsProjection()
-		RESULT := this.editor.EditTempFile(ux.FormatOutcomeDetails(PROJECTION))
-		PARSER := ux.NewOutcomeDetailParser(this.handler, ID, PROJECTION, RESULT)
-		ERR := PARSER.Parse()
-		if ERR != nil {
-			log.Fatal(ERR)
-		}
+		go this.editOutcome(ID, waiter)
 	}
+	waiter.Wait()
+}
 
+func (this *Application) editOutcome(ID string, waiter *sync.WaitGroup) {
+	defer waiter.Done()
+
+	log.Println("Replaying outcome details...")
+	START := time.Now()
+	STREAM := &storage.OutcomeEventStream{OutcomeID: ID}
+	this.reader.Read(STREAM)
+	if len(STREAM.Result.Events) == 0 {
+		log.Println("No history found for requested outcome ID:", ID)
+		return
+	}
+	PROJECTOR := projections.NewOutcomeDetailsProjector()
+	PROJECTOR.Apply(STREAM.Result.Events...)
+	log.Printf("Outcome details replayed for id %s in: %s", ID, time.Since(START))
+	PROJECTION := PROJECTOR.OutcomeDetailsProjection()
+	RESULT := this.editor.EditTempFile(ux.FormatOutcomeDetails(PROJECTION))
+	PARSER := ux.NewOutcomeDetailParser(this.handler, ID, PROJECTION, RESULT)
+	ERR := PARSER.Parse()
+	if ERR != nil {
+		log.Fatal(ERR)
+	}
 }
 
 func (this *Application) PresentOutcomesListing(contexts []string) {
