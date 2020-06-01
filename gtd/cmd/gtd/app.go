@@ -82,7 +82,11 @@ func (this *Application) PresentOutcomesListing(contexts []string) {
 	PROJECTION := replayOutcomesListing(this.reader)
 	RESULT := this.editor.EditTempFile(ux.FormatOutcomesListing(PROJECTION))
 	PARSER := ux.NewOutcomesListingParser(this.handler, PROJECTION, RESULT)
-	this.editOutcomes(PARSER.Parse())
+	EDITS := PARSER.Parse()
+	this.editOutcomes(EDITS)
+	if len(EDITS) > 0 {
+		this.PresentOutcomesListing(contexts)
+	}
 }
 func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesListing {
 	log.Println("Replaying outcomes listing...")
@@ -99,7 +103,11 @@ func (this *Application) PresentIncompleteActions(contexts []string) {
 	PROJECTION := replayIncompleteActions(this.reader)
 	RESULT := this.editor.EditTempFile(ux.FormatIncompleteActions(PROJECTION))
 	PARSER := ux.NewIncompleteActionsParser(this.handler, PROJECTION, RESULT)
-	this.editOutcomes(PARSER.Parse())
+	EDITS := PARSER.Parse()
+	this.editOutcomes(EDITS)
+	if len(EDITS) > 0 {
+		this.PresentIncompleteActions(contexts)
+	}
 }
 
 func replayIncompleteActions(_reader joyride.StorageReader) projections.IncompleteActionsByContext {
