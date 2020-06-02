@@ -101,7 +101,18 @@ func (this *OutcomeDetailParserFixture) TestTrackNewOutcome_HappyPath() {
 	)
 }
 
-func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome() {
+func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome_TitleUnmodified_OnlySendCommandWhenTitleModified() {
+	this.outcomeID = "0"
+	this.projection.ID = "0"
+	this.projection.Title = "The Title"
+	this.projection.Explanation = "The Explanation"
+	this.projection.Description = "The Description"
+	this.content = originalMetadata
+
+	this.parseAndAssertResult()
+}
+
+func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome_SomeActionsUnmodified_OnlySendCommandsWhenActionsModified() {
 	this.content = allElementsAndAllExistingTasks
 	this.outcomeID = "0"
 	this.projection.Actions = append(this.projection.Actions,
@@ -198,6 +209,17 @@ func (this *OutcomeDetailParserFixture) TestDeletedAction() {
 }
 
 var (
+	originalMetadata = `# The Title
+
+> The Explanation
+
+## Actions:
+
+## Support Materials:
+
+The Description
+`
+
 	allElementsAndAllNewTasks = `# The Title
 
 > The Explanation

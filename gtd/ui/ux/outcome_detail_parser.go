@@ -82,7 +82,10 @@ func (this *OutcomeDetailParser) parseTitleLine() {
 		this.outcomeID = command.Result.ID
 		this.handle(&commands.DeclareOutcomeFixed{OutcomeID: this.outcomeID})
 	} else {
-		this.handle(&commands.UpdateOutcomeTitle{UpdatedTitle: this.line[2:]})
+		title := this.line[2:]
+		if title != this.projection.Title {
+			this.handle(&commands.UpdateOutcomeTitle{UpdatedTitle: title})
+		}
 	}
 
 	this.parseLine = this.parseExplanationLine
@@ -96,10 +99,13 @@ func (this *OutcomeDetailParser) parseExplanationLine() {
 		return
 	}
 	if strings.HasPrefix(this.line, "> ") {
-		this.handle(&commands.UpdateOutcomeExplanation{
-			OutcomeID:          this.outcomeID,
-			UpdatedExplanation: this.line[2:],
-		})
+		explanation := this.line[2:]
+		if explanation != this.projection.Explanation {
+			this.handle(&commands.UpdateOutcomeExplanation{
+				OutcomeID:          this.outcomeID,
+				UpdatedExplanation: explanation,
+			})
+		}
 	}
 }
 func (this *OutcomeDetailParser) parseActionLine() {
@@ -244,10 +250,11 @@ func (this *OutcomeDetailParser) parseOutcomeDescriptionLine() {
 	_, _ = io.WriteString(this.description, "\n")
 }
 func (this *OutcomeDetailParser) updateDescription() {
-	if this.description.Len() > 0 {
+	description := strings.TrimSpace(this.description.String())
+	if description != this.projection.Description {
 		this.handle(&commands.UpdateOutcomeDescription{
 			OutcomeID:          this.outcomeID,
-			UpdatedDescription: strings.TrimSpace(this.description.String()),
+			UpdatedDescription: description,
 		})
 	}
 }
