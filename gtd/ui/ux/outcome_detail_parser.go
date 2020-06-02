@@ -26,6 +26,7 @@ type OutcomeDetailParser struct {
 	outcomeID   string
 	description *strings.Builder
 	actionIDs   map[string]bool
+	actionOrder []string
 }
 
 func NewOutcomeDetailParser(
@@ -67,6 +68,7 @@ func (this *OutcomeDetailParser) Parse() error {
 			break
 		}
 	}
+	this.reorderActions()
 	this.deleteRemovedActions()
 	this.updateDescription()
 	return nil
@@ -143,6 +145,7 @@ func (this *OutcomeDetailParser) parseAction() {
 		actionID = action.Result.ID
 	}
 
+	this.actionOrder = append(this.actionOrder, actionID)
 	this.parseActionStrategy(actionID)
 	this.parseActionStatus(actionID)
 }
@@ -268,4 +271,30 @@ func (this *OutcomeDetailParser) deleteRemovedActions() {
 			})
 		}
 	}
+}
+
+func (this *OutcomeDetailParser) reorderActions() {
+	if len(this.actionOrder) == 0 {
+		return
+	}
+	if len(this.projection.Actions) == 0 {
+		return
+	}
+	var projectionOrder []string
+	for _, action := range this.projection.Actions {
+		projectionOrder = append(projectionOrder, action.ID)
+	}
+	a := strings.Join(projectionOrder, "|")
+	b := strings.Join(this.actionOrder, "|")
+	if a == b {
+		return
+	}
+	if strings.HasPrefix(b, a) { // only post-inserts happened, no need to reorder
+		return
+	}
+
+	this.handle(&commands.ReorderActions{
+		OutcomeID:    this.outcomeID,
+		ReorderedIDs: this.actionOrder,
+	})
 }

@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/mdwhatcott/gtd/gtd/core"
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
+
+	"github.com/mdwhatcott/gtd/gtd/core"
 
 	"github.com/mdwhatcott/gtd/gtd/core/commands"
 	"github.com/mdwhatcott/gtd/gtd/core/projections"
@@ -167,6 +168,27 @@ func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome_SomeActionsUnm
 	)
 }
 
+func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome_ActionsReordered_SendReorderCommand() {
+	this.content = reorderedTasks
+	this.outcomeID = "0"
+	this.projection.ID = "0"
+	this.projection.Title = "The Title"
+	this.projection.Explanation = "The Explanation"
+	this.projection.Description = "The Description"
+	this.projection.Actions = append(this.projection.Actions,
+		&projections.ActionDetails{ID: "1", Status: core.ActionStatusIncomplete, Strategy: core.ActionStrategyConcurrent, Description: "1"},
+		&projections.ActionDetails{ID: "2", Status: core.ActionStatusIncomplete, Strategy: core.ActionStrategyConcurrent, Description: "2"},
+		&projections.ActionDetails{ID: "3", Status: core.ActionStatusIncomplete, Strategy: core.ActionStrategyConcurrent, Description: "3"},
+	)
+
+	this.parseAndAssertResult(
+		&commands.ReorderActions{
+			OutcomeID:    "0",
+			ReorderedIDs: []string{"2", "3", "1"},
+		},
+	)
+}
+
 func (this *OutcomeDetailParserFixture) TestActionTamperedWith() {
 	_, _ = this.handler.Next() // get "0" out of the way
 	this.content = tamperedAction
@@ -219,6 +241,25 @@ var (
 
 The Description
 `
+
+	reorderedTasks = fmt.Sprintf(`# The Title
+
+> The Explanation
+
+## Actions:
+
+- [ ] %s 2
+- [ ] %s 3
+- [ ] %s 1
+
+## Support Materials:
+
+The Description
+`,
+		"`0x2`",
+		"`0x3`",
+		"`0x1`",
+	)
 
 	allElementsAndAllNewTasks = `# The Title
 
