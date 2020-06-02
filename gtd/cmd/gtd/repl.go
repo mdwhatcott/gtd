@@ -8,18 +8,14 @@ import (
 	"strings"
 )
 
-func REPL() {
+func REPL(directive []string) {
 	APP := BuildApplication()
 
-	fmt.Println("Welcome to Getting Things Done!")
-	fmt.Println()
-	fmt.Println("Enter 'help' for instructions.")
+	if len(directive) == 0 {
+		directive = InitialPrompt()
+	}
 
 	for {
-		fmt.Print("\n-> ")
-
-		directive := ScanLine()
-
 		switch directive[0] {
 
 		case "projects":
@@ -43,7 +39,22 @@ func REPL() {
 		default:
 			log.Println("Unrecognized directive:", directive)
 		}
+
+		directive = Prompt()
 	}
+}
+
+func InitialPrompt() []string {
+	fmt.Println("Welcome to Getting Things Done!")
+	fmt.Println()
+	fmt.Println("Enter 'help' for instructions.")
+
+	return Prompt()
+}
+
+func Prompt() []string {
+	fmt.Print("\n-> ")
+	return ScanLine()
 }
 
 func ScanLine() []string {

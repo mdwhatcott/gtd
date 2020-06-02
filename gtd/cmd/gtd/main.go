@@ -10,5 +10,5 @@ func main() {
 	flag.Usage = Usage
 	flag.Parse()
 
-	REPL()
+	REPL(flag.Args())
 }
