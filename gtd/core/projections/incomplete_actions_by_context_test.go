@@ -38,6 +38,7 @@ func (this *IncompleteActionsByContextFixture) Test() {
 		events.ActionTrackedV1{OutcomeID: "0", ActionID: "000", Description: "action000", Contexts: []string{"c1", "c2"}},
 		events.ActionTrackedV1{OutcomeID: "0", ActionID: "00", Description: "action00", Contexts: []string{"c0", "c1"}},
 		events.ActionTrackedV1{OutcomeID: "0", ActionID: "0000", Description: "action0000", Contexts: []string{"c2", "c3"}},
+		events.ActionTrackedV1{OutcomeID: "0", ActionID: "00000", Description: "action00000", Contexts: nil},
 
 		events.ActionTrackedV1{OutcomeID: "1", ActionID: "11", Description: "action11", Contexts: []string{"c0", "c1"}},
 		events.ActionTrackedV1{OutcomeID: "2", ActionID: "22", Description: "action22", Contexts: []string{"c1", "c2"}},
@@ -70,6 +71,22 @@ func (this *IncompleteActionsByContextFixture) Test() {
 
 	this.assert(IncompleteActionsByContext{
 		Contexts: []*Context{
+			{
+				Name: "",
+				Actions: []*ContextualAction{
+					{
+						ActionDetails: &ActionDetails{
+							ID:          "00000",
+							Description: "action00000",
+							Contexts:    nil,
+							Status:      core.ActionStatusIncomplete,
+							Strategy:    core.ActionStrategyConcurrent,
+						},
+						OutcomeID:    "0",
+						OutcomeTitle: "0",
+					},
+				},
+			},
 			{
 				Name: "c0",
 				Actions: []*ContextualAction{

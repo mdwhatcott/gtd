@@ -78,7 +78,13 @@ func (this *IncompleteActionsByContextProjector) filterOutcomeActionsByContext()
 			}
 
 			firstSequential = firstSequential || action.Strategy == core.ActionStrategySequential
-			// TODO: if len(action.Contexts) == 0 { add to a no-context context }
+			if len(action.Contexts) == 0 {
+				contexts[""] = append(contexts[""], &ContextualAction{
+					ActionDetails: action,
+					OutcomeID:     outcome.ID,
+					OutcomeTitle:  outcome.Title,
+				})
+			}
 			for _, context := range action.Contexts {
 				contexts[context] = append(contexts[context], &ContextualAction{
 					ActionDetails: action,
