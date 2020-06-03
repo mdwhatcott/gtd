@@ -10,18 +10,18 @@ import (
 )
 
 type IncompleteActionsParser struct {
-	handler    core.Handler
-	projection projections.IncompleteActionsByContext
-	scanner    *bufio.Scanner
-	line       string
-	edits      []string
+	handler  core.Handler
+	contexts []*projections.Context
+	scanner  *bufio.Scanner
+	line     string
+	edits    []string
 }
 
-func NewIncompleteActionsParser(handler core.Handler, projection projections.IncompleteActionsByContext, content string) *IncompleteActionsParser {
+func NewIncompleteActionsParser(handler core.Handler, content string, contexts ...*projections.Context) *IncompleteActionsParser {
 	return &IncompleteActionsParser{
-		handler:    handler,
-		projection: projection,
-		scanner:    bufio.NewScanner(strings.NewReader(content)),
+		handler:  handler,
+		contexts: contexts,
+		scanner:  bufio.NewScanner(strings.NewReader(content)),
 	}
 }
 
@@ -95,7 +95,7 @@ func (this *IncompleteActionsParser) identifyIDs() (actionID, outcomeID string) 
 }
 
 func (this *IncompleteActionsParser) findID(prefix string) string {
-	for _, context := range this.projection.Contexts {
+	for _, context := range this.contexts {
 		for _, action := range context.Actions {
 			if strings.HasPrefix(action.ID, prefix) {
 				return action.ID

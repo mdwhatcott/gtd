@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -78,14 +79,14 @@ func (this *Application) editOutcome(ID string, waiter *sync.WaitGroup) {
 	}
 }
 
-func (this *Application) PresentOutcomesListing(contexts []string) {
+func (this *Application) PresentOutcomesListing(statuses []string) {
 	PROJECTION := replayOutcomesListing(this.reader)
 	RESULT := this.editor.EditTempFile(ux.FormatOutcomesListing(PROJECTION))
 	PARSER := ux.NewOutcomesListingParser(this.handler, PROJECTION, RESULT)
 	EDITS := PARSER.Parse()
 	this.editOutcomes(EDITS)
 	if len(EDITS) > 0 {
-		this.PresentOutcomesListing(contexts)
+		this.PresentOutcomesListing(statuses)
 	}
 }
 func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesListing {
@@ -101,13 +102,34 @@ func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesLi
 
 func (this *Application) PresentIncompleteActions(contexts []string) {
 	PROJECTION := replayIncompleteActions(this.reader)
-	RESULT := this.editor.EditTempFile(ux.FormatIncompleteActions(PROJECTION))
-	PARSER := ux.NewIncompleteActionsParser(this.handler, PROJECTION, RESULT)
+	CONTEXTS := filterContexts(PROJECTION, contexts)
+	RESULT := this.editor.EditTempFile(ux.FormatIncompleteActions(CONTEXTS...))
+	PARSER := ux.NewIncompleteActionsParser(this.handler, RESULT, CONTEXTS...)
 	EDITS := PARSER.Parse()
 	this.editOutcomes(EDITS)
 	if len(EDITS) > 0 {
 		this.PresentIncompleteActions(contexts)
 	}
+}
+
+func filterContexts(_projection projections.IncompleteActionsByContext, _filter []string) (filtered_ []*projections.Context) {
+	if len(_filter) == 0 {
+		return _projection.Contexts
+	}
+	for _, CONTEXT := range _projection.Contexts {
+		log.Println(CONTEXT.Name)
+		if CONTEXT.Name == "" {
+			filtered_ = append(filtered_, CONTEXT)
+		} else {
+			for _, context := range _filter {
+				if strings.ToLower(CONTEXT.Name) == strings.ToLower(context) {
+					filtered_ = append(filtered_, CONTEXT)
+					break
+				}
+			}
+		}
+	}
+	return filtered_
 }
 
 func replayIncompleteActions(_reader joyride.StorageReader) projections.IncompleteActionsByContext {

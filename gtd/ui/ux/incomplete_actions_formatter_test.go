@@ -47,7 +47,7 @@ func (this *IncompleteActionsFormatterFixture) Test() {
 		},
 	}
 
-	result := FormatIncompleteActions(projection)
+	result := FormatIncompleteActions(projection.Contexts...)
 
 	this.So(result, should.Equal, strings.Join([]string{
 		"## @Home:",

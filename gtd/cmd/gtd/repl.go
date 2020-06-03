@@ -93,18 +93,12 @@ Here are several examples of commands that can be entered:
 ## [UNDER CONSTRUCTION] Optionally, draw from tasks matching the provided contexts, home and work:
 -> task home work
 
-## [UNDER CONSTRUCTION] Optionally, draw from tasks that have no context:
--> task -
-
 
 # To present all pending tasks from active projects:
 -> tasks
 
-## [UNDER CONSTRUCTION] Optionally, show only those tasks that match the provided contexts, home and work:
+## Optionally, show only those tasks that match the provided contexts, home and work:
 -> tasks home work
-
-## [UNDER CONSTRUCTION] Optionally, include tasks that have no specified contexts:
--> tasks home work -
 
 
 # To present all projects (separated by status):

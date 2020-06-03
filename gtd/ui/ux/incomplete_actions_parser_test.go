@@ -62,7 +62,7 @@ func (this *IncompleteActionsParserFixture) TestParse() {
 		},
 	}
 
-	edits := NewIncompleteActionsParser(this.handler, this.projection, this.content).Parse()
+	edits := NewIncompleteActionsParser(this.handler, this.content, this.projection.Contexts...).Parse()
 
 	this.So(edits, should.Resemble, []string{"000BBB", "000FFF"})
 	this.So(this.handler.handled, should.Resemble, []interface{}{

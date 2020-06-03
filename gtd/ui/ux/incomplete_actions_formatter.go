@@ -7,13 +7,13 @@ import (
 	"github.com/mdwhatcott/gtd/gtd/core/projections"
 )
 
-func FormatIncompleteActions(projection projections.IncompleteActionsByContext) string {
-	actionIDPrefixes := shortenIDs(incompleteActionIDs(projection))
-	outcomeIDPrefixes := shortenIDs(incompleteActionOutcomeIDs(projection))
+func FormatIncompleteActions(contexts ...*projections.Context) string {
+	actionIDPrefixes := shortenIDs(incompleteActionIDs(contexts...))
+	outcomeIDPrefixes := shortenIDs(incompleteActionOutcomeIDs(contexts...))
 
 	builder := new(strings.Builder)
 
-	for _, context := range projection.Contexts {
+	for _, context := range contexts {
 		_, _ = fmt.Fprintf(builder, "## @%s:\n\n", strings.Title(context.Name))
 
 		for _, action := range context.Actions {
@@ -30,9 +30,9 @@ func FormatIncompleteActions(projection projections.IncompleteActionsByContext) 
 	return strings.TrimSpace(builder.String())
 }
 
-func incompleteActionOutcomeIDs(projection projections.IncompleteActionsByContext) (ids_ []string) {
+func incompleteActionOutcomeIDs(contexts ...*projections.Context) (ids_ []string) {
 	unique := make(map[string]bool)
-	for _, context := range projection.Contexts {
+	for _, context := range contexts {
 		for _, action := range context.Actions {
 			unique[action.OutcomeID] = true
 		}
@@ -43,9 +43,9 @@ func incompleteActionOutcomeIDs(projection projections.IncompleteActionsByContex
 	return ids_
 }
 
-func incompleteActionIDs(projection projections.IncompleteActionsByContext) (ids_ []string) {
+func incompleteActionIDs(contexts ...*projections.Context) (ids_ []string) {
 	unique := make(map[string]bool)
-	for _, context := range projection.Contexts {
+	for _, context := range contexts {
 		for _, action := range context.Actions {
 			unique[action.ID] = true
 		}
