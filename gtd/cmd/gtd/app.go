@@ -81,6 +81,7 @@ func (this *Application) editOutcome(ID string, waiter *sync.WaitGroup) {
 }
 
 func (this *Application) PresentOutcomesListing(statuses []string) {
+	// TODO: filter on provided statuses
 	PROJECTION := replayOutcomesListing(this.reader)
 	RESULT := this.editor.EditTempFile(ux.FormatOutcomesListing(PROJECTION))
 	PARSER := ux.NewOutcomesListingParser(this.handler, PROJECTION, RESULT)
