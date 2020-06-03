@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"path/filepath"
 	"strings"
@@ -144,7 +145,32 @@ func replayIncompleteActions(_reader joyride.StorageReader) projections.Incomple
 }
 
 func (this *Application) PresentIncompleteAction(contexts []string) {
-	// TODO
+	PROJECTION := replayIncompleteActions(this.reader)
+	CONTEXTS := filterContexts(PROJECTION, contexts)
+	SELECTED := selectNextAction(CONTEXTS)
+	RESULT := this.editor.EditTempFile(ux.FormatIncompleteActions(SELECTED))
+	PARSER := ux.NewIncompleteActionsParser(this.handler, RESULT, CONTEXTS...)
+	EDITS := PARSER.Parse()
+	this.editOutcomes(EDITS)
+	if len(EDITS) > 0 {
+		this.PresentIncompleteAction(contexts)
+	}
+}
+
+func selectNextAction(contexts_ []*projections.Context) (result_ *projections.Context) {
+	result_ = &projections.Context{Name: "Next"}
+	var ACTIONS []*projections.ContextualAction
+	for _, CONTEXT := range contexts_ {
+		for _, ACTION := range CONTEXT.Actions {
+			ACTIONS = append(ACTIONS, ACTION)
+		}
+	}
+	if len(ACTIONS) == 0 {
+		return result_
+	}
+	INDEX := rand.Intn(len(ACTIONS))
+	result_.Actions = append(result_.Actions, ACTIONS[INDEX])
+	return result_
 }
 
 func (this *Application) PresentContexts() {

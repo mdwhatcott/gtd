@@ -40,6 +40,7 @@ func REPL(directive []string) {
 			log.Println("Unrecognized directive:", directive)
 		}
 
+		// TODO: Display stalled projects!
 		directive = Prompt()
 	}
 }
@@ -87,10 +88,10 @@ Here are several examples of commands that can be entered:
 -> contexts
 
 
-# [UNDER CONSTRUCTION] To present a single, random, pending task from an active project:
+# To present a single, random, pending task from an active project:
 -> task
 
-## [UNDER CONSTRUCTION] Optionally, draw from tasks matching the provided contexts, home and work:
+## Optionally, draw from tasks matching the provided contexts, home and work:
 -> task home work
 
 
