@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/smartystreets/joyride/v2"
 
-	"github.com/mdwhatcott/gtd/gtd/core/events"
 	"github.com/mdwhatcott/gtd/gtd/storage"
 	"github.com/mdwhatcott/gtd/gtd/storage/eventstore"
 	"github.com/mdwhatcott/gtd/gtd/storage/json"
@@ -20,7 +19,7 @@ func BuildEventStoreWriter(path string) joyride.StorageWriter {
 	return eventstore.NewWriter(encoding, writing(path))
 }
 
-func decoding(_reader io.Reader) storage.Decoder { return json.NewDecoder(_reader, events.Registry()) }
+func decoding(_reader io.Reader) storage.Decoder { return json.NewDecoder(_reader, json.Registry()) }
 func encoding(_writer io.Writer) storage.Encoder { return json.NewEncoder(_writer) }
 
 func reading(path string) func() io.ReadCloser  { return func() io.ReadCloser { return open(path) } }
