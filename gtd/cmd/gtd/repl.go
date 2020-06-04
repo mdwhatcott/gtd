@@ -105,7 +105,7 @@ Here are several examples of commands that can be entered:
 # To present all projects (separated by status):
 -> projects
 
-## [UNDER CONSTRUCTION] Optionally, only present projects matching the provided statuses, fixed and deferred:
+## Optionally, only present projects matching the provided statuses, fixed and deferred:
 -> projects fixed deferred
 
 ## [UNDER CONSTRUCTION] Optionally, only present projects that have no pending tasks:

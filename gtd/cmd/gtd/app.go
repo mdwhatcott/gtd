@@ -81,8 +81,8 @@ func (this *Application) editOutcome(ID string, waiter *sync.WaitGroup) {
 }
 
 func (this *Application) PresentOutcomesListing(statuses []string) {
-	// TODO: filter on provided statuses
 	PROJECTION := replayOutcomesListing(this.reader)
+	PROJECTION = filterOnStatus(PROJECTION, statuses)
 	RESULT := this.editor.EditTempFile(ux.FormatOutcomesListing(PROJECTION))
 	PARSER := ux.NewOutcomesListingParser(this.handler, PROJECTION, RESULT)
 	EDITS := PARSER.Parse()
@@ -90,6 +90,34 @@ func (this *Application) PresentOutcomesListing(statuses []string) {
 	if len(EDITS) > 0 {
 		this.PresentOutcomesListing(statuses)
 	}
+}
+
+func filterOnStatus(projection projections.OutcomesListing, statuses []string) projections.OutcomesListing {
+	if len(statuses) == 0 {
+		return projection
+	}
+	if !hasStatus(statuses, "fixed") {
+		projection.Fixed = nil
+	}
+	if !hasStatus(statuses, "deferred") {
+		projection.Deferred = nil
+	}
+	if !hasStatus(statuses, "uncertain") {
+		projection.Uncertain = nil
+	}
+	if !hasStatus(statuses, "abandoned") {
+		projection.Abandoned = nil
+	}
+	return projection
+}
+
+func hasStatus(haystack []string, needle string) bool {
+	for _, straw := range haystack {
+		if strings.ToLower(straw) == strings.ToLower(needle) {
+			return true
+		}
+	}
+	return false
 }
 func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesListing {
 	log.Println("Replaying outcomes listing...")
