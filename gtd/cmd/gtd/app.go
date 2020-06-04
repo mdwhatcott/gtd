@@ -28,11 +28,11 @@ func BuildApplication() *Application {
 		log.Fatal("The 'GTDPATH' environment variable required for resolution of event store file.")
 	}
 
-	PATH := filepath.Join(GTDPath, "events.json")
+	PATH := filepath.Join(GTDPath, "events.csv")
 	REQUIREMENTS := coreWireup.Requirements{
 		IDFunc: storageWireup.GenerateID,
-		Reader: storageWireup.BuildJSONEventStoreReader(PATH),
-		Writer: storageWireup.BuildJSONEventStoreWriter(PATH),
+		Reader: storageWireup.BuildCSVEventStoreReader(PATH),
+		Writer: storageWireup.BuildCSVEventStoreWriter(PATH),
 	}
 
 	return &Application{
