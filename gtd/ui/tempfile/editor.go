@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 type Editor struct{}
@@ -40,23 +41,28 @@ func createTempFile(content string) string {
 }
 
 func editFile(name string) string {
-	// TODO: use $EDITOR
-	_, err2 := exec.Command("subl", name, "--wait").CombinedOutput()
-	if err2 != nil {
-		log.Fatal(err2)
+	EDITOR := os.Getenv("EDITOR")
+	if EDITOR == "" {
+		log.Panic("$EDITOR environment variable not set.")
+	}
+	ARGS := strings.Fields(EDITOR) // Splitting on space assumes a very simple value in the $EDITOR variable...
+	ARGS = append(ARGS, name)
+	_, ERR1 := exec.Command(ARGS[0], ARGS[1:]...).CombinedOutput()
+	if ERR1 != nil {
+		log.Fatal(ERR1)
 	}
 
-	all, err3 := ioutil.ReadFile(name)
-	if err3 != nil {
-		log.Fatal(err3)
+	ALL, ERR2 := ioutil.ReadFile(name)
+	if ERR2 != nil {
+		log.Fatal(ERR2)
 	}
 
-	return string(all)
+	return string(ALL)
 }
 
 func deleteFile(name string) {
-	err4 := os.Remove(name)
-	if err4 != nil {
-		log.Fatal(err4)
+	ERR := os.Remove(name)
+	if ERR != nil {
+		log.Fatal(ERR)
 	}
 }
