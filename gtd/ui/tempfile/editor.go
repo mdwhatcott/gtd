@@ -40,6 +40,7 @@ func createTempFile(content string) string {
 }
 
 func editFile(name string) string {
+	// TODO: use $EDITOR
 	_, err2 := exec.Command("subl", name, "--wait").CombinedOutput()
 	if err2 != nil {
 		log.Fatal(err2)
