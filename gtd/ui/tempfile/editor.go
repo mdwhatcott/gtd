@@ -9,16 +9,27 @@ import (
 	"strings"
 )
 
-type Editor struct{}
-
-func NewEditor() *Editor {
-	return &Editor{}
+type Editor struct {
+	editor string
+	args   []string
 }
 
-func (*Editor) EditTempFile(initialContent string) (resultContent string) {
+func NewEditor() *Editor {
+	EDITOR := os.Getenv("EDITOR")
+	if EDITOR == "" {
+		log.Panic("$EDITOR environment variable not set.")
+	}
+	args := strings.Fields(EDITOR)
+	return &Editor{
+		editor: args[0],
+		args:   args[1:],
+	}
+}
+
+func (this *Editor) EditTempFile(initialContent string) (resultContent string) {
 	name := createTempFile(initialContent)
 	defer deleteFile(name)
-	return editFile(name)
+	return this.editFile(name)
 }
 
 func createTempFile(content string) string {
@@ -40,14 +51,8 @@ func createTempFile(content string) string {
 	return file.Name()
 }
 
-func editFile(name string) string {
-	EDITOR := os.Getenv("EDITOR")
-	if EDITOR == "" {
-		log.Panic("$EDITOR environment variable not set.")
-	}
-	ARGS := strings.Fields(EDITOR) // Splitting on space assumes a very simple value in the $EDITOR variable...
-	ARGS = append(ARGS, name)
-	_, ERR1 := exec.Command(ARGS[0], ARGS[1:]...).CombinedOutput()
+func (this *Editor) editFile(name string) string {
+	_, ERR1 := exec.Command(this.editor, append(this.args, name)...).CombinedOutput()
 	if ERR1 != nil {
 		log.Fatal(ERR1)
 	}
