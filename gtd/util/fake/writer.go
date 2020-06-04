@@ -20,6 +20,9 @@ func NewWriter(_writeErr, _closeErr error) *Writer {
 	}
 }
 
+func (this *Writer) SetWriteError(_err error) { this.writeErr = _err }
+func (this *Writer) SetCloseError(_err error) { this.closeErr = _err }
+
 func (this *Writer) Write(_p []byte) (_n int, _err error) {
 	_n, _err = this.buffer.Write(_p)
 	if _err != nil {
@@ -33,8 +36,12 @@ func (this *Writer) Close() error {
 	return this.closeErr
 }
 
+func (this *Writer) Content() string {
+	return this.buffer.String()
+}
+
 func (this *Writer) Lines() []string {
-	return strings.Split(strings.TrimSpace(this.buffer.String()), "\n")
+	return strings.Split(strings.TrimSpace(this.Content()), "\n")
 }
 
 func (this *Writer) CloseCount() int {

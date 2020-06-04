@@ -31,8 +31,8 @@ func BuildApplication() *Application {
 	PATH := filepath.Join(GTDPath, "events.json")
 	REQUIREMENTS := coreWireup.Requirements{
 		IDFunc: storageWireup.GenerateID,
-		Reader: storageWireup.BuildEventStoreReader(PATH),
-		Writer: storageWireup.BuildEventStoreWriter(PATH),
+		Reader: storageWireup.BuildJSONEventStoreReader(PATH),
+		Writer: storageWireup.BuildJSONEventStoreWriter(PATH),
 	}
 
 	return &Application{

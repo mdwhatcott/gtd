@@ -8,7 +8,10 @@ import (
 
 type Time = time.Time
 
-var ParseDate = date.Parse
+var (
+	ParseDateRFC3339     = date.ParseRFC3339
+	ParseDateRFC3339Nano = date.ParseRFC3339Nano
+)
 
 func TransformSlice(raw interface{}) (transformed []string) {
 	if raw == nil {
