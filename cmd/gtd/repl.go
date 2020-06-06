@@ -8,9 +8,7 @@ import (
 	"strings"
 )
 
-func REPL(directive []string) {
-	APP := BuildApplication()
-
+func REPL(APP *Application, directive []string) {
 	defer APP.CommitChanges()
 
 	if len(directive) == 0 {
