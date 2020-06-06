@@ -4,7 +4,7 @@ import (
 	"github.com/smartystreets/joyride/v2"
 
 	"github.com/mdwhatcott/gtd/gtd/core"
-	"github.com/mdwhatcott/gtd/gtd/core/internal/outcomes"
+	"github.com/mdwhatcott/gtd/gtd/core/domain"
 )
 
 type Requirements struct {
@@ -14,7 +14,7 @@ type Requirements struct {
 }
 
 func BuildOutcomesHandler(_requirements Requirements) core.Handler {
-	return outcomes.NewHandler(
+	return domain.NewHandler(
 		joyride.NewRunner(
 			joyride.WithStorageReader(_requirements.Reader),
 			joyride.WithStorageWriter(_requirements.Writer),

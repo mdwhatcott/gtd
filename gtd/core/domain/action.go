@@ -1,4 +1,4 @@
-package outcomes
+package domain
 
 import "github.com/mdwhatcott/gtd/gtd/core"
 
