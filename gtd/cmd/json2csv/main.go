@@ -12,12 +12,12 @@ import (
 func main() {
 	log.SetFlags(log.Lshortfile)
 
-	log.Println(os.Remove("/Users/mike/src/github.com/mdwhatcott/gtd-data/events.csv"))
+	log.Println(os.Remove("/Users/mike/src/github.com/mdwhatcott/gtd/events.csv"))
 
-	reader := open("/Users/mike/src/github.com/mdwhatcott/gtd-data/events.json")
+	reader := open("/Users/mike/src/github.com/mdwhatcott/gtd/events.json")
 	defer reader.Close()
 
-	writer := open("/Users/mike/src/github.com/mdwhatcott/gtd-data/events.csv")
+	writer := open("/Users/mike/src/github.com/mdwhatcott/gtd/events.csv")
 	defer writer.Close()
 
 	decoder := json.NewDecoder(reader, json.Registry())

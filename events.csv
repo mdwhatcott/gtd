@@ -1,0 +1,50 @@
+2020-06-02T20:25:47.842529Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.OutcomeTrackedV1	Garden Planted
+2020-06-02T20:25:47.843213Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.OutcomeFixedV1
+2020-06-02T20:25:47.843364Z	75c23c28-b56a-4ee4-805e-2deadb51062c	events.OutcomeTrackedV1	Estate Plan in Place
+2020-06-02T20:25:47.843607Z	75c23c28-b56a-4ee4-805e-2deadb51062c	events.OutcomeDeferredV1
+2020-06-02T20:25:47.843744Z	c8fe1e88-28d6-40d8-8c74-d0b0724c1c51	events.OutcomeTrackedV1	"Read: ""Where the Red Fern Grows"""
+2020-06-02T20:25:47.843923Z	c8fe1e88-28d6-40d8-8c74-d0b0724c1c51	events.OutcomeUncertainV1
+2020-06-02T20:25:47.84403Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.OutcomeTrackedV1	Learn to Ride a Unicycle
+2020-06-02T20:25:47.844324Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.OutcomeAbandonedV1
+2020-06-02T20:30:53.860515Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.OutcomeExplanationUpdatedV1	I want to produce my own food.
+2020-06-02T20:30:53.861093Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionTrackedV1	a4d8df01-939a-4fd0-b11b-97218b62570f	Buy seeds	
+2020-06-02T20:30:53.861449Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionStrategyMarkedConcurrentV1	a4d8df01-939a-4fd0-b11b-97218b62570f
+2020-06-02T20:30:53.861712Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionStatusMarkedIncompleteV1	a4d8df01-939a-4fd0-b11b-97218b62570f
+2020-06-02T20:30:53.862006Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionTrackedV1	7439d287-e8d7-47bf-a56f-a9f58c995ab7	Till ground	
+2020-06-02T20:30:53.862289Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionStrategyMarkedSequentialV1	7439d287-e8d7-47bf-a56f-a9f58c995ab7
+2020-06-02T20:30:53.862634Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionStatusMarkedIncompleteV1	7439d287-e8d7-47bf-a56f-a9f58c995ab7
+2020-06-02T20:30:53.890866Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionTrackedV1	1cfd55c8-c7e8-4a3e-bef0-6165403aac80	Lay ground cloth	
+2020-06-02T20:30:53.891216Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionStrategyMarkedSequentialV1	1cfd55c8-c7e8-4a3e-bef0-6165403aac80
+2020-06-02T20:30:53.891548Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionStatusMarkedIncompleteV1	1cfd55c8-c7e8-4a3e-bef0-6165403aac80
+2020-06-02T20:30:53.891871Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionTrackedV1	0c58b310-3234-41a7-b690-a041455db860	Configure sprinklers	
+2020-06-02T20:30:53.892177Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionStrategyMarkedSequentialV1	0c58b310-3234-41a7-b690-a041455db860
+2020-06-02T20:30:53.892507Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionStatusMarkedIncompleteV1	0c58b310-3234-41a7-b690-a041455db860
+2020-06-02T20:30:53.89287Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.OutcomeDescriptionUpdatedV1	Some plants to consider:ΩΩ- Summer SquashΩ- Bell PeppersΩ- Cherry Tomatos
+2020-06-02T20:39:56.898824Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.OutcomeExplanationUpdatedV1	because reasons...
+2020-06-02T20:39:56.89949Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.ActionTrackedV1	bb127092-fc8b-4615-80e4-7e69f2ecc460	save $100 in the @budget	budget
+2020-06-02T20:39:56.899819Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.ActionStrategyMarkedConcurrentV1	bb127092-fc8b-4615-80e4-7e69f2ecc460
+2020-06-02T20:39:56.900131Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.ActionStatusMarkedIncompleteV1	bb127092-fc8b-4615-80e4-7e69f2ecc460
+2020-06-02T20:39:56.900443Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.ActionTrackedV1	e95219af-5624-4efd-89d3-21ba80167090	Buy unicycle on amazon @computer	computer
+2020-06-02T20:39:56.900757Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.ActionStrategyMarkedConcurrentV1	e95219af-5624-4efd-89d3-21ba80167090
+2020-06-02T20:39:56.901055Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.ActionStatusMarkedIncompleteV1	e95219af-5624-4efd-89d3-21ba80167090
+2020-06-02T20:39:56.9057Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.ActionTrackedV1	80133d16-9eb9-4545-adab-a8f85e58369b	Practice, practice, practice	
+2020-06-02T20:39:56.906036Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.ActionStrategyMarkedConcurrentV1	80133d16-9eb9-4545-adab-a8f85e58369b
+2020-06-02T20:39:56.906412Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.ActionStatusMarkedIncompleteV1	80133d16-9eb9-4545-adab-a8f85e58369b
+2020-06-02T20:49:41.475176Z	75c23c28-b56a-4ee4-805e-2deadb51062c	events.OutcomeExplanationUpdatedV1	We've taken care of all the things.
+2020-06-02T20:49:41.475818Z	75c23c28-b56a-4ee4-805e-2deadb51062c	events.ActionTrackedV1	4e483dd3-dce4-4eb8-a610-97bbfda30828	talk to lawyer friends to find an estate planning attorney	
+2020-06-02T20:49:41.476224Z	75c23c28-b56a-4ee4-805e-2deadb51062c	events.ActionStrategyMarkedConcurrentV1	4e483dd3-dce4-4eb8-a610-97bbfda30828
+2020-06-02T20:49:41.476556Z	75c23c28-b56a-4ee4-805e-2deadb51062c	events.ActionStatusMarkedIncompleteV1	4e483dd3-dce4-4eb8-a610-97bbfda30828
+2020-06-02T20:50:12.587283Z	c8fe1e88-28d6-40d8-8c74-d0b0724c1c51	events.OutcomeExplanationUpdatedV1	It's a classic!
+2020-06-02T20:50:12.587924Z	c8fe1e88-28d6-40d8-8c74-d0b0724c1c51	events.ActionTrackedV1	460cce11-b2e8-4dd9-b0ac-eccc3aecdf5b	checkout @library	library
+2020-06-02T20:50:12.588326Z	c8fe1e88-28d6-40d8-8c74-d0b0724c1c51	events.ActionStrategyMarkedConcurrentV1	460cce11-b2e8-4dd9-b0ac-eccc3aecdf5b
+2020-06-02T20:50:12.588717Z	c8fe1e88-28d6-40d8-8c74-d0b0724c1c51	events.ActionStatusMarkedIncompleteV1	460cce11-b2e8-4dd9-b0ac-eccc3aecdf5b
+2020-06-02T20:50:54.412061Z	75c23c28-b56a-4ee4-805e-2deadb51062c	events.OutcomeFixedV1
+2020-06-02T20:50:54.412728Z	c8fe1e88-28d6-40d8-8c74-d0b0724c1c51	events.OutcomeFixedV1
+2020-06-02T20:50:54.41329Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.OutcomeFixedV1
+2020-06-02T20:51:37.085476Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionDescriptionUpdatedV1	a4d8df01-939a-4fd0-b11b-97218b62570f	Buy seeds @errands	errands
+2020-06-02T20:51:37.086096Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionDescriptionUpdatedV1	7439d287-e8d7-47bf-a56f-a9f58c995ab7	Till ground @home	home
+2020-06-02T20:51:37.086544Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionDescriptionUpdatedV1	1cfd55c8-c7e8-4a3e-bef0-6165403aac80	Lay ground cloth @home	home
+2020-06-02T20:51:37.086973Z	639f75e0-5831-4cf8-b0c6-a9de14044a0d	events.ActionDescriptionUpdatedV1	0c58b310-3234-41a7-b690-a041455db860	Configure sprinklers @home	home
+2020-06-02T20:56:53.18203Z	75c23c28-b56a-4ee4-805e-2deadb51062c	events.OutcomeDeferredV1
+2020-06-02T20:56:53.182644Z	c8fe1e88-28d6-40d8-8c74-d0b0724c1c51	events.OutcomeUncertainV1
+2020-06-02T20:56:53.183124Z	227eea6f-b15a-40e3-9886-13a0977cc385	events.OutcomeAbandonedV1
