@@ -5,6 +5,7 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -39,6 +40,8 @@ func BuildApplication() *Application {
 		handler: coreWireup.BuildOutcomesHandler(REQUIREMENTS),
 		editor:  tempfile.NewEditor(),
 		reader:  REQUIREMENTS.Reader,
+
+		workingDirectory: GTDPath,
 	}
 }
 
@@ -46,6 +49,8 @@ type Application struct {
 	handler core.Handler
 	editor  ui.Editor
 	reader  joyride.StorageReader
+
+	workingDirectory string
 }
 
 func (this *Application) editOutcomes(_ids []string) {
@@ -206,5 +211,12 @@ func (this *Application) PresentContexts() {
 	PROJECTION := replayIncompleteActions(this.reader)
 	for _, context := range PROJECTION.Contexts {
 		fmt.Printf("- %s (%d)\n", context.Name, len(context.Actions))
+	}
+}
+
+func (this *Application) CommitChanges() {
+	ERR := exec.Command("smerge", this.workingDirectory).Run()
+	if ERR != nil {
+		log.Fatal(ERR)
 	}
 }

@@ -11,6 +11,8 @@ import (
 func REPL(directive []string) {
 	APP := BuildApplication()
 
+	defer APP.CommitChanges()
+
 	if len(directive) == 0 {
 		directive = InitialPrompt()
 	}
