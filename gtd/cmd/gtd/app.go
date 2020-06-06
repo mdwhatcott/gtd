@@ -41,7 +41,7 @@ func BuildApplication() *Application {
 		editor:  tempfile.NewEditor(),
 		reader:  REQUIREMENTS.Reader,
 
-		workingDirectory: GTDPath,
+		storageDirectory: GTDPath,
 	}
 }
 
@@ -50,7 +50,7 @@ type Application struct {
 	editor  ui.Editor
 	reader  joyride.StorageReader
 
-	workingDirectory string
+	storageDirectory string
 }
 
 func (this *Application) editOutcomes(_ids []string) {
@@ -215,7 +215,28 @@ func (this *Application) PresentContexts() {
 }
 
 func (this *Application) CommitChanges() {
-	ERR := exec.Command("smerge", this.workingDirectory).Run()
+	STATUS := exec.Command("git", "status", "--porcelain")
+	STATUS.Dir = this.storageDirectory
+	OUT, ERR := STATUS.CombinedOutput()
+	if ERR != nil {
+		log.Println(OUT)
+		log.Fatal(ERR)
+	}
+	OUT2 := strings.TrimSpace(string(OUT))
+	if !strings.Contains(OUT2, "events.csv") {
+		log.Println("No new events to commit. Exiting...")
+		return
+	}
+
+	ADD := exec.Command("git", "add", "events.csv")
+	ADD.Dir = this.storageDirectory
+	OUT, ERR = ADD.CombinedOutput()
+	if ERR != nil {
+		log.Println(OUT)
+		log.Fatal(ERR)
+	}
+
+	ERR = exec.Command("smerge", this.storageDirectory).Run()
 	if ERR != nil {
 		log.Fatal(ERR)
 	}
