@@ -25,6 +25,10 @@ func NewIncompleteActionsParser(handler core.Handler, content string, contexts .
 	}
 }
 
+func (this *IncompleteActionsParser) handle(instructions ...interface{}) {
+	handle(this.handler, instructions...)
+}
+
 func (this *IncompleteActionsParser) Parse() (edits []string) {
 	for this.scanner.Scan() {
 		this.line = this.scanner.Text()
@@ -74,7 +78,7 @@ func (this *IncompleteActionsParser) parseEdits() {
 
 func (this *IncompleteActionsParser) markActionLatent() {
 	actionID, outcomeID := this.identifyIDs()
-	this.handler.Handle(&commands.MarkActionStatusLatent{
+	this.handle(&commands.MarkActionStatusLatent{
 		OutcomeID: outcomeID,
 		ActionID:  actionID,
 	})
@@ -82,7 +86,7 @@ func (this *IncompleteActionsParser) markActionLatent() {
 
 func (this *IncompleteActionsParser) markActionComplete() {
 	actionID, outcomeID := this.identifyIDs()
-	this.handler.Handle(&commands.MarkActionStatusComplete{
+	this.handle(&commands.MarkActionStatusComplete{
 		OutcomeID: outcomeID,
 		ActionID:  actionID,
 	})

@@ -195,7 +195,7 @@ func (this *OutcomeDetailParserFixture) TestActionTamperedWith() {
 	this.outcomeID = "0"
 
 	this.parseAndAssertResult(
-		&commands.UpdateOutcomeTitle{UpdatedTitle: "The Title"},
+		&commands.UpdateOutcomeTitle{OutcomeID: "0", UpdatedTitle: "The Title"},
 		&commands.UpdateOutcomeExplanation{OutcomeID: "0", UpdatedExplanation: "The Explanation"},
 
 		&commands.TrackAction{
@@ -221,7 +221,7 @@ func (this *OutcomeDetailParserFixture) TestDeletedAction() {
 	)
 
 	this.parseAndAssertResult(
-		&commands.UpdateOutcomeTitle{UpdatedTitle: "The Title"},
+		&commands.UpdateOutcomeTitle{OutcomeID: "0", UpdatedTitle: "The Title"},
 		&commands.UpdateOutcomeExplanation{OutcomeID: "0", UpdatedExplanation: "The Explanation"},
 
 		&commands.DeleteAction{OutcomeID: "0", ActionID: "1"},

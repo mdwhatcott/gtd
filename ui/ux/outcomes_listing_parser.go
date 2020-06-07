@@ -30,6 +30,10 @@ func NewOutcomesListingParser(
 	}
 }
 
+func (this *OutcomesListingParser) handle(instruction interface{}) {
+	handle(this.handler, instruction)
+}
+
 func (this *OutcomesListingParser) Parse() (edits []string) {
 	for this.scanner.Scan() {
 		this.line = this.scanner.Text()
@@ -63,7 +67,7 @@ func (this *OutcomesListingParser) parseLine() {
 
 func (this *OutcomesListingParser) trackOutcome() {
 	command := &commands.TrackOutcome{Title: strings.TrimSpace(strings.TrimLeft(this.line, "-"))}
-	this.handler.Handle(command)
+	this.handle(command)
 	this.changeStatus(command.Result.ID)
 	this.edits = append(this.edits, command.Result.ID)
 }
@@ -100,22 +104,22 @@ func (this *OutcomesListingParser) changeStatus(id string) {
 	switch this.status {
 
 	case core.OutcomeStatusRealized:
-		this.handler.Handle(&commands.DeclareOutcomeRealized{OutcomeID: id})
+		this.handle(&commands.DeclareOutcomeRealized{OutcomeID: id})
 
 	case core.OutcomeStatusFixed:
-		this.handler.Handle(&commands.DeclareOutcomeFixed{OutcomeID: id})
+		this.handle(&commands.DeclareOutcomeFixed{OutcomeID: id})
 
 	case core.OutcomeStatusDeferred:
-		this.handler.Handle(&commands.DeclareOutcomeDeferred{OutcomeID: id})
+		this.handle(&commands.DeclareOutcomeDeferred{OutcomeID: id})
 
 	case core.OutcomeStatusUncertain:
-		this.handler.Handle(&commands.DeclareOutcomeUncertain{OutcomeID: id})
+		this.handle(&commands.DeclareOutcomeUncertain{OutcomeID: id})
 
 	case core.OutcomeStatusAbandoned:
-		this.handler.Handle(&commands.DeclareOutcomeAbandoned{OutcomeID: id})
+		this.handle(&commands.DeclareOutcomeAbandoned{OutcomeID: id})
 
 	case "":
-		this.handler.Handle(&commands.DeleteOutcome{OutcomeID: id})
+		this.handle(&commands.DeleteOutcome{OutcomeID: id})
 	}
 }
 

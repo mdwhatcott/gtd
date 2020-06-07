@@ -56,7 +56,7 @@ func actionIDMap(actions []*projections.ActionDetails) map[string]bool {
 }
 
 func (this *OutcomeDetailParser) handle(instructions ...interface{}) {
-	this.handler.Handle(instructions...)
+	handle(this.handler, instructions...)
 }
 
 func (this *OutcomeDetailParser) Parse() error {

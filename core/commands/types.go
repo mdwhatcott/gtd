@@ -29,3 +29,25 @@ func (this MarkActionStatusComplete) ID() string     { return this.OutcomeID }
 func (this MarkActionStrategySequential) ID() string { return this.OutcomeID }
 func (this MarkActionStrategyConcurrent) ID() string { return this.OutcomeID }
 func (this DeleteAction) ID() string                 { return this.OutcomeID }
+
+type Fallible interface{ Err() error }
+
+func (this TrackOutcome) Err() error                 { return this.Result.Error }
+func (this UpdateOutcomeTitle) Err() error           { return this.Result.Error }
+func (this UpdateOutcomeExplanation) Err() error     { return this.Result.Error }
+func (this UpdateOutcomeDescription) Err() error     { return this.Result.Error }
+func (this DeleteOutcome) Err() error                { return this.Result.Error }
+func (this DeclareOutcomeFixed) Err() error          { return this.Result.Error }
+func (this DeclareOutcomeRealized) Err() error       { return this.Result.Error }
+func (this DeclareOutcomeAbandoned) Err() error      { return this.Result.Error }
+func (this DeclareOutcomeDeferred) Err() error       { return this.Result.Error }
+func (this DeclareOutcomeUncertain) Err() error      { return this.Result.Error }
+func (this TrackAction) Err() error                  { return this.Result.Error }
+func (this ReorderActions) Err() error               { return this.Result.Error }
+func (this UpdateActionDescription) Err() error      { return this.Result.Error }
+func (this MarkActionStatusLatent) Err() error       { return this.Result.Error }
+func (this MarkActionStatusIncomplete) Err() error   { return this.Result.Error }
+func (this MarkActionStatusComplete) Err() error     { return this.Result.Error }
+func (this MarkActionStrategySequential) Err() error { return this.Result.Error }
+func (this MarkActionStrategyConcurrent) Err() error { return this.Result.Error }
+func (this DeleteAction) Err() error                 { return this.Result.Error }
