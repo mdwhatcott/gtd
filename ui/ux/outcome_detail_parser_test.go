@@ -126,7 +126,7 @@ func (this *OutcomeDetailParserFixture) TestUpdateExistingOutcome_SomeActionsUnm
 	)
 
 	this.parseAndAssertResult(
-		&commands.UpdateOutcomeTitle{UpdatedTitle: "The Title"},
+		&commands.UpdateOutcomeTitle{OutcomeID: "0", UpdatedTitle: "The Title"},
 		&commands.UpdateOutcomeExplanation{OutcomeID: "0", UpdatedExplanation: "The Explanation"},
 
 		&commands.UpdateActionDescription{

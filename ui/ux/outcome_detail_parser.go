@@ -86,7 +86,7 @@ func (this *OutcomeDetailParser) parseTitleLine() {
 	} else {
 		title := this.line[2:]
 		if title != this.projection.Title {
-			this.handle(&commands.UpdateOutcomeTitle{UpdatedTitle: title})
+			this.handle(&commands.UpdateOutcomeTitle{OutcomeID: this.outcomeID, UpdatedTitle: title})
 		}
 	}
 
