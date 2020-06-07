@@ -92,6 +92,7 @@ func (this *OutcomesListingParser) combinedListings() (all []*projections.Outcom
 	all = append(all, this.listings.Deferred...)
 	all = append(all, this.listings.Uncertain...)
 	all = append(all, this.listings.Abandoned...)
+	all = append(all, this.listings.Realized...)
 	return all
 }
 

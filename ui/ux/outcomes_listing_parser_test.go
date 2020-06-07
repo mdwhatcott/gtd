@@ -44,6 +44,9 @@ func (this *OutcomesListingParserFixture) Test() {
 		&projections.OutcomesListingItem{ID: "000777", Title: "7", Status: core.OutcomeStatusAbandoned},
 		&projections.OutcomesListingItem{ID: "000888", Title: "8", Status: core.OutcomeStatusAbandoned},
 	)
+	this.listings.Realized = append(this.listings.Realized,
+		&projections.OutcomesListingItem{ID: "000999", Title: "9", Status: core.OutcomeStatusRealized},
+	)
 	this.content = strings.Join([]string{
 		"## Fixed:",
 		"\t- `0x0002` 2",
