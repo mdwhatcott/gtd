@@ -36,13 +36,13 @@ func (this *OutcomesListingFormatter) Test() {
 			{ID: "000777", Title: "7"},
 			{ID: "000888", Title: "8"},
 		},
+		Realized: []*projections.OutcomesListingItem{
+			{ID: "000999", Title: "9"},
+		},
 	}
 
 	result := FormatOutcomesListing(listing)
 	this.So(result, should.Equal, strings.Join([]string{
-		"## Realized:",
-		"",
-		"",
 		"## Fixed:",
 		"",
 		"- `0x0001` 1",
@@ -65,6 +65,11 @@ func (this *OutcomesListingFormatter) Test() {
 		"",
 		"- `0x0007` 7",
 		"- `0x0008` 8",
+		"",
+		"",
+		"## Realized:",
+		"",
+		"- `0x0009` 9",
 		"",
 		"",
 		"## Deleted:",

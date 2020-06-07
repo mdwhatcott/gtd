@@ -48,7 +48,7 @@ func (this *OutcomesListingProjector) Apply(_messages ...interface{}) {
 		case events.OutcomeAbandonedV1:
 			this.all[EVENT.OutcomeID].Status = core.OutcomeStatusAbandoned
 		case events.OutcomeRealizedV1:
-			delete(this.all, EVENT.OutcomeID)
+			this.all[EVENT.OutcomeID].Status = core.OutcomeStatusRealized
 		case events.OutcomeDeletedV1:
 			delete(this.all, EVENT.OutcomeID)
 		}
@@ -56,20 +56,25 @@ func (this *OutcomesListingProjector) Apply(_messages ...interface{}) {
 }
 
 func (this *OutcomesListingProjector) buildProjection() {
-	this.Fixed = this.filter(core.OutcomeStatusFixed)
-	this.Deferred = this.filter(core.OutcomeStatusDeferred)
-	this.Uncertain = this.filter(core.OutcomeStatusUncertain)
-	this.Abandoned = this.filter(core.OutcomeStatusAbandoned)
+	this.Fixed = sortByTitle(this.filterByStatus(core.OutcomeStatusFixed))
+	this.Deferred = sortByTitle(this.filterByStatus(core.OutcomeStatusDeferred))
+	this.Uncertain = sortByTitle(this.filterByStatus(core.OutcomeStatusUncertain))
+	this.Abandoned = sortByTitle(this.filterByStatus(core.OutcomeStatusAbandoned))
+	this.Realized = sortByTitle(this.filterByStatus(core.OutcomeStatusRealized))
 }
 
-func (this *OutcomesListingProjector) filter(status core.OutcomeStatus) (filtered []*OutcomesListingItem) {
+func (this *OutcomesListingProjector) filterByStatus(status core.OutcomeStatus) (filtered []*OutcomesListingItem) {
 	for _, item := range this.all {
 		if item.Status == status {
 			filtered = append(filtered, item)
 		}
 	}
-	sort.Slice(filtered, func(i, j int) bool {
-		return filtered[i].Title < filtered[j].Title
-	})
 	return filtered
+}
+
+func sortByTitle(listing []*OutcomesListingItem) []*OutcomesListingItem {
+	sort.Slice(listing, func(i, j int) bool {
+		return listing[i].Title < listing[j].Title
+	})
+	return listing
 }

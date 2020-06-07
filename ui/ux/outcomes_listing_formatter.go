@@ -8,11 +8,11 @@ import (
 
 func FormatOutcomesListing(listing projections.OutcomesListing) string {
 	builder := new(strings.Builder)
-	builder.WriteString(composeListing("## Realized:", nil))
 	builder.WriteString(composeListing("## Fixed:", listing.Fixed))
 	builder.WriteString(composeListing("## Deferred:", listing.Deferred))
 	builder.WriteString(composeListing("## Uncertain:", listing.Uncertain))
 	builder.WriteString(composeListing("## Abandoned:", listing.Abandoned))
+	builder.WriteString(composeListing("## Realized:", listing.Realized))
 	builder.WriteString(composeListing("## Deleted:", nil))
 	return strings.TrimSpace(builder.String()) + "\n"
 }

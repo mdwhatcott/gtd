@@ -79,7 +79,9 @@ func (this *OutcomesListingFixture) TestOutcomeRealized() {
 		events.OutcomeTrackedV1{OutcomeID: "1", Title: "title"},
 		events.OutcomeRealizedV1{OutcomeID: "1"},
 	)
-	this.assert(OutcomesListing{})
+	this.assert(OutcomesListing{
+		Realized: []*OutcomesListingItem{{ID: "1", Title: "title", Status: core.OutcomeStatusRealized}},
+	})
 }
 func (this *OutcomesListingFixture) TestOutcomeDeleted() {
 	this.apply(
@@ -132,6 +134,9 @@ func (this *OutcomesListingFixture) TestSortingOfListings() {
 		Abandoned: []*OutcomesListingItem{
 			{ID: "6", Title: "d", Status: core.OutcomeStatusAbandoned},
 			{ID: "3", Title: "g", Status: core.OutcomeStatusAbandoned},
+		},
+		Realized: []*OutcomesListingItem{
+			{ID: "5", Title: "e", Status: core.OutcomeStatusRealized},
 		},
 	})
 }

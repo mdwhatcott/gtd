@@ -45,9 +45,6 @@ func (this *OutcomesListingParserFixture) Test() {
 		&projections.OutcomesListingItem{ID: "000888", Title: "8", Status: core.OutcomeStatusAbandoned},
 	)
 	this.content = strings.Join([]string{
-		"## Realized:",
-		"- `0x0001` 1",
-
 		"## Fixed:",
 		"\t- `0x0002` 2",
 		"- `0x0003` 3",
@@ -62,6 +59,9 @@ func (this *OutcomesListingParserFixture) Test() {
 		"## Abandoned:",
 		"- `0x0006` 6",
 
+		"## Realized:",
+		"- `0x0001` 1",
+
 		"## Deleted:",
 		"- `0x0007` 7",
 		"- `0x0008` 8",
@@ -73,7 +73,6 @@ func (this *OutcomesListingParserFixture) Test() {
 
 	this.So(requestedEdits, should.Resemble, []string{"000222", "0042"})
 	this.So(this.handler.handled, should.Resemble, []interface{}{
-		&commands.DeclareOutcomeRealized{OutcomeID: "000111"},
 		//&commands.DeclareOutcomeFixed{OutcomeID: "000222"}, // unchanged
 		//&commands.DeclareOutcomeFixed{OutcomeID: "000333"}, // unchanged
 		&commands.DeclareOutcomeDeferred{OutcomeID: "000555"},
@@ -81,6 +80,7 @@ func (this *OutcomesListingParserFixture) Test() {
 		&commands.TrackOutcome{Title: "All New Outcome!", Result: commands.CreateResult{ID: "0042"}},
 		&commands.DeclareOutcomeUncertain{OutcomeID: "0042"},
 		//&commands.DeclareOutcomeAbandoned{OutcomeID: "000666"}, // unchanged
+		&commands.DeclareOutcomeRealized{OutcomeID: "000111"},
 		&commands.DeleteOutcome{OutcomeID: "000777"},
 		&commands.DeleteOutcome{OutcomeID: "000888"},
 	})

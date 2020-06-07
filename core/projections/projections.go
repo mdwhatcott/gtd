@@ -1,6 +1,8 @@
 package projections
 
-import "github.com/mdwhatcott/gtd/core"
+import (
+	"github.com/mdwhatcott/gtd/core"
+)
 
 type IncompleteActionsByContext struct {
 	Contexts []*Context
@@ -39,6 +41,7 @@ type OutcomesListing struct {
 	Deferred  []*OutcomesListingItem
 	Uncertain []*OutcomesListingItem
 	Abandoned []*OutcomesListingItem
+	Realized  []*OutcomesListingItem
 }
 
 type OutcomesListingItem struct {
