@@ -2,7 +2,6 @@ package eventstore
 
 import (
 	"io"
-	"log"
 	"reflect"
 
 	"github.com/smartystreets/logging"
@@ -54,13 +53,13 @@ func (this *Reader) stream(_stream chan interface{}, _filter string) {
 		}
 
 		if ERR != nil {
-			log.Println(errors.Wrap(ErrUnexpectedReadError, ERR))
+			this.log.Println(errors.Wrap(ErrUnexpectedReadError, ERR))
 			break
 		}
 
 		IDENTIFIABLE, OK := VALUE.(storage.Identifiable)
 		if !OK {
-			log.Println(errors.Wrap(ErrUnidentifiableType, reflect.TypeOf(VALUE)))
+			this.log.Println(errors.Wrap(ErrUnidentifiableType, reflect.TypeOf(VALUE)))
 			break
 		}
 
@@ -74,6 +73,6 @@ func (this *Reader) stream(_stream chan interface{}, _filter string) {
 func (this *Reader) close(_reader io.ReadCloser) {
 	ERR := _reader.Close()
 	if ERR != nil {
-		log.Println(errors.Wrap(ErrUnexpectedCloseError, ERR))
+		this.log.Println(errors.Wrap(ErrUnexpectedCloseError, ERR))
 	}
 }

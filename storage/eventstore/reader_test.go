@@ -56,35 +56,40 @@ func (this *ReaderFixture) TestRead_OutcomeEventStream_EventsFilteredByID() {
 	this.So(this.inner.Closed, should.Equal, 1)
 }
 
-func (this *ReaderFixture) SkipTestRead_OutcomeEventStream_NonIdentifiableValueEncountered_PANIC() { // TODO fix
+func (this *ReaderFixture) TestRead_OutcomeEventStream_NonIdentifiableValueEncountered_PANIC() {
 	this.inner = fake.NewReader("1\n2\n-1000") // The fake decoder treats negative numbers as unidentifiable.
 	QUERY := &storage.OutcomeEventStream{OutcomeID: "2"}
 
 	this.reader.Read(QUERY)
-	stream(QUERY.Result.Events)
 
+	this.So(stream(QUERY.Result.Events), should.Resemble, []interface{}{
+		fake.NewIdentifiable(2),
+	})
 	this.So(this.reader.log.Log.String(), should.ContainSubstring, ErrUnidentifiableType.Error())
-	this.So(QUERY.Result.Events, should.BeEmpty)
 	this.So(this.inner.Closed, should.Equal, 1)
 }
 
-func (this *ReaderFixture) SkipTestRead_OutcomeEventStreamErr() { // TODO fix
+func (this *ReaderFixture) TestRead_OutcomeEventStreamErr() {
 	this.inner.ReadErr = errGophers
 	QUERY := new(storage.OutcomeEventStream)
 
 	this.reader.Read(QUERY)
-	stream(QUERY.Result.Events)
 
+	this.So(stream(QUERY.Result.Events), should.BeEmpty)
 	this.So(this.reader.log.Log.String(), should.ContainSubstring, ErrUnexpectedReadError.Error())
 }
 
-func (this *ReaderFixture) SkipTestCloseErr() { // TODO fix
+func (this *ReaderFixture) TestCloseErr() {
 	this.inner.CloseErr = errGophers
 	QUERY := new(storage.OutcomeEventStream)
 
 	this.reader.Read(QUERY)
-	stream(QUERY.Result.Events)
 
+	this.So(stream(QUERY.Result.Events), should.Resemble, []interface{}{
+		fake.NewIdentifiable(1),
+		fake.NewIdentifiable(2),
+		fake.NewIdentifiable(3),
+	})
 	this.So(this.reader.log.Log.String(), should.ContainSubstring, ErrUnexpectedCloseError.Error())
 }
 
