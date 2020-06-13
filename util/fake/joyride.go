@@ -29,7 +29,11 @@ func (this *Joyride) Read(_values ...interface{}) {
 		switch QUERY := VALUE.(type) {
 		case *storage.OutcomeEventStream:
 			this.log.Println("Reading outcome event stream...", QUERY.OutcomeID)
-			QUERY.Result.Events = this.reads[QUERY.OutcomeID]
+			QUERY.Result.Events = make(chan interface{}, len(this.reads[QUERY.OutcomeID]))
+			for _, EVENT := range this.reads[QUERY.OutcomeID] {
+				QUERY.Result.Events <- EVENT
+			}
+			close(QUERY.Result.Events)
 		}
 	}
 }

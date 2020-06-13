@@ -2,7 +2,10 @@ package eventstore
 
 import (
 	"io"
+	"log"
 	"reflect"
+
+	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/storage"
 	"github.com/mdwhatcott/gtd/util/errors"
@@ -11,6 +14,7 @@ import (
 type Reader struct {
 	reader  storage.ReaderFunc
 	decoder storage.DecoderFunc
+	log     *logging.Logger
 }
 
 func NewReader(_readerFunc storage.ReaderFunc, _decoderFunc storage.DecoderFunc) *Reader {
@@ -24,48 +28,52 @@ func (this *Reader) Read(_v ...interface{}) {
 	for _, QUERY := range _v {
 		switch QUERY := QUERY.(type) {
 		case *storage.EventStream:
-			QUERY.Result.Events = this.stream()
+			QUERY.Result.Events = make(chan interface{})
+			go this.stream(QUERY.Result.Events, "")
 		case *storage.OutcomeEventStream:
-			QUERY.Result.Events = filter(this.stream(), QUERY.OutcomeID)
+			QUERY.Result.Events = make(chan interface{})
+			go this.stream(QUERY.Result.Events, QUERY.OutcomeID)
 		default:
 			panic(errors.Wrap(ErrUnrecognizedType, reflect.TypeOf(QUERY)))
 		}
 	}
 }
 
-func filter(_stream []interface{}, _id string) (filtered []interface{}) {
-	for _, ITEM := range _stream {
-		IDENTIFIABLE, OK := ITEM.(storage.Identifiable)
-		if !OK {
-			panic(errors.Wrap(ErrUnidentifiableType, reflect.TypeOf(ITEM)))
-		}
-		if IDENTIFIABLE.ID() == _id {
-			filtered = append(filtered, ITEM)
-		}
-	}
-	return filtered
-}
+func (this *Reader) stream(_stream chan interface{}, _filter string) {
+	defer close(_stream)
 
-func (this *Reader) stream() (events_ []interface{}) {
 	READER := this.reader()
 	defer this.close(READER)
 
 	DECODER := this.decoder(READER)
-	for {
+	COUNT := 0
+	for ; ; COUNT++ {
 		VALUE, ERR := DECODER.Decode()
 		if ERR == io.EOF {
-			return
+			break
 		}
+
 		if ERR != nil {
-			panic(errors.Wrap(ErrUnexpectedReadError, ERR))
+			log.Println(errors.Wrap(ErrUnexpectedReadError, ERR))
+			break
 		}
-		events_ = append(events_, VALUE)
+
+		IDENTIFIABLE, OK := VALUE.(storage.Identifiable)
+		if !OK {
+			log.Println(errors.Wrap(ErrUnidentifiableType, reflect.TypeOf(VALUE)))
+			break
+		}
+
+		if _filter == "" || IDENTIFIABLE.ID() == _filter {
+			_stream <- VALUE
+		}
 	}
+	this.log.Printf("Streamed %d events.", COUNT)
 }
 
 func (this *Reader) close(_reader io.ReadCloser) {
 	ERR := _reader.Close()
 	if ERR != nil {
-		panic(errors.Wrap(ErrUnexpectedCloseError, ERR))
+		log.Println(errors.Wrap(ErrUnexpectedCloseError, ERR))
 	}
 }

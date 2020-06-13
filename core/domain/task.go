@@ -74,7 +74,7 @@ func (this *Task) Execute() joyride.TaskResult {
 }
 func (this *Task) replayEvents() {
 	for _, QUERY := range this.queries {
-		this.aggregate(QUERY).Replay(QUERY.Result.Events...)
+		this.aggregate(QUERY).Replay(QUERY.Result.Events)
 	}
 }
 func (this *Task) processInstructions() {
@@ -148,7 +148,11 @@ func (this *Task) processInstructions() {
 			continue
 		}
 
-		this.log.Println("Received instruction:", reflect.TypeOf(MESSAGE).String())
+		this.log.Println(
+			"Received instruction:",
+			reflect.TypeOf(MESSAGE).String(),
+			MESSAGE.(commands.Identifiable).ID(),
+		)
 	}
 }
 func (this *Task) publishResults() {

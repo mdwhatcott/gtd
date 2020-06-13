@@ -26,11 +26,11 @@ func (this *IncompleteActionsByContextProjector) Projection() interface{} {
 	return this.IncompleteActionsByContextProjection()
 }
 
-func (this *IncompleteActionsByContextProjector) Apply(_messages ...interface{}) {
+func (this *IncompleteActionsByContextProjector) Apply(_messages chan interface{}) {
 	defer this.buildProjection()
 
-	for _, MESSAGE := range _messages {
-		this.getOutcome(MESSAGE).Apply(MESSAGE)
+	for MESSAGE := range _messages {
+		this.getOutcome(MESSAGE).apply(MESSAGE)
 
 		switch MESSAGE := MESSAGE.(type) {
 		case events.OutcomeDeletedV1:

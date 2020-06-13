@@ -42,8 +42,8 @@ func (this *Aggregate) raise(_events ...interface{}) error {
 	}
 	return nil
 }
-func (this *Aggregate) Replay(events ...interface{}) {
-	for _, EVENT := range events {
+func (this *Aggregate) Replay(events chan interface{}) {
+	for EVENT := range events {
 		this.apply(EVENT)
 	}
 }

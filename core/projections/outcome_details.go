@@ -18,71 +18,75 @@ func (this *OutcomeDetailsProjector) OutcomeDetailsProjection() OutcomeDetails {
 	return this.OutcomeDetails
 }
 
-func (this *OutcomeDetailsProjector) Apply(_messages ...interface{}) {
-	for _, MESSAGE := range _messages {
-		switch EVENT := MESSAGE.(type) {
+func (this *OutcomeDetailsProjector) Apply(_messages chan interface{}) {
+	for MESSAGE := range _messages {
+		this.apply(MESSAGE)
+	}
+}
 
-		case events.OutcomeTrackedV1:
-			this.ID = EVENT.OutcomeID
-			this.Title = EVENT.Title
+func (this *OutcomeDetailsProjector) apply(MESSAGE interface{}) {
+	switch EVENT := MESSAGE.(type) {
 
-		case events.OutcomeTitleUpdatedV1:
-			this.Title = EVENT.UpdatedTitle
+	case events.OutcomeTrackedV1:
+		this.ID = EVENT.OutcomeID
+		this.Title = EVENT.Title
 
-		case events.OutcomeDescriptionUpdatedV1:
-			this.Description = EVENT.UpdatedDescription
+	case events.OutcomeTitleUpdatedV1:
+		this.Title = EVENT.UpdatedTitle
 
-		case events.OutcomeExplanationUpdatedV1:
-			this.Explanation = EVENT.UpdatedExplanation
+	case events.OutcomeDescriptionUpdatedV1:
+		this.Description = EVENT.UpdatedDescription
 
-		case events.OutcomeFixedV1:
-			this.Status = core.OutcomeStatusFixed
+	case events.OutcomeExplanationUpdatedV1:
+		this.Explanation = EVENT.UpdatedExplanation
 
-		case events.OutcomeDeferredV1:
-			this.Status = core.OutcomeStatusDeferred
+	case events.OutcomeFixedV1:
+		this.Status = core.OutcomeStatusFixed
 
-		case events.OutcomeUncertainV1:
-			this.Status = core.OutcomeStatusUncertain
+	case events.OutcomeDeferredV1:
+		this.Status = core.OutcomeStatusDeferred
 
-		case events.OutcomeAbandonedV1:
-			this.Status = core.OutcomeStatusAbandoned
+	case events.OutcomeUncertainV1:
+		this.Status = core.OutcomeStatusUncertain
 
-		case events.ActionTrackedV1:
-			this.Actions = append(this.Actions, &ActionDetails{
-				ID:          EVENT.ActionID,
-				Description: EVENT.Description,
-				Contexts:    EVENT.Contexts,
-				Status:      core.ActionStatusIncomplete,
-				Strategy:    core.ActionStrategyConcurrent,
-			})
+	case events.OutcomeAbandonedV1:
+		this.Status = core.OutcomeStatusAbandoned
 
-		case events.ActionsReorderedV1:
-			this.Actions = this.reorderActions(EVENT.ReorderedIDs)
+	case events.ActionTrackedV1:
+		this.Actions = append(this.Actions, &ActionDetails{
+			ID:          EVENT.ActionID,
+			Description: EVENT.Description,
+			Contexts:    EVENT.Contexts,
+			Status:      core.ActionStatusIncomplete,
+			Strategy:    core.ActionStrategyConcurrent,
+		})
 
-		case events.ActionDescriptionUpdatedV1:
-			action := this.getAction(EVENT.ActionID)
-			action.Contexts = EVENT.UpdatedContexts
-			action.Description = EVENT.UpdatedDescription
+	case events.ActionsReorderedV1:
+		this.Actions = this.reorderActions(EVENT.ReorderedIDs)
 
-		case events.ActionStatusMarkedLatentV1:
-			this.getAction(EVENT.ActionID).Status = core.ActionStatusLatent
+	case events.ActionDescriptionUpdatedV1:
+		action := this.getAction(EVENT.ActionID)
+		action.Contexts = EVENT.UpdatedContexts
+		action.Description = EVENT.UpdatedDescription
 
-		case events.ActionStatusMarkedIncompleteV1:
-			this.getAction(EVENT.ActionID).Status = core.ActionStatusIncomplete
+	case events.ActionStatusMarkedLatentV1:
+		this.getAction(EVENT.ActionID).Status = core.ActionStatusLatent
 
-		case events.ActionStatusMarkedCompleteV1:
-			this.getAction(EVENT.ActionID).Status = core.ActionStatusComplete
+	case events.ActionStatusMarkedIncompleteV1:
+		this.getAction(EVENT.ActionID).Status = core.ActionStatusIncomplete
 
-		case events.ActionStrategyMarkedSequentialV1:
-			this.getAction(EVENT.ActionID).Strategy = core.ActionStrategySequential
+	case events.ActionStatusMarkedCompleteV1:
+		this.getAction(EVENT.ActionID).Status = core.ActionStatusComplete
 
-		case events.ActionStrategyMarkedConcurrentV1:
-			this.getAction(EVENT.ActionID).Strategy = core.ActionStrategyConcurrent
+	case events.ActionStrategyMarkedSequentialV1:
+		this.getAction(EVENT.ActionID).Strategy = core.ActionStrategySequential
 
-		case events.ActionDeletedV1:
-			this.deleteAction(this.findAction(EVENT.ActionID))
+	case events.ActionStrategyMarkedConcurrentV1:
+		this.getAction(EVENT.ActionID).Strategy = core.ActionStrategyConcurrent
 
-		}
+	case events.ActionDeletedV1:
+		this.deleteAction(this.findAction(EVENT.ActionID))
+
 	}
 }
 

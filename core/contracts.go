@@ -7,7 +7,7 @@ type Handler interface {
 }
 
 type Projector interface {
-	Apply(events ...interface{})
+	Apply(events chan interface{})
 	Projection() interface{}
 }
 

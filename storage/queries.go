@@ -4,7 +4,7 @@ type OutcomeEventStream struct {
 	OutcomeID string
 
 	Result struct {
-		Events []interface{}
+		Events chan interface{}
 	}
 }
 
@@ -14,6 +14,6 @@ func (this OutcomeEventStream) ID() string {
 
 type EventStream struct {
 	Result struct {
-		Events []interface{}
+		Events chan interface{}
 	}
 }

@@ -26,10 +26,10 @@ func (this *OutcomesListingProjector) OutcomesListingProjection() OutcomesListin
 	return this.OutcomesListing
 }
 
-func (this *OutcomesListingProjector) Apply(_messages ...interface{}) {
+func (this *OutcomesListingProjector) Apply(_messages chan interface{}) {
 	defer this.buildProjection()
 
-	for _, MESSAGE := range _messages {
+	for MESSAGE := range _messages {
 		switch EVENT := MESSAGE.(type) {
 		case events.OutcomeTrackedV1:
 			this.all[EVENT.OutcomeID] = &OutcomesListingItem{

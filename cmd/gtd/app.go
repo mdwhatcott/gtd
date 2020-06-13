@@ -42,12 +42,8 @@ func (this *Application) editOutcome(ID string, waiter *sync.WaitGroup) {
 	START := time.Now()
 	STREAM := &storage.OutcomeEventStream{OutcomeID: ID}
 	this.reader.Read(STREAM)
-	if len(STREAM.Result.Events) == 0 {
-		log.Println("No history found for requested outcome ID:", ID)
-		return
-	}
 	PROJECTOR := projections.NewOutcomeDetailsProjector()
-	PROJECTOR.Apply(STREAM.Result.Events...)
+	PROJECTOR.Apply(STREAM.Result.Events)
 	log.Printf("Outcome details replayed for id %s in: %s", ID, time.Since(START))
 	PROJECTION := PROJECTOR.OutcomeDetailsProjection()
 	RESULT := this.editor.EditTempFile(ux.FormatOutcomeDetails(PROJECTION))
@@ -103,7 +99,7 @@ func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesLi
 	STREAM := &storage.EventStream{}
 	_reader.Read(STREAM)
 	PROJECTOR := projections.NewOutcomesListingProjector()
-	PROJECTOR.Apply(STREAM.Result.Events...)
+	PROJECTOR.Apply(STREAM.Result.Events)
 	log.Println("Outcomes listing replayed in:", time.Since(START))
 	return PROJECTOR.OutcomesListingProjection()
 }
@@ -146,7 +142,7 @@ func replayIncompleteActions(_reader joyride.StorageReader) projections.Incomple
 	STREAM := &storage.EventStream{}
 	_reader.Read(STREAM)
 	PROJECTOR := projections.NewIncompleteActionsByContextProjector()
-	PROJECTOR.Apply(STREAM.Result.Events...)
+	PROJECTOR.Apply(STREAM.Result.Events)
 	log.Println("Incomplete actions replayed in:", time.Since(START))
 	return PROJECTOR.IncompleteActionsByContextProjection()
 }

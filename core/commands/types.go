@@ -11,6 +11,7 @@ type Result struct {
 
 type Identifiable interface{ ID() string }
 
+func (this TrackOutcome) ID() string                 { return this.Result.ID }
 func (this UpdateOutcomeTitle) ID() string           { return this.OutcomeID }
 func (this UpdateOutcomeExplanation) ID() string     { return this.OutcomeID }
 func (this UpdateOutcomeDescription) ID() string     { return this.OutcomeID }
