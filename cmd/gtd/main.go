@@ -26,10 +26,11 @@ func BuildApplication() *Application {
 	}
 
 	PATH := filepath.Join(GTDPath, "events.csv")
+	reader, writer := wireupstorage.BuildCachedCSVEventStore(PATH)
 	REQUIREMENTS := wireupcore.Requirements{
 		IDFunc: wireupstorage.GenerateID,
-		Reader: wireupstorage.BuildCSVEventStoreReader(PATH),
-		Writer: wireupstorage.BuildCSVEventStoreWriter(PATH),
+		Reader: reader,
+		Writer: writer,
 	}
 
 	return &Application{

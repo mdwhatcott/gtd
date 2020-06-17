@@ -10,6 +10,14 @@ import (
 	"github.com/mdwhatcott/gtd/storage/eventstore"
 )
 
+func BuildCachedCSVEventStore(path string) (joyride.StorageReader, joyride.StorageWriter) {
+	cache := eventstore.NewCache(
+		BuildCSVEventStoreReader(path),
+		BuildCSVEventStoreWriter(path),
+	)
+	return cache, cache
+}
+
 func BuildCSVEventStoreReader(path string) joyride.StorageReader {
 	return eventstore.NewReader(reading(path), csvDecoding)
 }
