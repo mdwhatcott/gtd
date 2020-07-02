@@ -60,7 +60,6 @@ func (this *Cache) stream(_stream chan interface{}, _filter string) {
 			_stream <- VALUE
 		}
 	}
-	this.log.Printf("Streamed %d events.", COUNT)
 }
 
 func (this *Cache) Write(i ...interface{}) {

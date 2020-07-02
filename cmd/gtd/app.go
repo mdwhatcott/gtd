@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/smartystreets/joyride/v2"
 
@@ -38,13 +37,10 @@ func (this *Application) editOutcomes(_ids []string) {
 func (this *Application) editOutcome(ID string, waiter *sync.WaitGroup) {
 	defer waiter.Done()
 
-	log.Println("Replaying outcome details...")
-	START := time.Now()
 	STREAM := &storage.OutcomeEventStream{OutcomeID: ID}
 	this.reader.Read(STREAM)
 	PROJECTOR := projections.NewOutcomeDetailsProjector()
 	PROJECTOR.Apply(STREAM.Result.Events)
-	log.Printf("Outcome details replayed for id %s in: %s", ID, time.Since(START))
 	PROJECTION := PROJECTOR.OutcomeDetailsProjection()
 	RESULT := this.editor.EditTempFile(ux.FormatOutcomeDetails(PROJECTION))
 	PARSER := ux.NewOutcomeDetailParser(this.handler, ID, PROJECTION, RESULT)
@@ -94,13 +90,10 @@ func hasStatus(haystack []string, needle string) bool {
 	return false
 }
 func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesListing {
-	log.Println("Replaying outcomes listing...")
-	START := time.Now()
 	STREAM := &storage.EventStream{}
 	_reader.Read(STREAM)
 	PROJECTOR := projections.NewOutcomesListingProjector()
 	PROJECTOR.Apply(STREAM.Result.Events)
-	log.Println("Outcomes listing replayed in:", time.Since(START))
 	return PROJECTOR.OutcomesListingProjection()
 }
 
@@ -121,7 +114,6 @@ func filterContexts(_projection projections.IncompleteActionsByContext, _filter 
 		return _projection.Contexts
 	}
 	for _, CONTEXT := range _projection.Contexts {
-		log.Println(CONTEXT.Name)
 		if CONTEXT.Name == "" {
 			filtered_ = append(filtered_, CONTEXT)
 		} else {
@@ -137,13 +129,10 @@ func filterContexts(_projection projections.IncompleteActionsByContext, _filter 
 }
 
 func replayIncompleteActions(_reader joyride.StorageReader) projections.IncompleteActionsByContext {
-	log.Println("Replaying incomplete actions...")
-	START := time.Now()
 	STREAM := &storage.EventStream{}
 	_reader.Read(STREAM)
 	PROJECTOR := projections.NewIncompleteActionsByContextProjector()
 	PROJECTOR.Apply(STREAM.Result.Events)
-	log.Println("Incomplete actions replayed in:", time.Since(START))
 	return PROJECTOR.IncompleteActionsByContextProjection()
 }
 
@@ -193,7 +182,6 @@ func (this *Application) CommitChanges() {
 	}
 	OUT2 := strings.TrimSpace(string(OUT))
 	if !strings.Contains(OUT2, "events.csv") {
-		log.Println("No new events to commit. Exiting...")
 		return
 	}
 

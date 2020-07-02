@@ -147,19 +147,12 @@ func (this *Task) processInstructions() {
 			this.log.Println("Unrecognized instruction:", reflect.TypeOf(COMMAND).String())
 			continue
 		}
-
-		this.log.Println(
-			"Received instruction:",
-			reflect.TypeOf(MESSAGE).String(),
-			MESSAGE.(commands.Identifiable).ID(),
-		)
 	}
 }
 func (this *Task) publishResults() {
 	for _, AGGREGATE := range this.aggregates {
 		results := AGGREGATE.Results()
 		for _, result := range results {
-			this.log.Println("Publishing result:", reflect.TypeOf(result).String())
 			this.AddPendingWrites(result)
 		}
 	}
