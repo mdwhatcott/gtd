@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+VERSION := $(shell git describe)
+
 test: fmt
 	go test -count=1 -short -cover $(ARGS) ./...
 
@@ -10,4 +12,4 @@ build:
 	go build ./...
 
 install: test
-	go install github.com/mdwhatcott/gtd/cmd/gtd
+	go install -ldflags="-X 'main.Version=$(VERSION)'" github.com/mdwhatcott/gtd/cmd/gtd

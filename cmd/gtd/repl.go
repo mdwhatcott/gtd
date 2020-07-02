@@ -8,11 +8,11 @@ import (
 	"strings"
 )
 
-func REPL(APP *Application, directive []string) {
+func REPL(APP *Application, version string, directive []string) {
 	defer APP.CommitChanges()
 
 	if len(directive) == 0 {
-		directive = InitialPrompt()
+		directive = InitialPrompt(version)
 	}
 
 	for {
@@ -45,8 +45,10 @@ func REPL(APP *Application, directive []string) {
 	}
 }
 
-func InitialPrompt() []string {
+func InitialPrompt(version string) []string {
 	fmt.Println("Welcome to Getting Things Done!")
+	fmt.Println()
+	fmt.Println("Version:", version)
 	fmt.Println()
 	fmt.Println("Enter 'help' for instructions.")
 

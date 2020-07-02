@@ -11,12 +11,14 @@ import (
 	"github.com/mdwhatcott/gtd/ui/tempfile"
 )
 
+var Version = "dev"
+
 func main() {
 	log.SetFlags(log.Lmicroseconds | log.Lshortfile)
 	flag.Usage = Usage
 	flag.Parse()
 
-	REPL(BuildApplication(), flag.Args())
+	REPL(BuildApplication(), Version, flag.Args())
 }
 
 func BuildApplication() *Application {
