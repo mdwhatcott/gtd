@@ -15,9 +15,10 @@ func handle(handler core.Handler, instructions ...interface{}) {
 		if !ok {
 			return
 		}
-		if fail.Err() == nil {
+		err := fail.Err()
+		if err == nil {
 			return
 		}
-		log.Println("Instruction failed with err:", fail.Err())
+		log.Printf("Instruction failed. Error: [%v] Instruction: %#v", err, instruction)
 	}
 }
