@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/smartystreets/joyride/v2"
 
@@ -193,8 +194,12 @@ func (this *Application) CommitChanges() {
 		log.Fatal(ERR)
 	}
 
-	ERR = exec.Command("smerge", this.storageDirectory).Run()
+	TODAY := time.Now().Format("2006-01-02")
+	COMMIT := exec.Command("git", "commit", "-m", `"`+TODAY+`"`)
+	COMMIT.Dir = this.storageDirectory
+	OUT, ERR = COMMIT.CombinedOutput()
 	if ERR != nil {
+		log.Println(OUT)
 		log.Fatal(ERR)
 	}
 }
