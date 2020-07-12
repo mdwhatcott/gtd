@@ -195,7 +195,7 @@ func (this *Application) CommitChanges() {
 	}
 
 	TODAY := time.Now().Format("2006-01-02")
-	COMMIT := exec.Command("git", "commit", "-m", `"`+TODAY+`"`)
+	COMMIT := exec.Command("git", "commit", "-m", TODAY)
 	COMMIT.Dir = this.storageDirectory
 	OUT, ERR = COMMIT.CombinedOutput()
 	if ERR != nil {
