@@ -202,4 +202,12 @@ func (this *Application) CommitChanges() {
 		log.Println(OUT)
 		log.Fatal(ERR)
 	}
+
+	PUSH := exec.Command("git", "push", "origin", "main")
+	PUSH.Dir = this.storageDirectory
+	OUT, ERR = PUSH.CombinedOutput()
+	if ERR != nil {
+		log.Println(PUSH)
+		log.Fatal(ERR)
+	}
 }
