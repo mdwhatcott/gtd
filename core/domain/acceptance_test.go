@@ -829,7 +829,7 @@ func (this *Fixture) TestReorderActions_OutcomeNotFound_ErrorReturned() {
 	}
 	this.handle(COMMAND)
 
-	this.So(COMMAND.Result.Error, should.Resemble, core.ErrOutcomeNotFound)
+	this.So(COMMAND.Result.Error, should.Wrap, core.ErrOutcomeNotFound)
 	this.AssertNoOutput()
 }
 func (this *Fixture) TestReorderActions_AnyActionNotFound_ErrorReturned() {
@@ -858,7 +858,7 @@ func (this *Fixture) TestReorderActions_AnyActionNotFound_ErrorReturned() {
 	}
 	this.handle(COMMAND)
 
-	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.So(COMMAND.Result.Error, should.Wrap, core.ErrActionNotFound)
 	this.AssertNoOutput()
 }
 func (this *Fixture) TestReorderActions_AnyActionMissing_ErrorReturned() {
@@ -887,7 +887,7 @@ func (this *Fixture) TestReorderActions_AnyActionMissing_ErrorReturned() {
 	}
 	this.handle(COMMAND)
 
-	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.So(COMMAND.Result.Error, should.Wrap, core.ErrActionNotFound)
 	this.AssertNoOutput()
 }
 func (this *Fixture) TestReorderActions_NoActions_ErrorReturned() {
@@ -904,7 +904,7 @@ func (this *Fixture) TestReorderActions_NoActions_ErrorReturned() {
 	}
 	this.handle(COMMAND)
 
-	this.So(COMMAND.Result.Error, should.Resemble, core.ErrActionNotFound)
+	this.So(COMMAND.Result.Error, should.Wrap, core.ErrActionNotFound)
 	this.AssertNoOutput()
 }
 func (this *Fixture) TestMarkActionStatusLatent_PublishActionStatusMarkedLatent() {

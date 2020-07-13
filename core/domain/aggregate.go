@@ -7,6 +7,7 @@ import (
 
 	"github.com/mdwhatcott/gtd/core"
 	"github.com/mdwhatcott/gtd/core/events"
+	"github.com/mdwhatcott/gtd/util/errors"
 )
 
 type Aggregate struct {
@@ -267,11 +268,13 @@ func (this *Aggregate) UpdateActionDescription(_id, _description string) error {
 	})
 }
 func (this *Aggregate) ReorderActions(_newIDOrder []string) error {
+	// TODO: it should be OK if the _newIDOrder has extra entries (but not the other way around)
+
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	if len(this.actions) == 0 {
-		return core.ErrActionNotFound
+		return errors.Wrap(core.ErrActionNotFound, errors.New("there are none"))
 	}
 	if len(_newIDOrder) != len(this.actions) {
 		return core.ErrActionNotFound
