@@ -27,12 +27,12 @@ type Application struct {
 }
 
 func (this *Application) editOutcomes(_ids []string) {
-	waiter := new(sync.WaitGroup)
-	waiter.Add(len(_ids))
+	WAITER := new(sync.WaitGroup)
+	WAITER.Add(len(_ids))
 	for _, ID := range _ids {
-		go this.editOutcome(ID, waiter)
+		go this.editOutcome(ID, WAITER)
 	}
-	waiter.Wait()
+	WAITER.Wait()
 }
 
 func (this *Application) editOutcome(ID string, waiter *sync.WaitGroup) {
@@ -181,8 +181,8 @@ func (this *Application) CommitChanges() {
 		log.Println(OUT)
 		log.Fatal(ERR)
 	}
-	OUT2 := strings.TrimSpace(string(OUT))
-	if !strings.Contains(OUT2, "events.csv") {
+
+	if !strings.Contains(strings.TrimSpace(string(OUT)), "events.csv") {
 		return
 	}
 
