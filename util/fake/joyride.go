@@ -1,6 +1,8 @@
 package fake
 
 import (
+	"context"
+
 	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/v3/storage"
@@ -19,11 +21,11 @@ func NewJoyride(log *logging.Logger) *Joyride {
 	}
 }
 
-func (this *Joyride) Write(values ...interface{}) {
+func (this *Joyride) Write(_ context.Context, values ...interface{}) {
 	this.Writes = append(this.Writes, values...)
 }
 
-func (this *Joyride) Read(values ...interface{}) {
+func (this *Joyride) Read(_ context.Context, values ...interface{}) {
 	for _, VALUE := range values {
 		switch QUERY := VALUE.(type) {
 		case *storage.OutcomeEventStream:

@@ -1,9 +1,12 @@
 package core
 
-import "errors"
+import (
+	"context"
+	"errors"
+)
 
 type Handler interface {
-	Handle(...interface{})
+	Handle(context.Context, ...interface{})
 }
 
 type Projector interface {

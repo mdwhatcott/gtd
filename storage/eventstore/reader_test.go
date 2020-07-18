@@ -1,6 +1,7 @@
 package eventstore
 
 import (
+	"context"
 	"io"
 	"testing"
 
@@ -37,8 +38,12 @@ func (this *ReaderFixture) Setup() {
 	this.reader.log = logging.Capture()
 }
 
+func (this *ReaderFixture) read(v ...interface{}) {
+	this.reader.Read(context.Background(), v...)
+}
+
 func (this *ReaderFixture) TestRead_UnrecognizedQueryType_PANIC() {
-	ACTION := func() { this.reader.Read(42) }
+	ACTION := func() { this.read(42) }
 	RESULT := recovered(ACTION)
 	this.So(RESULT, should.Wrap, ErrUnrecognizedType)
 }
@@ -47,7 +52,7 @@ func (this *ReaderFixture) TestRead_OutcomeEventStream_EventsFilteredByID() {
 	this.inner = fake.NewReader("1\n2\n2")
 	QUERY := &storage.OutcomeEventStream{OutcomeID: "2"}
 
-	this.reader.Read(QUERY)
+	this.read(QUERY)
 
 	this.So(stream(QUERY.Result.Events), should.Resemble, []interface{}{
 		fake.NewIdentifiable(2),
@@ -60,7 +65,7 @@ func (this *ReaderFixture) TestRead_OutcomeEventStream_NonIdentifiableValueEncou
 	this.inner = fake.NewReader("1\n2\n-1000") // The fake decoder treats negative numbers as unidentifiable.
 	QUERY := &storage.OutcomeEventStream{OutcomeID: "2"}
 
-	this.reader.Read(QUERY)
+	this.read(QUERY)
 
 	this.So(stream(QUERY.Result.Events), should.Resemble, []interface{}{
 		fake.NewIdentifiable(2),
@@ -73,7 +78,7 @@ func (this *ReaderFixture) TestRead_OutcomeEventStreamErr() {
 	this.inner.ReadErr = errGophers
 	QUERY := new(storage.OutcomeEventStream)
 
-	this.reader.Read(QUERY)
+	this.read(QUERY)
 
 	this.So(stream(QUERY.Result.Events), should.BeEmpty)
 	this.So(this.reader.log.Log.String(), should.ContainSubstring, ErrUnexpectedReadError.Error())
@@ -83,7 +88,7 @@ func (this *ReaderFixture) TestCloseErr() {
 	this.inner.CloseErr = errGophers
 	QUERY := new(storage.OutcomeEventStream)
 
-	this.reader.Read(QUERY)
+	this.read(QUERY)
 
 	this.So(stream(QUERY.Result.Events), should.Resemble, []interface{}{
 		fake.NewIdentifiable(1),
@@ -96,7 +101,7 @@ func (this *ReaderFixture) TestCloseErr() {
 func (this *ReaderFixture) TestRead_EventStream_AllEventsIncluded() {
 	QUERY := new(storage.EventStream)
 
-	this.reader.Read(QUERY)
+	this.read(QUERY)
 
 	this.So(stream(QUERY.Result.Events), should.Resemble, []interface{}{
 		fake.NewIdentifiable(1),

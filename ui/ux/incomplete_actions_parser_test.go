@@ -1,6 +1,7 @@
 package ux
 
 import (
+	"context"
 	"strings"
 	"testing"
 
@@ -97,6 +98,6 @@ func NewIncompleteActionsParserFakeHandler() *IncompleteActionsParserFakeHandler
 	return &IncompleteActionsParserFakeHandler{}
 }
 
-func (this *IncompleteActionsParserFakeHandler) Handle(messages ...interface{}) {
+func (this *IncompleteActionsParserFakeHandler) Handle(_ context.Context, messages ...interface{}) {
 	this.handled = append(this.handled, messages...)
 }

@@ -1,6 +1,7 @@
 package eventstore
 
 import (
+	"context"
 	"io"
 	"reflect"
 
@@ -23,7 +24,7 @@ func NewReader(readerFunc storage.ReaderFunc, decoderFunc storage.DecoderFunc) *
 	}
 }
 
-func (this *Reader) Read(v ...interface{}) {
+func (this *Reader) Read(_ context.Context, v ...interface{}) {
 	for _, QUERY := range v {
 		switch QUERY := QUERY.(type) {
 		case *storage.EventStream:

@@ -1,6 +1,7 @@
 package ux
 
 import (
+	"context"
 	"log"
 
 	"github.com/mdwhatcott/gtd/v3/core"
@@ -8,7 +9,7 @@ import (
 )
 
 func handle(handler core.Handler, instructions ...interface{}) {
-	handler.Handle(instructions...)
+	handler.Handle(context.Background(), instructions...)
 
 	for _, INSTRUCTION := range instructions {
 		FAIL, OK := INSTRUCTION.(commands.Fallible)

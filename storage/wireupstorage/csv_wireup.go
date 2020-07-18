@@ -4,7 +4,7 @@ import (
 	"io"
 	"path/filepath"
 
-	"github.com/smartystreets/joyride/v2"
+	"github.com/smartystreets/joyride/v3"
 
 	"github.com/mdwhatcott/gtd/v3/storage"
 	"github.com/mdwhatcott/gtd/v3/storage/csv"

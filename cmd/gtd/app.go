@@ -1,13 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"math/rand"
 	"strings"
 	"sync"
 
-	"github.com/smartystreets/joyride/v2"
+	"github.com/smartystreets/joyride/v3"
 
 	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/core/projections"
@@ -35,7 +36,7 @@ func (this *Application) editOutcome(id string, waiter *sync.WaitGroup) {
 	defer waiter.Done()
 
 	STREAM := &storage.OutcomeEventStream{OutcomeID: id}
-	this.reader.Read(STREAM)
+	this.reader.Read(context.Background(), STREAM)
 	PROJECTOR := projections.NewOutcomeDetailsProjector()
 	PROJECTOR.Apply(STREAM.Result.Events)
 	PROJECTION := PROJECTOR.OutcomeDetailsProjection()
@@ -88,7 +89,7 @@ func hasStatus(haystack []string, needle string) bool {
 }
 func replayOutcomesListing(reader joyride.StorageReader) projections.OutcomesListing {
 	STREAM := &storage.EventStream{}
-	reader.Read(STREAM)
+	reader.Read(context.Background(), STREAM)
 	PROJECTOR := projections.NewOutcomesListingProjector()
 	PROJECTOR.Apply(STREAM.Result.Events)
 	return PROJECTOR.OutcomesListingProjection()
@@ -127,7 +128,7 @@ func filterContexts(projection projections.IncompleteActionsByContext, filter []
 
 func replayIncompleteActions(reader joyride.StorageReader) projections.IncompleteActionsByContext {
 	STREAM := &storage.EventStream{}
-	reader.Read(STREAM)
+	reader.Read(context.Background(), STREAM)
 	PROJECTOR := projections.NewIncompleteActionsByContextProjector()
 	PROJECTOR.Apply(STREAM.Result.Events)
 	return PROJECTOR.IncompleteActionsByContextProjection()

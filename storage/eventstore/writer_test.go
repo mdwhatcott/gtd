@@ -1,6 +1,7 @@
 package eventstore
 
 import (
+	"context"
 	"io"
 	"testing"
 
@@ -41,14 +42,18 @@ func (this *WriterFixture) Setup() {
 	this.writer = NewWriter(this.encoderFunc, this.writerFunc)
 }
 
+func (this *WriterFixture) write(v ...interface{}) {
+	this.writer.Write(context.Background(), v...)
+}
+
 func (this *WriterFixture) TestWrite_UnrecognizedEventType_PANIC() {
-	ACTION := func() { this.writer.Write(42) }
+	ACTION := func() { this.write(42) }
 	RESULT := recovered(ACTION)
 	this.So(RESULT, should.Wrap, ErrUnrecognizedType)
 }
 
 func (this *WriterFixture) TestWrite_PersistsEncodedEventsToWriter() {
-	this.writer.Write(outcomeTracked, outcomeUpdated)
+	this.write(outcomeTracked, outcomeUpdated)
 	ACTUAL := this.inner.Lines()
 	this.So(ACTUAL, should.Resemble, []string{"OutcomeTrackedV1", "OutcomeTitleUpdatedV1"})
 	this.So(this.inner.CloseCount(), should.Equal, 2)
@@ -56,21 +61,21 @@ func (this *WriterFixture) TestWrite_PersistsEncodedEventsToWriter() {
 
 func (this *WriterFixture) TestWrite_ErrFromWriter_PANIC() {
 	this.writeErr = errGophers
-	ACTION := func() { this.writer.Write(outcomeTracked) }
+	ACTION := func() { this.write(outcomeTracked) }
 	this.So(recovered(ACTION), should.Wrap, ErrUnexpectedWriteError)
 	this.So(this.inner.CloseCount(), should.Equal, 1)
 }
 
 func (this *WriterFixture) TestWrite_ErrFromEncoder_PANIC() {
 	this.encodeErr = errGophers
-	ACTION := func() { this.writer.Write(outcomeTracked) }
+	ACTION := func() { this.write(outcomeTracked) }
 	this.So(recovered(ACTION), should.Wrap, ErrUnexpectedWriteError)
 	this.So(this.inner.CloseCount(), should.Equal, 1)
 }
 
 func (this *WriterFixture) TestWrite_ErrFromWriterClose_PANIC() {
 	this.closeErr = errGophers
-	ACTION := func() { this.writer.Write(outcomeTracked) }
+	ACTION := func() { this.write(outcomeTracked) }
 	this.So(recovered(ACTION), should.Wrap, ErrUnexpectedCloseError)
 	this.So(this.inner.CloseCount(), should.Equal, 1)
 }

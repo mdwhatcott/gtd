@@ -1,8 +1,10 @@
 package domain
 
 import (
+	"context"
+
 	"github.com/smartystreets/clock"
-	"github.com/smartystreets/joyride/v2"
+	"github.com/smartystreets/joyride/v3"
 
 	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/core/commands"
@@ -21,7 +23,7 @@ func NewHandler(runner joyride.Runner, nextID core.IDFunc) *Handler {
 	return THIS
 }
 
-func (this *Handler) HandleMessage(message interface{}) bool {
+func (this *Handler) HandleMessage(_ context.Context, message interface{}) bool {
 	TRACK, OK := message.(*commands.TrackOutcome)
 	if OK {
 		this.buildTask().PrepareToTrackOutcome(TRACK)

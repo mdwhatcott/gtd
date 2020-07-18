@@ -1,10 +1,11 @@
 package domain
 
 import (
+	"context"
 	"reflect"
 
 	"github.com/smartystreets/clock"
-	"github.com/smartystreets/joyride/v2"
+	"github.com/smartystreets/joyride/v3"
 	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/v3/core"
@@ -66,7 +67,7 @@ func (this *Task) registerOutcomeEventStreamQuery(id string) {
 	this.AddRequiredReads(QUERY)
 }
 
-func (this *Task) Execute() joyride.TaskResult {
+func (this *Task) Execute(_ context.Context) joyride.TaskResult {
 	this.replayEvents()
 	this.processInstructions()
 	this.publishResults()

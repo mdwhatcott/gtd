@@ -1,6 +1,7 @@
 package ux
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -353,7 +354,7 @@ func NewOutcomeDetailParserFixtureFakeHandler() *OutcomeDetailParserFixtureFakeH
 	return &OutcomeDetailParserFixtureFakeHandler{}
 }
 
-func (this *OutcomeDetailParserFixtureFakeHandler) Handle(messages ...interface{}) {
+func (this *OutcomeDetailParserFixtureFakeHandler) Handle(_ context.Context, messages ...interface{}) {
 	this.handled = append(this.handled, messages...)
 	for _, MESSAGE := range messages {
 		switch MESSAGE := MESSAGE.(type) {

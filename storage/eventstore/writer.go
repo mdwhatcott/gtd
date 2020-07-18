@@ -1,6 +1,7 @@
 package eventstore
 
 import (
+	"context"
 	"io"
 	"reflect"
 
@@ -20,7 +21,7 @@ func NewWriter(encoder storage.EncoderFunc, writer storage.WriterFunc) *Writer {
 	}
 }
 
-func (this *Writer) Write(events ...interface{}) {
+func (this *Writer) Write(_ context.Context, events ...interface{}) {
 	for _, EVENT := range events {
 		ROOT, OK := EVENT.(storage.Identifiable)
 		if !OK {

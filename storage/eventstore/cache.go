@@ -1,9 +1,10 @@
 package eventstore
 
 import (
+	"context"
 	"reflect"
 
-	"github.com/smartystreets/joyride/v2"
+	"github.com/smartystreets/joyride/v3"
 	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/v3/storage"
@@ -22,14 +23,14 @@ func NewCache(reader joyride.StorageReader, writer joyride.StorageWriter) *Cache
 
 func warmUp(reader joyride.StorageReader) (cached_ []interface{}) {
 	query := &storage.EventStream{}
-	reader.Read(query)
+	reader.Read(context.Background(), query)
 	for event := range query.Result.Events {
 		cached_ = append(cached_, event)
 	}
 	return cached_
 }
 
-func (this *Cache) Read(v ...interface{}) {
+func (this *Cache) Read(_ context.Context, v ...interface{}) {
 	for _, QUERY := range v {
 		switch QUERY := QUERY.(type) {
 		case *storage.EventStream:
@@ -62,7 +63,7 @@ func (this *Cache) stream(stream chan interface{}, filter string) {
 	}
 }
 
-func (this *Cache) Write(i ...interface{}) {
+func (this *Cache) Write(ctx context.Context, i ...interface{}) {
 	this.cached = append(this.cached, i...)
-	this.writer.Write(i...)
+	this.writer.Write(ctx, i...)
 }

@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -10,7 +11,7 @@ import (
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/clock"
 	"github.com/smartystreets/gunit"
-	"github.com/smartystreets/joyride/v2"
+	"github.com/smartystreets/joyride/v3"
 	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/v3/core"
@@ -60,7 +61,7 @@ func (this *Fixture) Setup() {
 func (this *Fixture) handle(command interface{}) {
 	this.handler = NewHandler(this.runner, this.generateID)
 	this.handler.clock = clock.Freeze(this.now)
-	this.handler.Handle(command)
+	this.handler.Handle(context.Background(), command)
 }
 func (this *Fixture) generateID() string {
 	this.id++

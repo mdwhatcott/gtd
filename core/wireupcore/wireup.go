@@ -1,7 +1,7 @@
 package wireupcore
 
 import (
-	"github.com/smartystreets/joyride/v2"
+	"github.com/smartystreets/joyride/v3"
 
 	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/core/domain"
