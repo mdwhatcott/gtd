@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"log"
 	"math/rand"
-	"os/exec"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/smartystreets/joyride/v2"
 
@@ -171,48 +169,4 @@ func (this *Application) PresentContexts() {
 	for _, context := range PROJECTION.Contexts {
 		fmt.Printf("- %s (%d)\n", context.Name, len(context.Actions))
 	}
-}
-
-func (this *Application) PushChanges() {
-	STATUS := exec.Command("git", "status", "--porcelain")
-	STATUS.Dir = this.storageDirectory
-	OUT, ERR := STATUS.CombinedOutput()
-	if ERR != nil {
-		log.Println(OUT)
-		log.Fatal(ERR)
-	}
-
-	if !strings.Contains(strings.TrimSpace(string(OUT)), "events.csv") {
-		return
-	}
-
-	log.Println("Staging newly generated events...")
-	ADD := exec.Command("git", "add", "events.csv")
-	ADD.Dir = this.storageDirectory
-	OUT, ERR = ADD.CombinedOutput()
-	if ERR != nil {
-		log.Println(OUT)
-		log.Fatal(ERR)
-	}
-
-	log.Println("Committing newly generated events...")
-	TODAY := time.Now().Format("2006-01-02")
-	COMMIT := exec.Command("git", "commit", "-m", TODAY)
-	COMMIT.Dir = this.storageDirectory
-	OUT, ERR = COMMIT.CombinedOutput()
-	if ERR != nil {
-		log.Println(OUT)
-		log.Fatal(ERR)
-	}
-
-	log.Println("Pushing newly generated events...")
-	PUSH := exec.Command("git", "push", "origin", "main")
-	PUSH.Dir = this.storageDirectory
-	OUT, ERR = PUSH.CombinedOutput()
-	if ERR != nil {
-		log.Println(PUSH)
-		log.Fatal(ERR)
-	}
-
-	log.Println("Finished.")
 }
