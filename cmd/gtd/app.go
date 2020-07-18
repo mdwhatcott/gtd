@@ -186,6 +186,7 @@ func (this *Application) CommitChanges() {
 		return
 	}
 
+	log.Println("Staging newly generated events...")
 	ADD := exec.Command("git", "add", "events.csv")
 	ADD.Dir = this.storageDirectory
 	OUT, ERR = ADD.CombinedOutput()
@@ -194,6 +195,7 @@ func (this *Application) CommitChanges() {
 		log.Fatal(ERR)
 	}
 
+	log.Println("Committing newly generated events...")
 	TODAY := time.Now().Format("2006-01-02")
 	COMMIT := exec.Command("git", "commit", "-m", TODAY)
 	COMMIT.Dir = this.storageDirectory
@@ -203,6 +205,7 @@ func (this *Application) CommitChanges() {
 		log.Fatal(ERR)
 	}
 
+	log.Println("Pushing newly generated events...")
 	PUSH := exec.Command("git", "push", "origin", "main")
 	PUSH.Dir = this.storageDirectory
 	OUT, ERR = PUSH.CombinedOutput()
@@ -210,4 +213,6 @@ func (this *Application) CommitChanges() {
 		log.Println(PUSH)
 		log.Fatal(ERR)
 	}
+
+	log.Println("Finished.")
 }
