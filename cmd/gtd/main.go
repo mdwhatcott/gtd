@@ -15,10 +15,21 @@ var Version = "dev"
 
 func main() {
 	log.SetFlags(log.Lmicroseconds | log.Lshortfile)
-	flag.Usage = Usage
+	flag.Usage = PrintUsage
 	flag.Parse()
 
-	REPL(BuildApplication(), Version, flag.Args())
+	PrintBanner(Version)
+
+	APP := BuildApplication()
+
+	ARGS := flag.Args()
+	if len(ARGS) == 0 {
+		DoREPL(APP, Version)
+	} else {
+		DoOnce(APP, ARGS)
+	}
+
+	APP.PushChanges()
 }
 
 func BuildApplication() *Application {

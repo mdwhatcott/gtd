@@ -173,7 +173,7 @@ func (this *Application) PresentContexts() {
 	}
 }
 
-func (this *Application) CommitChanges() {
+func (this *Application) PushChanges() {
 	STATUS := exec.Command("git", "status", "--porcelain")
 	STATUS.Dir = this.storageDirectory
 	OUT, ERR := STATUS.CombinedOutput()
