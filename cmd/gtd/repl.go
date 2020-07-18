@@ -8,14 +8,14 @@ import (
 	"strings"
 )
 
-func DoREPL(APP *Application, version string) {
+func GTDREPL(APP *Application, version string) {
 	directive := Prompt(version)
-	for DoOnce(APP, directive) {
+	for GTDOnce(APP, directive) {
 		directive = Prompt(version)
 	}
 }
 
-func DoOnce(APP *Application, directive []string) bool {
+func GTDOnce(APP *Application, directive []string) bool {
 	switch directive[0] {
 
 	case "projects":
@@ -37,21 +37,13 @@ func DoOnce(APP *Application, directive []string) bool {
 		return false
 
 	default:
-		log.Println("Unrecognized directive:", directive)
+		log.Println("\nUnrecognized directive:", directive)
 	}
 	return true
 }
 
-func PrintBanner(version string) {
-	fmt.Println("Welcome to Getting Things Done!")
-	fmt.Println()
-	fmt.Println("Version:", version)
-	fmt.Println()
-	fmt.Println("Enter 'help' for instructions.")
-}
-
 func Prompt(version string) []string {
-	fmt.Printf("\ngtd-%s --> ", version)
+	fmt.Print("\n" + PromptPrefix(version) + " ")
 	fields := strings.Fields(ScanLine())
 	if len(fields) > 1 && fields[0] == "gtd" {
 		fields = fields[1:]
@@ -59,94 +51,12 @@ func Prompt(version string) []string {
 	return fields
 }
 
+func PromptPrefix(version string) string {
+	return fmt.Sprintf("gtd@%s:", version)
+}
+
 func ScanLine() string {
 	scanner := bufio.NewScanner(os.Stdin)
 	scanner.Scan()
 	return scanner.Text()
-}
-
-func PrintUsage() {
-	flags := log.Flags()
-	log.SetFlags(0)
-	defer log.SetFlags(flags)
-
-	log.Println(`Usage of gtd:
-
-This application provides both a command-line and a REPL-style
-interface for managing projects and tasks.
-
-## Required Environment Variables
-
-- GTDPATH (the folder containing the "Event Database")
-
-
-## Event Database
-
-Because this application is purely event-sourced, the only
-state required is a database of serialized events. If missing
-at startup a new database will be created. It is assumed that
-the parent folder of the database is under revision control 
-in a 'git' repository and that said repository is currently
-on a branch called 'main' and that a remote named 'origin' has
-already been configured. As a final step at shutdown any new
-events added to the database are committed and pushed to the 
-configured remote.
-
-
-## Directives
-
-Here are several examples of directives that can be entered
-at the REPL, or as non-flag command-line arguments (which,
-if included, will bypass the REPL):
-
-
-// To show this usage documentation:
--> help
-
-
-// To exit the program:
--> exit
-
-
-// To present a listing of all active contexts:
--> contexts
-
----
-
-// To present a single, random, pending task from an active 
-// project:
--> task
-
-
-// Optionally, draw from tasks matching the provided contexts,
-// home and work:
--> task home work
-
----
-
-// To present all pending tasks from active projects:
--> tasks
-
-
-// Optionally, show only those tasks that match the provided
-// contexts, home and work:
--> tasks home work
-
----
-
-// To present all projects (separated by status):
--> projects
-
-
-// Optionally, only present projects matching the provided
-// statuses, fixed and deferred:
--> projects fixed deferred
-
-
-// [UNDER CONSTRUCTION] Optionally, only present projects 
-// that have no pending tasks:
--> projects fixed deferred ?
-
-
-The End`)
 }

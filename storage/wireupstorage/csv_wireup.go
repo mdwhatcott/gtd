@@ -2,6 +2,7 @@ package wireupstorage
 
 import (
 	"io"
+	"path/filepath"
 
 	"github.com/smartystreets/joyride/v2"
 
@@ -10,10 +11,11 @@ import (
 	"github.com/mdwhatcott/gtd/v3/storage/eventstore"
 )
 
-func BuildCachedCSVEventStore(path string) (joyride.StorageReader, joyride.StorageWriter) {
+func BuildCachedCSVEventStore(folder string) (joyride.StorageReader, joyride.StorageWriter) {
+	PATH := filepath.Join(folder, storage.EventsDatabaseFilename)
 	cache := eventstore.NewCache(
-		BuildCSVEventStoreReader(path),
-		BuildCSVEventStoreWriter(path),
+		BuildCSVEventStoreReader(PATH),
+		BuildCSVEventStoreWriter(PATH),
 	)
 	return cache, cache
 }

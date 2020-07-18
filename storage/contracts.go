@@ -4,6 +4,8 @@ import (
 	"io"
 )
 
+const EventsDatabaseFilename = "events.csv"
+
 type EncoderFunc func(io.Writer) Encoder
 type DecoderFunc func(io.Reader) Decoder
 

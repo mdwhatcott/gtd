@@ -20,8 +20,6 @@ type Application struct {
 	handler core.Handler
 	editor  ui.Editor
 	reader  joyride.StorageReader
-
-	storageDirectory string
 }
 
 func (this *Application) editOutcomes(_ids []string) {
