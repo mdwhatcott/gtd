@@ -9,9 +9,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mdwhatcott/gtd/core/wireupcore"
-	"github.com/mdwhatcott/gtd/storage/wireupstorage"
-	"github.com/mdwhatcott/gtd/ui/tempfile"
+	"github.com/mdwhatcott/gtd/v3/core/wireupcore"
+	"github.com/mdwhatcott/gtd/v3/storage/wireupstorage"
+	"github.com/mdwhatcott/gtd/v3/ui/tempfile"
 )
 
 var Version = "dev"

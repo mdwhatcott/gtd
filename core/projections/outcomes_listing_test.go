@@ -5,8 +5,8 @@ import (
 
 	"github.com/smartystreets/gunit"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/events"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/events"
 )
 
 func TestOutcomesListingFixture(t *testing.T) {

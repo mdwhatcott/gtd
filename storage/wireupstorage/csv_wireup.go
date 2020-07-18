@@ -5,9 +5,9 @@ import (
 
 	"github.com/smartystreets/joyride/v2"
 
-	"github.com/mdwhatcott/gtd/storage"
-	"github.com/mdwhatcott/gtd/storage/csv"
-	"github.com/mdwhatcott/gtd/storage/eventstore"
+	"github.com/mdwhatcott/gtd/v3/storage"
+	"github.com/mdwhatcott/gtd/v3/storage/csv"
+	"github.com/mdwhatcott/gtd/v3/storage/eventstore"
 )
 
 func BuildCachedCSVEventStore(path string) (joyride.StorageReader, joyride.StorageWriter) {

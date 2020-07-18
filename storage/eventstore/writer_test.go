@@ -7,9 +7,9 @@ import (
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
 
-	"github.com/mdwhatcott/gtd/core/events"
-	"github.com/mdwhatcott/gtd/storage"
-	"github.com/mdwhatcott/gtd/util/fake"
+	"github.com/mdwhatcott/gtd/v3/core/events"
+	"github.com/mdwhatcott/gtd/v3/storage"
+	"github.com/mdwhatcott/gtd/v3/util/fake"
 )
 
 func TestWriterFixture(t *testing.T) {

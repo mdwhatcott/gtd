@@ -1,6 +1,6 @@
 package domain
 
-import "github.com/mdwhatcott/gtd/core"
+import "github.com/mdwhatcott/gtd/v3/core"
 
 type Action struct {
 	Description string

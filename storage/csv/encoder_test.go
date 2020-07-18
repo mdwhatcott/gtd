@@ -8,7 +8,7 @@ import (
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
 
-	"github.com/mdwhatcott/gtd/util/fake"
+	"github.com/mdwhatcott/gtd/v3/util/fake"
 )
 
 func TestEncoderFixture(t *testing.T) {

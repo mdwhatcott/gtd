@@ -9,11 +9,11 @@ import (
 
 	"github.com/smartystreets/joyride/v2"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/projections"
-	"github.com/mdwhatcott/gtd/storage"
-	"github.com/mdwhatcott/gtd/ui"
-	"github.com/mdwhatcott/gtd/ui/ux"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/projections"
+	"github.com/mdwhatcott/gtd/v3/storage"
+	"github.com/mdwhatcott/gtd/v3/ui"
+	"github.com/mdwhatcott/gtd/v3/ui/ux"
 )
 
 type Application struct {

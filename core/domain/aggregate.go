@@ -5,9 +5,9 @@ import (
 
 	"github.com/smartystreets/logging"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/events"
-	"github.com/mdwhatcott/gtd/util/errors"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/events"
+	"github.com/mdwhatcott/gtd/v3/util/errors"
 )
 
 type Aggregate struct {

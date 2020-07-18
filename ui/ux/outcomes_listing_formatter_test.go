@@ -7,7 +7,7 @@ import (
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
 
-	"github.com/mdwhatcott/gtd/core/projections"
+	"github.com/mdwhatcott/gtd/v3/core/projections"
 )
 
 func TestOutcomesListingFormatter(t *testing.T) {

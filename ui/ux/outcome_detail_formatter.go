@@ -3,8 +3,8 @@ package ux
 import (
 	"strings"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/projections"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/projections"
 )
 
 func FormatOutcomeDetails(outcome projections.OutcomeDetails) string {

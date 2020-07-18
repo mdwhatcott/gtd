@@ -3,7 +3,7 @@ package fake
 import (
 	"github.com/smartystreets/logging"
 
-	"github.com/mdwhatcott/gtd/storage"
+	"github.com/mdwhatcott/gtd/v3/storage"
 )
 
 type Joyride struct {

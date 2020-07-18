@@ -4,8 +4,8 @@ import (
 	"github.com/smartystreets/clock"
 	"github.com/smartystreets/joyride/v2"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/commands"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/commands"
 )
 
 type Handler struct {

@@ -4,9 +4,9 @@ import (
 	"bufio"
 	"strings"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/commands"
-	"github.com/mdwhatcott/gtd/core/projections"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/commands"
+	"github.com/mdwhatcott/gtd/v3/core/projections"
 )
 
 type OutcomesListingParser struct {

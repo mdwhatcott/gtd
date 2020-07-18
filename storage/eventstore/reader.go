@@ -6,8 +6,8 @@ import (
 
 	"github.com/smartystreets/logging"
 
-	"github.com/mdwhatcott/gtd/storage"
-	"github.com/mdwhatcott/gtd/util/errors"
+	"github.com/mdwhatcott/gtd/v3/storage"
+	"github.com/mdwhatcott/gtd/v3/util/errors"
 )
 
 type Reader struct {

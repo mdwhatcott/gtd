@@ -13,10 +13,10 @@ import (
 	"github.com/smartystreets/joyride/v2"
 	"github.com/smartystreets/logging"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/commands"
-	"github.com/mdwhatcott/gtd/core/events"
-	"github.com/mdwhatcott/gtd/util/fake"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/commands"
+	"github.com/mdwhatcott/gtd/v3/core/events"
+	"github.com/mdwhatcott/gtd/v3/util/fake"
 )
 
 func TestFixture(t *testing.T) {

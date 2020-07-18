@@ -3,8 +3,8 @@ package wireupcore
 import (
 	"github.com/smartystreets/joyride/v2"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/domain"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/domain"
 )
 
 type Requirements struct {

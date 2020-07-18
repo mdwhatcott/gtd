@@ -1,6 +1,6 @@
 # GTD
 
-    $ go get -u github.com/mdwhatcott/gtd/cmd/gtd
+    $ go get -u github.com/mdwhatcott/gtd/v3/cmd/gtd
     $ gtd -help
  
 ----------

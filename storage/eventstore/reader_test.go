@@ -8,8 +8,8 @@ import (
 	"github.com/smartystreets/gunit"
 	"github.com/smartystreets/logging"
 
-	"github.com/mdwhatcott/gtd/storage"
-	"github.com/mdwhatcott/gtd/util/fake"
+	"github.com/mdwhatcott/gtd/v3/storage"
+	"github.com/mdwhatcott/gtd/v3/util/fake"
 )
 
 func TestReaderFixture(t *testing.T) {

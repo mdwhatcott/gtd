@@ -1,8 +1,8 @@
 package projections
 
 import (
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/events"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/events"
 )
 
 type OutcomeDetailsProjector struct{ OutcomeDetails }

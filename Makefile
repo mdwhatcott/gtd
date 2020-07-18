@@ -12,4 +12,4 @@ build:
 	go build ./...
 
 install: test
-	go install -ldflags="-X 'main.Version=$(VERSION)'" github.com/mdwhatcott/gtd/cmd/gtd
+	go install -ldflags="-X 'main.Version=$(VERSION)'" github.com/mdwhatcott/gtd/v3/cmd/gtd

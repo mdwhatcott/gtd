@@ -7,9 +7,9 @@ import (
 	"github.com/smartystreets/joyride/v2"
 	"github.com/smartystreets/logging"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/commands"
-	"github.com/mdwhatcott/gtd/storage"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/commands"
+	"github.com/mdwhatcott/gtd/v3/storage"
 )
 
 type Task struct {

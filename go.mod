@@ -1,4 +1,4 @@
-module github.com/mdwhatcott/gtd
+module github.com/mdwhatcott/gtd/v3
 
 go 1.13
 

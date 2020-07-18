@@ -1,7 +1,7 @@
 package projections
 
 import (
-	"github.com/mdwhatcott/gtd/core"
+	"github.com/mdwhatcott/gtd/v3/core"
 )
 
 type IncompleteActionsByContext struct {

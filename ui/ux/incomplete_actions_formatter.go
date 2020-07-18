@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/mdwhatcott/gtd/core/projections"
+	"github.com/mdwhatcott/gtd/v3/core/projections"
 )
 
 func FormatIncompleteActions(contexts ...*projections.Context) string {

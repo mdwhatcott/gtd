@@ -3,8 +3,8 @@ package ux
 import (
 	"log"
 
-	"github.com/mdwhatcott/gtd/core"
-	"github.com/mdwhatcott/gtd/core/commands"
+	"github.com/mdwhatcott/gtd/v3/core"
+	"github.com/mdwhatcott/gtd/v3/core/commands"
 )
 
 func handle(handler core.Handler, instructions ...interface{}) {
