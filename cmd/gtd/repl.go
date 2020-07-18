@@ -52,15 +52,11 @@ func PrintBanner(version string) {
 
 func Prompt(version string) []string {
 	fmt.Printf("\ngtd-%s --> ", version)
-	fields := ScanLineFields()
+	fields := strings.Fields(ScanLine())
 	if len(fields) > 1 && fields[0] == "gtd" {
 		fields = fields[1:]
 	}
 	return fields
-}
-
-func ScanLineFields() []string {
-	return strings.Fields(ScanLine())
 }
 
 func ScanLine() string {
