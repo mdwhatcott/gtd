@@ -72,43 +72,79 @@ func PrintUsage() {
 
 	log.Println(`Usage of gtd:
 
-This application provides a REPL-style interface for selecting directives.
-Here are several examples of commands that can be entered:
+This application provides both a command-line and a REPL-style
+interface for managing projects and tasks.
+
+## Required Environment Variables
+
+- GTDPATH (the folder containing the "Event Database")
 
 
-# To show this usage documentation:
+## Event Database
+
+Because this application is purely event-sourced, the only
+state required is a database of serialized events. If missing
+at startup a new database will be created. It is assumed that
+the parent folder of the database is under revision control 
+in a 'git' repository and that said repository is currently
+on a branch called 'main' and that a remote named 'origin' has
+already been configured. As a final step at shutdown any new
+events added to the database are committed and pushed to the 
+configured remote.
+
+
+## Directives
+
+Here are several examples of directives that can be entered
+at the REPL, or as non-flag command-line arguments (which,
+if included, will bypass the REPL):
+
+
+// To show this usage documentation:
 -> help
 
 
-# To exit the program:
+// To exit the program:
 -> exit
 
 
-# To present a listing of all active contexts:
+// To present a listing of all active contexts:
 -> contexts
 
+---
 
-# To present a single, random, pending task from an active project:
+// To present a single, random, pending task from an active 
+// project:
 -> task
 
-## Optionally, draw from tasks matching the provided contexts, home and work:
+
+// Optionally, draw from tasks matching the provided contexts,
+// home and work:
 -> task home work
 
+---
 
-# To present all pending tasks from active projects:
+// To present all pending tasks from active projects:
 -> tasks
 
-## Optionally, show only those tasks that match the provided contexts, home and work:
+
+// Optionally, show only those tasks that match the provided
+// contexts, home and work:
 -> tasks home work
 
+---
 
-# To present all projects (separated by status):
+// To present all projects (separated by status):
 -> projects
 
-## Optionally, only present projects matching the provided statuses, fixed and deferred:
+
+// Optionally, only present projects matching the provided
+// statuses, fixed and deferred:
 -> projects fixed deferred
 
-## [UNDER CONSTRUCTION] Optionally, only present projects that have no pending tasks:
+
+// [UNDER CONSTRUCTION] Optionally, only present projects 
+// that have no pending tasks:
 -> projects fixed deferred ?
 
 
