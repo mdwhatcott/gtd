@@ -12,23 +12,23 @@ type Writer struct {
 	closeErr error
 }
 
-func NewWriter(_writeErr, _closeErr error) *Writer {
+func NewWriter(writeErr, closeErr error) *Writer {
 	return &Writer{
 		buffer:   new(bytes.Buffer),
-		writeErr: _writeErr,
-		closeErr: _closeErr,
+		writeErr: writeErr,
+		closeErr: closeErr,
 	}
 }
 
-func (this *Writer) SetWriteError(_err error) { this.writeErr = _err }
-func (this *Writer) SetCloseError(_err error) { this.closeErr = _err }
+func (this *Writer) SetWriteError(err error) { this.writeErr = err }
+func (this *Writer) SetCloseError(err error) { this.closeErr = err }
 
-func (this *Writer) Write(_p []byte) (_n int, _err error) {
-	_n, _err = this.buffer.Write(_p)
-	if _err != nil {
-		return _n, _err
+func (this *Writer) Write(p []byte) (n_ int, err_ error) {
+	n_, err_ = this.buffer.Write(p)
+	if err_ != nil {
+		return n_, err_
 	}
-	return _n, this.writeErr
+	return n_, this.writeErr
 }
 
 func (this *Writer) Close() error {

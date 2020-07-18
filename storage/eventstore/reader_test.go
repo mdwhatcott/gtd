@@ -27,8 +27,8 @@ func (this *ReaderFixture) readerFunc() io.ReadCloser {
 	return this.inner
 }
 
-func (this *ReaderFixture) decoderFunc(_reader io.Reader) storage.Decoder {
-	return fake.NewDecoder(_reader, this.decodeErr)
+func (this *ReaderFixture) decoderFunc(reader io.Reader) storage.Decoder {
+	return fake.NewDecoder(reader, this.decodeErr)
 }
 
 func (this *ReaderFixture) Setup() {
@@ -105,9 +105,9 @@ func (this *ReaderFixture) TestRead_EventStream_AllEventsIncluded() {
 	})
 }
 
-func stream(events chan interface{}) (streamed []interface{}) {
-	for event := range events {
-		streamed = append(streamed, event)
+func stream(events chan interface{}) (streamed_ []interface{}) {
+	for EVENT := range events {
+		streamed_ = append(streamed_, EVENT)
 	}
-	return streamed
+	return streamed_
 }

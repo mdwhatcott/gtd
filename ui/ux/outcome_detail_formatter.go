@@ -8,53 +8,53 @@ import (
 )
 
 func FormatOutcomeDetails(outcome projections.OutcomeDetails) string {
-	prefixes := shortenIDs(actionIDs(outcome.Actions))
+	PREFIXES := shortenIDs(actionIDs(outcome.Actions))
 
-	builder := new(strings.Builder)
-	builder.WriteString("# ")
-	builder.WriteString(outcome.Title)
-	builder.WriteString("\n")
-	builder.WriteString("\n")
-	builder.WriteString("> ")
-	builder.WriteString(outcome.Explanation)
-	builder.WriteString("\n")
-	builder.WriteString("\n")
-	builder.WriteString("\n")
-	builder.WriteString("## Actions:")
-	builder.WriteString("\n")
-	builder.WriteString("\n")
-	for _, action := range outcome.Actions {
-		if action.Strategy == core.ActionStrategyConcurrent {
-			builder.WriteString("-  ")
+	BUILDER := new(strings.Builder)
+	BUILDER.WriteString("# ")
+	BUILDER.WriteString(outcome.Title)
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("> ")
+	BUILDER.WriteString(outcome.Explanation)
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("## Actions:")
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("\n")
+	for _, ACTION := range outcome.Actions {
+		if ACTION.Strategy == core.ActionStrategyConcurrent {
+			BUILDER.WriteString("-  ")
 		} else {
-			builder.WriteString("1. ")
+			BUILDER.WriteString("1. ")
 		}
-		if action.Status == core.ActionStatusComplete {
-			builder.WriteString("[X] ")
-		} else if action.Status == core.ActionStatusLatent {
-			builder.WriteString("[?] ")
+		if ACTION.Status == core.ActionStatusComplete {
+			BUILDER.WriteString("[X] ")
+		} else if ACTION.Status == core.ActionStatusLatent {
+			BUILDER.WriteString("[?] ")
 		} else {
-			builder.WriteString("[ ] ")
+			BUILDER.WriteString("[ ] ")
 		}
-		builder.WriteString("`0x")
-		builder.WriteString(prefixes[action.ID])
-		builder.WriteString("` ")
-		builder.WriteString(action.Description)
-		builder.WriteString("\n")
+		BUILDER.WriteString("`0x")
+		BUILDER.WriteString(PREFIXES[ACTION.ID])
+		BUILDER.WriteString("` ")
+		BUILDER.WriteString(ACTION.Description)
+		BUILDER.WriteString("\n")
 	}
-	builder.WriteString("\n")
-	builder.WriteString("\n")
-	builder.WriteString("## Support Materials:")
-	builder.WriteString("\n")
-	builder.WriteString("\n")
-	builder.WriteString(outcome.Description)
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("## Support Materials:")
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString(outcome.Description)
 
-	return strings.TrimSpace(builder.String())
+	return strings.TrimSpace(BUILDER.String())
 }
 
 func actionIDs(actions []*projections.ActionDetails) (ids_ []string) {
-	for _, action := range actions {
-		ids_ = append(ids_, action.ID)
+	for _, ACTION := range actions {
+		ids_ = append(ids_, ACTION.ID)
 	}
 	return ids_
 }

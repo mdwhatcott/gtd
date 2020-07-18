@@ -13,15 +13,15 @@ type Writer struct {
 	writer  storage.WriterFunc
 }
 
-func NewWriter(_encoder storage.EncoderFunc, _writer storage.WriterFunc) *Writer {
+func NewWriter(encoder storage.EncoderFunc, writer storage.WriterFunc) *Writer {
 	return &Writer{
-		encoder: _encoder,
-		writer:  _writer,
+		encoder: encoder,
+		writer:  writer,
 	}
 }
 
-func (this *Writer) Write(_events ...interface{}) {
-	for _, EVENT := range _events {
+func (this *Writer) Write(events ...interface{}) {
+	for _, EVENT := range events {
 		ROOT, OK := EVENT.(storage.Identifiable)
 		if !OK {
 			panic(errors.Wrap(ErrUnrecognizedType, reflect.TypeOf(EVENT)))
@@ -30,19 +30,19 @@ func (this *Writer) Write(_events ...interface{}) {
 	}
 }
 
-func (this *Writer) persist(_root storage.Identifiable) {
+func (this *Writer) persist(root storage.Identifiable) {
 	WRITER := this.writer()
 	defer this.close(WRITER)
 
 	ENCODER := this.encoder(WRITER)
-	ERR := ENCODER.Encode(_root)
+	ERR := ENCODER.Encode(root)
 	if ERR != nil {
 		panic(errors.Wrap(ErrUnexpectedWriteError, ERR))
 	}
 }
 
-func (this *Writer) close(_writer io.WriteCloser) {
-	ERR := _writer.Close()
+func (this *Writer) close(writer io.WriteCloser) {
+	ERR := writer.Close()
 	if ERR != nil {
 		panic(errors.Wrap(ErrUnexpectedCloseError, ERR))
 	}

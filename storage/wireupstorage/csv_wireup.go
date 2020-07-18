@@ -13,11 +13,11 @@ import (
 
 func BuildCachedCSVEventStore(folder string) (joyride.StorageReader, joyride.StorageWriter) {
 	PATH := filepath.Join(folder, storage.EventsDatabaseFilename)
-	cache := eventstore.NewCache(
+	CACHE := eventstore.NewCache(
 		BuildCSVEventStoreReader(PATH),
 		BuildCSVEventStoreWriter(PATH),
 	)
-	return cache, cache
+	return CACHE, CACHE
 }
 
 func BuildCSVEventStoreReader(path string) joyride.StorageReader {
@@ -27,9 +27,9 @@ func BuildCSVEventStoreWriter(path string) joyride.StorageWriter {
 	return eventstore.NewWriter(csvEncoding, writing(path))
 }
 
-func csvDecoding(_reader io.Reader) storage.Decoder {
-	return csv.NewDecoder(_reader, csv.DecoderRegistry())
+func csvDecoding(reader io.Reader) storage.Decoder {
+	return csv.NewDecoder(reader, csv.DecoderRegistry())
 }
-func csvEncoding(_writer io.Writer) storage.Encoder {
-	return csv.NewEncoder(_writer, csv.EncoderRegistry())
+func csvEncoding(writer io.Writer) storage.Encoder {
+	return csv.NewEncoder(writer, csv.EncoderRegistry())
 }

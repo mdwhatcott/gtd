@@ -16,15 +16,15 @@ type Reader struct {
 	log     *logging.Logger
 }
 
-func NewReader(_readerFunc storage.ReaderFunc, _decoderFunc storage.DecoderFunc) *Reader {
+func NewReader(readerFunc storage.ReaderFunc, decoderFunc storage.DecoderFunc) *Reader {
 	return &Reader{
-		reader:  _readerFunc,
-		decoder: _decoderFunc,
+		reader:  readerFunc,
+		decoder: decoderFunc,
 	}
 }
 
-func (this *Reader) Read(_v ...interface{}) {
-	for _, QUERY := range _v {
+func (this *Reader) Read(v ...interface{}) {
+	for _, QUERY := range v {
 		switch QUERY := QUERY.(type) {
 		case *storage.EventStream:
 			QUERY.Result.Events = make(chan interface{})
@@ -38,8 +38,8 @@ func (this *Reader) Read(_v ...interface{}) {
 	}
 }
 
-func (this *Reader) stream(_stream chan interface{}, _filter string) {
-	defer close(_stream)
+func (this *Reader) stream(stream chan interface{}, filter string) {
+	defer close(stream)
 
 	READER := this.reader()
 	defer this.close(READER)
@@ -63,14 +63,14 @@ func (this *Reader) stream(_stream chan interface{}, _filter string) {
 			break
 		}
 
-		if _filter == "" || IDENTIFIABLE.ID() == _filter {
-			_stream <- VALUE
+		if filter == "" || IDENTIFIABLE.ID() == filter {
+			stream <- VALUE
 		}
 	}
 }
 
-func (this *Reader) close(_reader io.ReadCloser) {
-	ERR := _reader.Close()
+func (this *Reader) close(reader io.ReadCloser) {
+	ERR := reader.Close()
 	if ERR != nil {
 		this.log.Println(errors.Wrap(ErrUnexpectedCloseError, ERR))
 	}

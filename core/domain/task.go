@@ -24,45 +24,45 @@ type Task struct {
 	aggregates   map[string]*Aggregate
 }
 
-func NewTask(_nextID core.IDFunc) *Task {
+func NewTask(nextID core.IDFunc) *Task {
 	return &Task{
 		Base:       joyride.New(),
-		nextID:     _nextID,
+		nextID:     nextID,
 		queries:    make(map[string]*storage.OutcomeEventStream),
 		aggregates: make(map[string]*Aggregate),
 	}
 }
 
-func (this *Task) saveInstruction(_command interface{}) {
-	this.instructions = append(this.instructions, _command)
+func (this *Task) saveInstruction(command interface{}) {
+	this.instructions = append(this.instructions, command)
 }
-func (this *Task) aggregate(_id commands.Identifiable) *Aggregate {
-	AGGREGATE, FOUND := this.aggregates[_id.ID()]
+func (this *Task) aggregate(id commands.Identifiable) *Aggregate {
+	AGGREGATE, FOUND := this.aggregates[id.ID()]
 	if FOUND {
 		return AGGREGATE
 	}
-	return this.createAggregate(_id.ID())
+	return this.createAggregate(id.ID())
 }
-func (this *Task) createAggregate(_id string) (aggregate_ *Aggregate) {
+func (this *Task) createAggregate(id string) (aggregate_ *Aggregate) {
 	aggregate_ = NewAggregate(this.clock.UTCNow(), this.log)
-	this.aggregates[_id] = aggregate_
+	this.aggregates[id] = aggregate_
 	return aggregate_
 }
 
-func (this *Task) PrepareToTrackOutcome(_command *commands.TrackOutcome) {
-	this.saveInstruction(_command)
+func (this *Task) PrepareToTrackOutcome(command *commands.TrackOutcome) {
+	this.saveInstruction(command)
 }
-func (this *Task) PrepareInstruction(_instruction commands.Identifiable) {
-	this.saveInstruction(_instruction)
-	this.registerOutcomeEventStreamQuery(_instruction.ID())
+func (this *Task) PrepareInstruction(instruction commands.Identifiable) {
+	this.saveInstruction(instruction)
+	this.registerOutcomeEventStreamQuery(instruction.ID())
 }
-func (this *Task) registerOutcomeEventStreamQuery(_id string) {
-	QUERY, FOUND := this.queries[_id]
+func (this *Task) registerOutcomeEventStreamQuery(id string) {
+	QUERY, FOUND := this.queries[id]
 	if FOUND {
 		return
 	}
-	QUERY = &storage.OutcomeEventStream{OutcomeID: _id}
-	this.queries[_id] = QUERY
+	QUERY = &storage.OutcomeEventStream{OutcomeID: id}
+	this.queries[id] = QUERY
 	this.AddRequiredReads(QUERY)
 }
 
@@ -151,8 +151,8 @@ func (this *Task) processInstructions() {
 }
 func (this *Task) publishResults() {
 	for _, AGGREGATE := range this.aggregates {
-		results := AGGREGATE.Results()
-		for _, result := range results {
+		RESULTS := AGGREGATE.Results()
+		for _, result := range RESULTS {
 			this.AddPendingWrites(result)
 		}
 	}

@@ -25,10 +25,10 @@ type Aggregate struct {
 	results []interface{}
 }
 
-func NewAggregate(_now time.Time, _log *logging.Logger) *Aggregate {
+func NewAggregate(now time.Time, log *logging.Logger) *Aggregate {
 	return &Aggregate{
-		now:     _now,
-		log:     _log,
+		now:     now,
+		log:     log,
 		actions: make(map[string]*Action),
 	}
 }
@@ -36,8 +36,8 @@ func NewAggregate(_now time.Time, _log *logging.Logger) *Aggregate {
 func (this *Aggregate) Results() []interface{} {
 	return this.results
 }
-func (this *Aggregate) raise(_events ...interface{}) error {
-	for _, EVENT := range _events {
+func (this *Aggregate) raise(events ...interface{}) error {
+	for _, EVENT := range events {
 		this.results = append(this.results, EVENT)
 		this.apply(EVENT)
 	}
@@ -59,8 +59,8 @@ func (this *Aggregate) exists() bool {
 	return true
 }
 
-func (this *Aggregate) apply(_event interface{}) {
-	switch EVENT := _event.(type) {
+func (this *Aggregate) apply(event interface{}) {
+	switch EVENT := event.(type) {
 
 	case events.OutcomeTrackedV1:
 		this.id = EVENT.OutcomeID
@@ -119,52 +119,52 @@ func (this *Aggregate) apply(_event interface{}) {
 	}
 }
 
-func (this *Aggregate) TrackOutcome(_outcomeID, _title string) {
+func (this *Aggregate) TrackOutcome(outcomeID, title string) {
 	_ = this.raise(
 		events.OutcomeTrackedV1{
 			Timestamp: this.now,
-			OutcomeID: _outcomeID,
-			Title:     _title,
+			OutcomeID: outcomeID,
+			Title:     title,
 		},
 	)
 }
-func (this *Aggregate) UpdateOutcomeTitle(_title string) error {
+func (this *Aggregate) UpdateOutcomeTitle(title string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	if _title == this.title {
+	if title == this.title {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeTitleUpdatedV1{
 		Timestamp:    this.now,
 		OutcomeID:    this.id,
-		UpdatedTitle: _title,
+		UpdatedTitle: title,
 	})
 }
-func (this *Aggregate) UpdateOutcomeExplanation(_explanation string) error {
+func (this *Aggregate) UpdateOutcomeExplanation(explanation string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	if _explanation == this.explanation {
+	if explanation == this.explanation {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeExplanationUpdatedV1{
 		Timestamp:          this.now,
 		OutcomeID:          this.id,
-		UpdatedExplanation: _explanation,
+		UpdatedExplanation: explanation,
 	})
 }
-func (this *Aggregate) UpdateOutcomeDescription(_description string) error {
+func (this *Aggregate) UpdateOutcomeDescription(description string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	if _description == this.description {
+	if description == this.description {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.OutcomeDescriptionUpdatedV1{
 		Timestamp:          this.now,
 		OutcomeID:          this.id,
-		UpdatedDescription: _description,
+		UpdatedDescription: description,
 	})
 }
 func (this *Aggregate) DeleteOutcome() error {
@@ -236,39 +236,39 @@ func (this *Aggregate) DeclareOutcomeUncertain() error {
 		OutcomeID: this.id,
 	})
 }
-func (this *Aggregate) TrackAction(_id, _description string) error {
+func (this *Aggregate) TrackAction(id, description string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
 	return this.raise(events.ActionTrackedV1{
 		Timestamp:   this.now,
 		OutcomeID:   this.id,
-		ActionID:    _id,
-		Description: _description,
-		Contexts:    gatherContexts(_description),
+		ActionID:    id,
+		Description: description,
+		Contexts:    gatherContexts(description),
 	})
 }
-func (this *Aggregate) UpdateActionDescription(_id, _description string) error {
+func (this *Aggregate) UpdateActionDescription(id, description string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions[_id]
-	if action == nil {
+	ACTION := this.actions[id]
+	if ACTION == nil {
 		return core.ErrActionNotFound
 	}
-	if action.Description == _description {
+	if ACTION.Description == description {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.ActionDescriptionUpdatedV1{
 		Timestamp:          this.now,
 		OutcomeID:          this.id,
-		ActionID:           _id,
-		UpdatedDescription: _description,
-		UpdatedContexts:    gatherContexts(_description),
+		ActionID:           id,
+		UpdatedDescription: description,
+		UpdatedContexts:    gatherContexts(description),
 	})
 }
-func (this *Aggregate) ReorderActions(_newIDOrder []string) error {
-	// TODO: it should be OK if the _newIDOrder has extra entries (but not the other way around)
+func (this *Aggregate) ReorderActions(newIDOrder []string) error {
+	// TODO: it should be OK if the newIDOrder has extra entries (but not the other way around)
 
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
@@ -276,10 +276,10 @@ func (this *Aggregate) ReorderActions(_newIDOrder []string) error {
 	if len(this.actions) == 0 {
 		return errors.Wrap(core.ErrActionNotFound, errors.New("there are none"))
 	}
-	if len(_newIDOrder) != len(this.actions) {
+	if len(newIDOrder) != len(this.actions) {
 		return core.ErrActionNotFound
 	}
-	for _, ID := range _newIDOrder {
+	for _, ID := range newIDOrder {
 		if this.actions[ID] == nil {
 			return core.ErrActionNotFound
 		}
@@ -287,105 +287,105 @@ func (this *Aggregate) ReorderActions(_newIDOrder []string) error {
 	return this.raise(events.ActionsReorderedV1{
 		Timestamp:    this.now,
 		OutcomeID:    this.id,
-		ReorderedIDs: _newIDOrder,
+		ReorderedIDs: newIDOrder,
 	})
 }
-func (this *Aggregate) MarkActionStatusLatent(_id string) error {
+func (this *Aggregate) MarkActionStatusLatent(id string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions[_id]
-	if action == nil {
+	ACTION := this.actions[id]
+	if ACTION == nil {
 		return core.ErrActionNotFound
 	}
-	if action.Status == core.ActionStatusLatent {
+	if ACTION.Status == core.ActionStatusLatent {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.ActionStatusMarkedLatentV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
-		ActionID:  _id,
+		ActionID:  id,
 	})
 }
-func (this *Aggregate) MarkActionStatusIncomplete(_id string) error {
+func (this *Aggregate) MarkActionStatusIncomplete(id string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions[_id]
-	if action == nil {
+	ACTION := this.actions[id]
+	if ACTION == nil {
 		return core.ErrActionNotFound
 	}
-	if action.Status == core.ActionStatusIncomplete {
+	if ACTION.Status == core.ActionStatusIncomplete {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.ActionStatusMarkedIncompleteV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
-		ActionID:  _id,
+		ActionID:  id,
 	})
 }
-func (this *Aggregate) MarkActionStatusComplete(_id string) error {
+func (this *Aggregate) MarkActionStatusComplete(id string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions[_id]
-	if action == nil {
+	ACTION := this.actions[id]
+	if ACTION == nil {
 		return core.ErrActionNotFound
 	}
-	if action.Status == core.ActionStatusComplete {
+	if ACTION.Status == core.ActionStatusComplete {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.ActionStatusMarkedCompleteV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
-		ActionID:  _id,
+		ActionID:  id,
 	})
 }
-func (this *Aggregate) MarkActionStrategySequential(_id string) error {
+func (this *Aggregate) MarkActionStrategySequential(id string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions[_id]
-	if action == nil {
+	ACTION := this.actions[id]
+	if ACTION == nil {
 		return core.ErrActionNotFound
 	}
-	if action.Strategy == core.ActionStrategySequential {
+	if ACTION.Strategy == core.ActionStrategySequential {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.ActionStrategyMarkedSequentialV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
-		ActionID:  _id,
+		ActionID:  id,
 	})
 }
-func (this *Aggregate) MarkActionStrategyConcurrent(_id string) error {
+func (this *Aggregate) MarkActionStrategyConcurrent(id string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions[_id]
-	if action == nil {
+	ACTION := this.actions[id]
+	if ACTION == nil {
 		return core.ErrActionNotFound
 	}
-	if action.Strategy == core.ActionStrategyConcurrent {
+	if ACTION.Strategy == core.ActionStrategyConcurrent {
 		return core.ErrOutcomeUnchanged
 	}
 	return this.raise(events.ActionStrategyMarkedConcurrentV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
-		ActionID:  _id,
+		ActionID:  id,
 	})
 }
-func (this *Aggregate) DeleteAction(_id string) error {
+func (this *Aggregate) DeleteAction(id string) error {
 	if !this.exists() {
 		return core.ErrOutcomeNotFound
 	}
-	action := this.actions[_id]
-	if action == nil {
+	ACTION := this.actions[id]
+	if ACTION == nil {
 		return core.ErrActionNotFound
 	}
 	return this.raise(events.ActionDeletedV1{
 		Timestamp: this.now,
 		OutcomeID: this.id,
-		ActionID:  _id,
+		ActionID:  id,
 	})
 }

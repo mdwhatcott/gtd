@@ -8,27 +8,27 @@ import (
 	"strings"
 )
 
-func GTDREPL(APP *Application, version string) {
+func GTDREPL(app *Application, version string) {
 	directive := Prompt(version)
-	for GTDOnce(APP, directive) {
+	for GTDOnce(app, directive) {
 		directive = Prompt(version)
 	}
 }
 
-func GTDOnce(APP *Application, directive []string) bool {
+func GTDOnce(app *Application, directive []string) bool {
 	switch directive[0] {
 
 	case "projects":
-		APP.PresentOutcomesListing(directive[1:])
+		app.PresentOutcomesListing(directive[1:])
 
 	case "tasks":
-		APP.PresentIncompleteActions(directive[1:])
+		app.PresentIncompleteActions(directive[1:])
 
 	case "task":
-		APP.PresentIncompleteAction(directive[1:])
+		app.PresentIncompleteAction(directive[1:])
 
 	case "contexts":
-		APP.PresentContexts()
+		app.PresentContexts()
 
 	case "help":
 		PrintUsage()

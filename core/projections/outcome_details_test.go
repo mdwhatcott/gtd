@@ -146,8 +146,8 @@ func (this *OutcomeDetailsFixture) TestActionDeleted() {
 	)
 }
 func (this *OutcomeDetailsFixture) TestActionDeleted_NotPreviouslyTracked_Panic() {
-	action := func() { this.apply(events.ActionDeletedV1{ActionID: "not-found"}) }
-	this.So(action, should.Panic)
+	ACTION := func() { this.apply(events.ActionDeletedV1{ActionID: "not-found"}) }
+	this.So(ACTION, should.Panic)
 }
 func (this *OutcomeDetailsFixture) TestActionDescriptionUpdated() {
 	this.apply(

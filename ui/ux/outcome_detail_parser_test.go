@@ -30,11 +30,11 @@ func (this *OutcomeDetailParserFixture) Setup() {
 }
 
 func (this *OutcomeDetailParserFixture) parseAndAssertResult(expected ...interface{}) {
-	parser := NewOutcomeDetailParser(this.handler, this.outcomeID, this.projection, this.content)
+	PARSER := NewOutcomeDetailParser(this.handler, this.outcomeID, this.projection, this.content)
 
-	err := parser.Parse()
+	ERR := PARSER.Parse()
 
-	this.So(err, should.BeNil)
+	this.So(ERR, should.BeNil)
 	this.So(this.handler.handled, should.Resemble, expected)
 }
 
@@ -355,20 +355,20 @@ func NewOutcomeDetailParserFixtureFakeHandler() *OutcomeDetailParserFixtureFakeH
 
 func (this *OutcomeDetailParserFixtureFakeHandler) Handle(messages ...interface{}) {
 	this.handled = append(this.handled, messages...)
-	for _, message := range messages {
-		switch message := message.(type) {
+	for _, MESSAGE := range messages {
+		switch MESSAGE := MESSAGE.(type) {
 		case *commands.TrackOutcome:
-			message.Result.ID, message.Result.Error = this.Next()
+			MESSAGE.Result.ID, MESSAGE.Result.Error = this.Next()
 		case *commands.TrackAction:
-			message.Result.ID, message.Result.Error = this.Next()
+			MESSAGE.Result.ID, MESSAGE.Result.Error = this.Next()
 		}
 	}
 }
 
-func (this *OutcomeDetailParserFixtureFakeHandler) Next() (id string, err error) {
+func (this *OutcomeDetailParserFixtureFakeHandler) Next() (id_ string, err_ error) {
 	defer func() { this.id++ }()
 	if this.id < len(this.errs) {
-		err = this.errs[this.id]
+		err_ = this.errs[this.id]
 	}
-	return fmt.Sprint(this.id), err
+	return fmt.Sprint(this.id), err_
 }

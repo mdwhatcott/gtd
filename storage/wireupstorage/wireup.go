@@ -10,8 +10,8 @@ import (
 func reading(path string) func() io.ReadCloser  { return func() io.ReadCloser { return open(path) } }
 func writing(path string) func() io.WriteCloser { return func() io.WriteCloser { return open(path) } }
 
-func open(_path string) *os.File {
-	FILE, ERR := os.OpenFile(_path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
+func open(path string) *os.File {
+	FILE, ERR := os.OpenFile(path, os.O_RDWR|os.O_CREATE|os.O_APPEND, 0644)
 	if ERR != nil {
 		panic(ERR)
 	}

@@ -33,8 +33,8 @@ func (this *WriterFixture) writerFunc() io.WriteCloser {
 	return this.inner
 }
 
-func (this *WriterFixture) encoderFunc(_writer io.Writer) storage.Encoder {
-	return fake.NewEncoder(_writer, this.encodeErr)
+func (this *WriterFixture) encoderFunc(writer io.Writer) storage.Encoder {
+	return fake.NewEncoder(writer, this.encodeErr)
 }
 
 func (this *WriterFixture) Setup() {

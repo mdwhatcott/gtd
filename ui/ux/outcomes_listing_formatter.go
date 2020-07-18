@@ -7,60 +7,60 @@ import (
 )
 
 func FormatOutcomesListing(listing projections.OutcomesListing) string {
-	builder := new(strings.Builder)
-	builder.WriteString(composeListing("## Fixed:", listing.Fixed))
-	builder.WriteString(composeListing("## Deferred:", listing.Deferred))
-	builder.WriteString(composeListing("## Uncertain:", listing.Uncertain))
-	builder.WriteString(composeListing("## Abandoned:", listing.Abandoned))
-	builder.WriteString(composeListing("## Realized:", listing.Realized))
-	builder.WriteString(composeListing("## Deleted:", nil))
-	return strings.TrimSpace(builder.String()) + "\n"
+	BUILDER := new(strings.Builder)
+	BUILDER.WriteString(composeListing("## Fixed:", listing.Fixed))
+	BUILDER.WriteString(composeListing("## Deferred:", listing.Deferred))
+	BUILDER.WriteString(composeListing("## Uncertain:", listing.Uncertain))
+	BUILDER.WriteString(composeListing("## Abandoned:", listing.Abandoned))
+	BUILDER.WriteString(composeListing("## Realized:", listing.Realized))
+	BUILDER.WriteString(composeListing("## Deleted:", nil))
+	return strings.TrimSpace(BUILDER.String()) + "\n"
 }
 
 func composeListing(header string, items []*projections.OutcomesListingItem) string {
-	builder := new(strings.Builder)
-	builder.WriteString(header)
-	builder.WriteString("\n")
-	builder.WriteString("\n")
+	BUILDER := new(strings.Builder)
+	BUILDER.WriteString(header)
+	BUILDER.WriteString("\n")
+	BUILDER.WriteString("\n")
 	IDs := shortenIDs(outcomesListingIDs(items))
-	for _, outcome := range items {
-		builder.WriteString("- `0x")
-		builder.WriteString(IDs[outcome.ID])
-		builder.WriteString("` ")
-		builder.WriteString(outcome.Title)
-		builder.WriteString("\n")
+	for _, OUTCOME := range items {
+		BUILDER.WriteString("- `0x")
+		BUILDER.WriteString(IDs[OUTCOME.ID])
+		BUILDER.WriteString("` ")
+		BUILDER.WriteString(OUTCOME.Title)
+		BUILDER.WriteString("\n")
 	}
 	if len(items) > 0 {
-		builder.WriteString("\n")
+		BUILDER.WriteString("\n")
 	}
-	builder.WriteString("\n")
-	return builder.String()
+	BUILDER.WriteString("\n")
+	return BUILDER.String()
 }
 
 func outcomesListingIDs(listing []*projections.OutcomesListingItem) (ids_ []string) {
-	for _, item := range listing {
-		ids_ = append(ids_, item.ID)
+	for _, ITEM := range listing {
+		ids_ = append(ids_, ITEM.ID)
 	}
 	return ids_
 }
 
-func shortenIDs(_ids []string) (fullToPrefix map[string]string) {
-	if len(_ids) == 0 {
+func shortenIDs(ids []string) (fullToPrefix_ map[string]string) {
+	if len(ids) == 0 {
 		return nil
 	}
-	for length := minIDPrefixLength; length < len(_ids[0]); length++ {
-		actionIDs := make(map[string]bool)
-		fullToPrefix = make(map[string]string)
-		for _, ID := range _ids {
-			prefix := ID[:length]
-			actionIDs[prefix] = true
-			fullToPrefix[ID] = prefix
+	for LENGTH := minIDPrefixLength; LENGTH < len(ids[0]); LENGTH++ {
+		ACTIONS := make(map[string]bool)
+		fullToPrefix_ = make(map[string]string)
+		for _, ID := range ids {
+			PREFIX := ID[:LENGTH]
+			ACTIONS[PREFIX] = true
+			fullToPrefix_[ID] = PREFIX
 		}
-		if len(actionIDs) == len(_ids) {
+		if len(ACTIONS) == len(ids) {
 			break
 		}
 	}
-	return fullToPrefix
+	return fullToPrefix_
 }
 
 const minIDPrefixLength = 4

@@ -19,36 +19,36 @@ func NewEditor() *Editor {
 	if EDITOR == "" {
 		log.Panic("$EDITOR environment variable not set.")
 	}
-	args := strings.Fields(EDITOR)
+	ARGS := strings.Fields(EDITOR)
 	return &Editor{
-		editor: args[0],
-		args:   args[1:],
+		editor: ARGS[0],
+		args:   ARGS[1:],
 	}
 }
 
-func (this *Editor) EditTempFile(initialContent string) (resultContent string) {
-	name := createTempFile(initialContent)
-	defer deleteFile(name)
-	return this.editFile(name)
+func (this *Editor) EditTempFile(initialContent string) (resultContent_ string) {
+	NAME := createTempFile(initialContent)
+	defer deleteFile(NAME)
+	return this.editFile(NAME)
 }
 
 func createTempFile(content string) string {
-	file, err := ioutil.TempFile("", "*.md")
-	if err != nil {
-		log.Fatal(err)
+	FILE, ERR := ioutil.TempFile("", "*.md")
+	if ERR != nil {
+		log.Fatal(ERR)
 	}
 
-	_, err2 := io.WriteString(file, content)
-	if err2 != nil {
-		log.Fatal(err2)
+	_, ERR2 := io.WriteString(FILE, content)
+	if ERR2 != nil {
+		log.Fatal(ERR2)
 	}
 
-	err3 := file.Close()
-	if err3 != nil {
-		log.Fatal(err2)
+	ERR3 := FILE.Close()
+	if ERR3 != nil {
+		log.Fatal(ERR2)
 	}
 
-	return file.Name()
+	return FILE.Name()
 }
 
 func (this *Editor) editFile(name string) string {

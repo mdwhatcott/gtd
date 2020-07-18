@@ -23,7 +23,7 @@ type UsageData struct {
 	Today  string
 }
 
-var usageTemplate = `Usage of gtd:
+const usageTemplate = `Usage of gtd:
 
 This application provides both a command-line and a REPL-style
 interface for managing projects and tasks.

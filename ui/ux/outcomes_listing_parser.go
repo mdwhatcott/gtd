@@ -34,7 +34,7 @@ func (this *OutcomesListingParser) handle(instruction interface{}) {
 	handle(this.handler, instruction)
 }
 
-func (this *OutcomesListingParser) Parse() (edits []string) {
+func (this *OutcomesListingParser) Parse() (edits_ []string) {
 	for this.scanner.Scan() {
 		this.line = this.scanner.Text()
 		if len(this.line) == 0 {
@@ -49,55 +49,55 @@ func (this *OutcomesListingParser) Parse() (edits []string) {
 }
 
 func (this *OutcomesListingParser) updateStatus() bool {
-	status, found := headerToStatus[this.line]
-	if found {
-		this.status = status
+	STATUS, FOUND := headerToStatus[this.line]
+	if FOUND {
+		this.status = STATUS
 	}
-	return found
+	return FOUND
 }
 
 func (this *OutcomesListingParser) parseLine() {
-	idPrefix := between(this.line, "`0x", "`")
-	if idPrefix == "" {
+	ID := between(this.line, "`0x", "`")
+	if ID == "" {
 		this.trackOutcome()
 	} else {
-		this.updateOutcome(idPrefix)
+		this.updateOutcome(ID)
 	}
 }
 
 func (this *OutcomesListingParser) trackOutcome() {
-	command := &commands.TrackOutcome{Title: strings.TrimSpace(strings.TrimLeft(this.line, "-"))}
-	this.handle(command)
-	this.changeStatus(command.Result.ID)
-	this.edits = append(this.edits, command.Result.ID)
+	COMMAND := &commands.TrackOutcome{Title: strings.TrimSpace(strings.TrimLeft(this.line, "-"))}
+	this.handle(COMMAND)
+	this.changeStatus(COMMAND.Result.ID)
+	this.edits = append(this.edits, COMMAND.Result.ID)
 }
 
 func (this *OutcomesListingParser) updateOutcome(idPrefix string) {
-	id, status := this.findID(idPrefix)
-	if status != this.status {
-		this.changeStatus(id)
+	ID, STATUS := this.findID(idPrefix)
+	if STATUS != this.status {
+		this.changeStatus(ID)
 	}
 	if strings.HasPrefix(this.line, "\t") {
-		this.edits = append(this.edits, id)
+		this.edits = append(this.edits, ID)
 	}
 }
 
 func (this *OutcomesListingParser) findID(prefix string) (string, core.OutcomeStatus) {
-	for _, outcome := range this.combinedListings() {
-		if strings.HasPrefix(outcome.ID, prefix) {
-			return outcome.ID, outcome.Status
+	for _, OUTCOME := range this.combinedListings() {
+		if strings.HasPrefix(OUTCOME.ID, prefix) {
+			return OUTCOME.ID, OUTCOME.Status
 		}
 	}
 	return prefix, ""
 }
 
-func (this *OutcomesListingParser) combinedListings() (all []*projections.OutcomesListingItem) {
-	all = append(all, this.listings.Fixed...)
-	all = append(all, this.listings.Deferred...)
-	all = append(all, this.listings.Uncertain...)
-	all = append(all, this.listings.Abandoned...)
-	all = append(all, this.listings.Realized...)
-	return all
+func (this *OutcomesListingParser) combinedListings() (all_ []*projections.OutcomesListingItem) {
+	all_ = append(all_, this.listings.Fixed...)
+	all_ = append(all_, this.listings.Deferred...)
+	all_ = append(all_, this.listings.Uncertain...)
+	all_ = append(all_, this.listings.Abandoned...)
+	all_ = append(all_, this.listings.Realized...)
+	return all_
 }
 
 func (this *OutcomesListingParser) changeStatus(id string) {

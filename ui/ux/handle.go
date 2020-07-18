@@ -10,15 +10,15 @@ import (
 func handle(handler core.Handler, instructions ...interface{}) {
 	handler.Handle(instructions...)
 
-	for _, instruction := range instructions {
-		fail, ok := instruction.(commands.Fallible)
-		if !ok {
+	for _, INSTRUCTION := range instructions {
+		FAIL, OK := INSTRUCTION.(commands.Fallible)
+		if !OK {
 			return
 		}
-		err := fail.Err()
-		if err == nil {
+		ERR := FAIL.Err()
+		if ERR == nil {
 			return
 		}
-		log.Printf("Instruction failed. Error: [%v] Instruction: %#v", err, instruction)
+		log.Printf("Instruction failed. Error: [%v] Instruction: %#v", ERR, INSTRUCTION)
 	}
 }

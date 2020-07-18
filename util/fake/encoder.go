@@ -11,15 +11,15 @@ type Encoder struct {
 	err    error
 }
 
-func NewEncoder(_writer io.Writer, _err error) *Encoder {
+func NewEncoder(writer io.Writer, err error) *Encoder {
 	return &Encoder{
-		writer: _writer,
-		err:    _err,
+		writer: writer,
+		err:    err,
 	}
 }
 
-func (this *Encoder) Encode(_v interface{}) error {
-	_, ERR := fmt.Fprintln(this.writer, reflect.TypeOf(_v).Name())
+func (this *Encoder) Encode(v interface{}) error {
+	_, ERR := fmt.Fprintln(this.writer, reflect.TypeOf(v).Name())
 	if ERR != nil {
 		return ERR
 	}

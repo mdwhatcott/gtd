@@ -12,17 +12,17 @@ type ProjectorFixture struct {
 	projector core.Projector
 }
 
-func InitializeProjectorFixture(_inner *gunit.Fixture, _projector core.Projector) *ProjectorFixture {
-	return &ProjectorFixture{Fixture: _inner, projector: _projector}
+func InitializeProjectorFixture(inner *gunit.Fixture, projector core.Projector) *ProjectorFixture {
+	return &ProjectorFixture{Fixture: inner, projector: projector}
 }
-func (this *ProjectorFixture) apply(_events ...interface{}) {
-	STREAM := make(chan interface{}, len(_events))
-	for _, EVENT := range _events {
+func (this *ProjectorFixture) apply(events ...interface{}) {
+	STREAM := make(chan interface{}, len(events))
+	for _, EVENT := range events {
 		STREAM <- EVENT
 	}
 	close(STREAM)
 	this.projector.Apply(STREAM)
 }
-func (this *ProjectorFixture) assert(_expected interface{}) {
-	this.So(this.projector.Projection(), should.Resemble, _expected)
+func (this *ProjectorFixture) assert(expected interface{}) {
+	this.So(this.projector.Projection(), should.Resemble, expected)
 }

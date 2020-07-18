@@ -26,10 +26,10 @@ func (this *OutcomesListingProjector) OutcomesListingProjection() OutcomesListin
 	return this.OutcomesListing
 }
 
-func (this *OutcomesListingProjector) Apply(_messages chan interface{}) {
+func (this *OutcomesListingProjector) Apply(messages chan interface{}) {
 	defer this.buildProjection()
 
-	for MESSAGE := range _messages {
+	for MESSAGE := range messages {
 		switch EVENT := MESSAGE.(type) {
 		case events.OutcomeTrackedV1:
 			this.all[EVENT.OutcomeID] = &OutcomesListingItem{
@@ -63,13 +63,13 @@ func (this *OutcomesListingProjector) buildProjection() {
 	this.Realized = sortByTitle(this.filterByStatus(core.OutcomeStatusRealized))
 }
 
-func (this *OutcomesListingProjector) filterByStatus(status core.OutcomeStatus) (filtered []*OutcomesListingItem) {
+func (this *OutcomesListingProjector) filterByStatus(status core.OutcomeStatus) (filtered_ []*OutcomesListingItem) {
 	for _, item := range this.all {
 		if item.Status == status {
-			filtered = append(filtered, item)
+			filtered_ = append(filtered_, item)
 		}
 	}
-	return filtered
+	return filtered_
 }
 
 func sortByTitle(listing []*OutcomesListingItem) []*OutcomesListingItem {

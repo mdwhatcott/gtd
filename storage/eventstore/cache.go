@@ -20,13 +20,13 @@ func NewCache(reader joyride.StorageReader, writer joyride.StorageWriter) *Cache
 	return &Cache{cached: warmUp(reader), writer: writer}
 }
 
-func warmUp(reader joyride.StorageReader) (cached []interface{}) {
+func warmUp(reader joyride.StorageReader) (cached_ []interface{}) {
 	query := &storage.EventStream{}
 	reader.Read(query)
 	for event := range query.Result.Events {
-		cached = append(cached, event)
+		cached_ = append(cached_, event)
 	}
-	return cached
+	return cached_
 }
 
 func (this *Cache) Read(v ...interface{}) {
@@ -44,8 +44,8 @@ func (this *Cache) Read(v ...interface{}) {
 	}
 }
 
-func (this *Cache) stream(_stream chan interface{}, _filter string) {
-	defer close(_stream)
+func (this *Cache) stream(stream chan interface{}, filter string) {
+	defer close(stream)
 
 	COUNT := 0
 	for _, VALUE := range this.cached {
@@ -55,9 +55,9 @@ func (this *Cache) stream(_stream chan interface{}, _filter string) {
 			break
 		}
 
-		if _filter == "" || IDENTIFIABLE.ID() == _filter {
+		if filter == "" || IDENTIFIABLE.ID() == filter {
 			COUNT++
-			_stream <- VALUE
+			stream <- VALUE
 		}
 	}
 }

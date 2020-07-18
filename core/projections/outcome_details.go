@@ -18,8 +18,8 @@ func (this *OutcomeDetailsProjector) OutcomeDetailsProjection() OutcomeDetails {
 	return this.OutcomeDetails
 }
 
-func (this *OutcomeDetailsProjector) Apply(_messages chan interface{}) {
-	for MESSAGE := range _messages {
+func (this *OutcomeDetailsProjector) Apply(messages chan interface{}) {
+	for MESSAGE := range messages {
 		this.apply(MESSAGE)
 	}
 }
@@ -90,20 +90,20 @@ func (this *OutcomeDetailsProjector) apply(MESSAGE interface{}) {
 	}
 }
 
-func (this *OutcomeDetailsProjector) reorderActions(_newOrder []string) (reordered_ []*ActionDetails) {
-	for _, ID := range _newOrder {
+func (this *OutcomeDetailsProjector) reorderActions(newOrder []string) (reordered_ []*ActionDetails) {
+	for _, ID := range newOrder {
 		reordered_ = append(reordered_, this.getAction(ID))
 	}
 	return reordered_
 }
 
-func (this *OutcomeDetailsProjector) getAction(_id string) *ActionDetails {
-	return this.Actions[this.findAction(_id)]
+func (this *OutcomeDetailsProjector) getAction(id string) *ActionDetails {
+	return this.Actions[this.findAction(id)]
 }
 
-func (this *OutcomeDetails) findAction(_id string) int {
+func (this *OutcomeDetails) findAction(id string) int {
 	for i, action := range this.Actions {
-		if action.ID == _id {
+		if action.ID == id {
 			return i
 		}
 	}

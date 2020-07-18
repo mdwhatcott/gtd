@@ -39,81 +39,81 @@ func (this *IncompleteActionsByContextProjector) Apply(_messages chan interface{
 	}
 }
 
-func (this *IncompleteActionsByContextProjector) getOutcome(MESSAGE interface{}) *OutcomeDetailsProjector {
-	id := MESSAGE.(events.Identifiable).ID()
-	outcome := this.all[id]
-	if outcome == nil {
-		outcome = NewOutcomeDetailsProjector()
-		this.all[id] = outcome
+func (this *IncompleteActionsByContextProjector) getOutcome(message interface{}) *OutcomeDetailsProjector {
+	id := message.(events.Identifiable).ID()
+	OUTCOME := this.all[id]
+	if OUTCOME == nil {
+		OUTCOME = NewOutcomeDetailsProjector()
+		this.all[id] = OUTCOME
 	}
-	return outcome
+	return OUTCOME
 }
 
 func (this *IncompleteActionsByContextProjector) buildProjection() {
-	contexts := this.filterOutcomeActionsByContext()
-	for _, name := range this.sortedContextNames(contexts) {
+	CONTEXTS := this.filterOutcomeActionsByContext()
+	for _, NAME := range this.sortedContextNames(CONTEXTS) {
 		this.Contexts = append(this.Contexts, &Context{
-			Name:    name,
-			Actions: contexts[name],
+			Name:    NAME,
+			Actions: CONTEXTS[NAME],
 		})
 	}
 }
 
-func (this *IncompleteActionsByContextProjector) filterOutcomeActionsByContext() map[string][]*ContextualAction {
-	contexts := make(map[string][]*ContextualAction)
+func (this *IncompleteActionsByContextProjector) filterOutcomeActionsByContext() (contexts_ map[string][]*ContextualAction) {
+	contexts_ = make(map[string][]*ContextualAction)
 
-	for _, outcome := range this.all {
-		if outcome.Status != core.OutcomeStatusFixed {
+	for _, OUTCOME := range this.all {
+		if OUTCOME.Status != core.OutcomeStatusFixed {
 			continue
 		}
 
-		var firstSequential bool
-		for _, action := range outcome.Actions {
-			if action.Status != core.ActionStatusIncomplete {
+		var sequential bool
+		for _, ACTION := range OUTCOME.Actions {
+			if ACTION.Status != core.ActionStatusIncomplete {
 				continue
 			}
 
-			if action.Strategy == core.ActionStrategySequential && firstSequential {
+			if ACTION.Strategy == core.ActionStrategySequential && sequential {
 				continue
 			}
 
-			firstSequential = firstSequential || action.Strategy == core.ActionStrategySequential
-			if len(action.Contexts) == 0 {
-				contexts[""] = append(contexts[""], &ContextualAction{
-					ActionDetails: action,
-					OutcomeID:     outcome.ID,
-					OutcomeTitle:  outcome.Title,
+			sequential = sequential || ACTION.Strategy == core.ActionStrategySequential
+			if len(ACTION.Contexts) == 0 {
+				contexts_[""] = append(contexts_[""], &ContextualAction{
+					ActionDetails: ACTION,
+					OutcomeID:     OUTCOME.ID,
+					OutcomeTitle:  OUTCOME.Title,
 				})
 			}
-			for _, context := range action.Contexts {
-				contexts[context] = append(contexts[context], &ContextualAction{
-					ActionDetails: action,
-					OutcomeID:     outcome.ID,
-					OutcomeTitle:  outcome.Title,
+			for _, context := range ACTION.Contexts {
+				contexts_[context] = append(contexts_[context], &ContextualAction{
+					ActionDetails: ACTION,
+					OutcomeID:     OUTCOME.ID,
+					OutcomeTitle:  OUTCOME.Title,
 				})
 			}
 		}
 	}
 
-	this.sortActionsWithinContext(contexts)
+	this.sortActionsWithinContext(contexts_)
 
-	return contexts
+	return contexts_
 }
 
 func (this *IncompleteActionsByContextProjector) sortActionsWithinContext(contexts map[string][]*ContextualAction) {
-	for _, context := range contexts {
-		sort.Slice(context, func(i, j int) bool {
-			return context[i].Description < context[j].Description
+	for _, CONTEXT := range contexts {
+		sort.Slice(CONTEXT, func(i, j int) bool {
+			return CONTEXT[i].Description < CONTEXT[j].Description
 		})
 	}
 }
 
-func (this *IncompleteActionsByContextProjector) sortedContextNames(contexts map[string][]*ContextualAction) (names []string) {
-	for name := range contexts {
-		names = append(names, name)
+func (this *IncompleteActionsByContextProjector) sortedContextNames(contexts map[string][]*ContextualAction) (names_ []string) {
+	for NAME := range contexts {
+		names_ = append(names_, NAME)
 	}
-	sort.Slice(names, func(i, j int) bool {
-		return names[i] < names[j]
+	sort.Slice(names_, func(i, j int) bool {
+		return names_[i] < names_[j]
 	})
-	return names
+	return names_
 }

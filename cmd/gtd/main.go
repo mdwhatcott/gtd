@@ -50,8 +50,8 @@ func PrintBanner(version string) {
 	fmt.Println("Enter 'help' for instructions.")
 }
 
-func BuildApplication(_storageDirectory string) *Application {
-	reader, writer := wireupstorage.BuildCachedCSVEventStore(_storageDirectory)
+func BuildApplication(storageDirectory string) *Application {
+	reader, writer := wireupstorage.BuildCachedCSVEventStore(storageDirectory)
 	REQUIREMENTS := wireupcore.Requirements{
 		IDFunc: wireupstorage.GenerateID,
 		Reader: reader,
@@ -65,17 +65,17 @@ func BuildApplication(_storageDirectory string) *Application {
 	}
 }
 
-func PushChanges(_version string, _vcsRoot string) {
-	if _version == "dev" {
+func PushChanges(version string, vcsRoot string) {
+	if version == "dev" {
 		return
 	}
-	STATUS := exec.MustDo(_vcsRoot, "", "git", "status", "--porcelain")
+	STATUS := exec.MustDo(vcsRoot, "", "git", "status", "--porcelain")
 	if !strings.Contains(STATUS, "events.csv") {
 		return
 	}
-	_ = exec.MustDo(_vcsRoot, "Staging newly generated events..." /*****/, "git", "add", storage.EventsDatabaseFilename)
-	_ = exec.MustDo(_vcsRoot, "Committing newly generated events..." /**/, "git", "commit", "-m", date.Today())
-	_ = exec.MustDo(_vcsRoot, "Pushing newly generated events..." /*****/, "git", "push")
+	_ = exec.MustDo(vcsRoot, "Staging newly generated events..." /*****/, "git", "add", storage.EventsDatabaseFilename)
+	_ = exec.MustDo(vcsRoot, "Committing newly generated events..." /**/, "git", "commit", "-m", date.Today())
+	_ = exec.MustDo(vcsRoot, "Pushing newly generated events..." /*****/, "git", "push")
 
 	log.Println("Finished.")
 }

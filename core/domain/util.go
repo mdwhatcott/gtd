@@ -2,18 +2,18 @@ package domain
 
 import "strings"
 
-func gatherContexts(_description string) (contexts []string) {
-	for _, word := range strings.Fields(_description) {
-		if strings.HasPrefix(word, "@") && !contains(contexts, word[1:]) {
-			contexts = append(contexts, word[1:])
+func gatherContexts(description string) (contexts_ []string) {
+	for _, WORD := range strings.Fields(description) {
+		if strings.HasPrefix(WORD, "@") && !contains(contexts_, WORD[1:]) {
+			contexts_ = append(contexts_, WORD[1:])
 		}
 	}
-	return contexts
+	return contexts_
 }
 
 func contains(haystack []string, needle string) bool {
-	for _, straw := range haystack {
-		if straw == needle {
+	for _, STRAW := range haystack {
+		if STRAW == needle {
 			return true
 		}
 	}

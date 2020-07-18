@@ -15,19 +15,19 @@ type Handler struct {
 	nextID core.IDFunc
 }
 
-func NewHandler(_runner joyride.Runner, _nextID core.IDFunc) *Handler {
-	THIS := &Handler{nextID: _nextID}
-	THIS.Handler = joyride.NewHandler(THIS, _runner)
+func NewHandler(runner joyride.Runner, nextID core.IDFunc) *Handler {
+	THIS := &Handler{nextID: nextID}
+	THIS.Handler = joyride.NewHandler(THIS, runner)
 	return THIS
 }
 
-func (this *Handler) HandleMessage(_message interface{}) bool {
-	TRACK, OK := _message.(*commands.TrackOutcome)
+func (this *Handler) HandleMessage(message interface{}) bool {
+	TRACK, OK := message.(*commands.TrackOutcome)
 	if OK {
 		this.buildTask().PrepareToTrackOutcome(TRACK)
 		return true
 	}
-	ID, OK := _message.(commands.Identifiable)
+	ID, OK := message.(commands.Identifiable)
 	if OK {
 		this.buildTask().PrepareInstruction(ID)
 		return true
@@ -36,8 +36,8 @@ func (this *Handler) HandleMessage(_message interface{}) bool {
 }
 
 func (this *Handler) buildTask() *Task {
-	task := NewTask(this.nextID)
-	task.clock = this.clock
-	this.Handler.Add(task)
-	return task
+	TASK := NewTask(this.nextID)
+	TASK.clock = this.clock
+	this.Handler.Add(TASK)
+	return TASK
 }

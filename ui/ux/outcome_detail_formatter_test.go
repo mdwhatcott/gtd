@@ -21,7 +21,7 @@ type OutcomeDetailFormatterFixture struct {
 }
 
 func (this *OutcomeDetailFormatterFixture) Test() {
-	outcome := projections.OutcomeDetails{
+	OUTCOME := projections.OutcomeDetails{
 		Title:       "Title",
 		Explanation: "Explanation",
 		Description: "Description",
@@ -65,9 +65,9 @@ func (this *OutcomeDetailFormatterFixture) Test() {
 		),
 	}
 
-	result := FormatOutcomeDetails(outcome)
+	RESULT := FormatOutcomeDetails(OUTCOME)
 
-	this.So(result, should.Equal, strings.Join([]string{
+	this.So(RESULT, should.Equal, strings.Join([]string{
 		"# Title",
 		"",
 		"> Explanation",

@@ -19,12 +19,12 @@ func NewJoyride(log *logging.Logger) *Joyride {
 	}
 }
 
-func (this *Joyride) Write(_values ...interface{}) {
-	this.Writes = append(this.Writes, _values...)
+func (this *Joyride) Write(values ...interface{}) {
+	this.Writes = append(this.Writes, values...)
 }
 
-func (this *Joyride) Read(_values ...interface{}) {
-	for _, VALUE := range _values {
+func (this *Joyride) Read(values ...interface{}) {
+	for _, VALUE := range values {
 		switch QUERY := VALUE.(type) {
 		case *storage.OutcomeEventStream:
 			QUERY.Result.Events = make(chan interface{}, len(this.reads[QUERY.OutcomeID]))
@@ -36,6 +36,6 @@ func (this *Joyride) Read(_values ...interface{}) {
 	}
 }
 
-func (this *Joyride) PrepareReadResults(_id string, _results ...interface{}) {
-	this.reads[_id] = append(this.reads[_id], _results...)
+func (this *Joyride) PrepareReadResults(id string, results ...interface{}) {
+	this.reads[id] = append(this.reads[id], results...)
 }

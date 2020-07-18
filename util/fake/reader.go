@@ -11,21 +11,21 @@ type Reader struct {
 	Closed   int
 }
 
-func NewReader(_data string) *Reader {
+func NewReader(data string) *Reader {
 	THIS := new(Reader)
-	THIS.Initialize(_data)
+	THIS.Initialize(data)
 	return THIS
 }
 
-func (this *Reader) Initialize(_data string) {
-	this.data = bytes.NewBufferString(_data)
+func (this *Reader) Initialize(data string) {
+	this.data = bytes.NewBufferString(data)
 }
 
-func (this *Reader) Read(_p []byte) (n_ int, err_ error) {
+func (this *Reader) Read(p []byte) (n_ int, err_ error) {
 	if this.ReadErr != nil {
 		return 0, this.ReadErr
 	}
-	n_, err_ = this.data.Read(_p)
+	n_, err_ = this.data.Read(p)
 	if err_ != nil {
 		return n_, err_
 	}

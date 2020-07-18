@@ -23,10 +23,10 @@ type OutcomeDetailParser struct {
 	words      []string
 	parseLine  func()
 
-	outcomeID   string
-	description *strings.Builder
-	actionIDs   map[string]bool
-	actionOrder []string
+	outcomeID          string
+	description        *strings.Builder
+	actionIDs          map[string]bool
+	updatedActionOrder []string
 }
 
 func NewOutcomeDetailParser(
@@ -35,7 +35,7 @@ func NewOutcomeDetailParser(
 	projection projections.OutcomeDetails,
 	modifiedContent string,
 ) *OutcomeDetailParser {
-	ux := &OutcomeDetailParser{
+	UX := &OutcomeDetailParser{
 		handler:     handler,
 		projection:  projection,
 		scanner:     bufio.NewScanner(strings.NewReader(modifiedContent)),
@@ -43,16 +43,16 @@ func NewOutcomeDetailParser(
 		actionIDs:   actionIDMap(projection.Actions),
 		description: new(strings.Builder),
 	}
-	ux.parseLine = ux.parseTitleLine
-	return ux
+	UX.parseLine = UX.parseTitleLine
+	return UX
 }
 
 func actionIDMap(actions []*projections.ActionDetails) map[string]bool {
-	set := make(map[string]bool)
+	SET := make(map[string]bool)
 	for _, action := range actions {
-		set[action.ID] = true
+		SET[action.ID] = true
 	}
-	return set
+	return SET
 }
 
 func (this *OutcomeDetailParser) handle(instructions ...interface{}) {
@@ -79,14 +79,14 @@ func (this *OutcomeDetailParser) parseTitleLine() {
 		return
 	}
 	if this.outcomeID == "" {
-		command := &commands.TrackOutcome{Title: this.line[2:]}
-		this.handle(command)
-		this.outcomeID = command.Result.ID
+		COMMAND := &commands.TrackOutcome{Title: this.line[2:]}
+		this.handle(COMMAND)
+		this.outcomeID = COMMAND.Result.ID
 		this.handle(&commands.DeclareOutcomeFixed{OutcomeID: this.outcomeID})
 	} else {
-		title := this.line[2:]
-		if title != this.projection.Title {
-			this.handle(&commands.UpdateOutcomeTitle{OutcomeID: this.outcomeID, UpdatedTitle: title})
+		TITLE := this.line[2:]
+		if TITLE != this.projection.Title {
+			this.handle(&commands.UpdateOutcomeTitle{OutcomeID: this.outcomeID, UpdatedTitle: TITLE})
 		}
 	}
 
@@ -124,35 +124,35 @@ func (this *OutcomeDetailParser) parseActionLine() {
 	this.parseAction()
 }
 func (this *OutcomeDetailParser) parseAction() {
-	var actionID string
+	var ACTION_ID string
 	if this.isExistingAction() {
-		actionID = this.extractActionID()
-		description := this.parseActionDescription()
-		if this.descriptionModified(actionID, description) {
+		ACTION_ID = this.extractActionID()
+		DESCRIPTION := this.parseActionDescription()
+		if this.descriptionModified(ACTION_ID, DESCRIPTION) {
 			this.handle(&commands.UpdateActionDescription{
 				OutcomeID:          this.outcomeID,
-				ActionID:           actionID,
-				UpdatedDescription: description,
+				ActionID:           ACTION_ID,
+				UpdatedDescription: DESCRIPTION,
 			})
 		}
-		this.actionIDs[actionID] = false
+		this.actionIDs[ACTION_ID] = false
 	} else {
-		action := &commands.TrackAction{
+		COMMAND := &commands.TrackAction{
 			OutcomeID:   this.outcomeID,
 			Description: this.parseActionDescription(),
 		}
-		this.handle(action)
-		actionID = action.Result.ID
+		this.handle(COMMAND)
+		ACTION_ID = COMMAND.Result.ID
 	}
 
-	this.actionOrder = append(this.actionOrder, actionID)
-	this.parseActionStrategy(actionID)
-	this.parseActionStatus(actionID)
+	this.updatedActionOrder = append(this.updatedActionOrder, ACTION_ID)
+	this.parseActionStrategy(ACTION_ID)
+	this.parseActionStatus(ACTION_ID)
 }
 func (this *OutcomeDetailParser) descriptionModified(id string, updatedDescription string) bool {
-	for _, action := range this.projection.Actions {
-		if action.ID == id {
-			return updatedDescription != action.Description
+	for _, ACTION := range this.projection.Actions {
+		if ACTION.ID == id {
+			return updatedDescription != ACTION.Description
 		}
 	}
 	return false
@@ -164,13 +164,13 @@ func (this *OutcomeDetailParser) actionLineHasID() bool {
 	return strings.Contains(this.line, " `0x")
 }
 func (this *OutcomeDetailParser) extractActionID() string {
-	prefix := between(this.line, " `0x", "` ")
-	for id := range this.actionIDs {
-		if strings.HasPrefix(id, prefix) {
-			return id
+	PREFIX := between(this.line, " `0x", "` ")
+	for ID := range this.actionIDs {
+		if strings.HasPrefix(ID, PREFIX) {
+			return ID
 		}
 	}
-	return prefix
+	return PREFIX
 }
 func (this *OutcomeDetailParser) parseActionStatus(actionID string) {
 	if this.isCompletedAction() && !this.actionStatusPreviouslyMatched(actionID, core.ActionStatusComplete) {
@@ -191,9 +191,9 @@ func (this *OutcomeDetailParser) parseActionStatus(actionID string) {
 	}
 }
 func (this *OutcomeDetailParser) actionStatusPreviouslyMatched(actionID string, previousStatus core.ActionStatus) bool {
-	for _, action := range this.projection.Actions {
-		if action.ID == actionID {
-			return action.Status == previousStatus
+	for _, ACTION := range this.projection.Actions {
+		if ACTION.ID == actionID {
+			return ACTION.Status == previousStatus
 		}
 	}
 	return false
@@ -219,17 +219,17 @@ func (this *OutcomeDetailParser) isConcurrentAction() bool {
 	return this.words[0] == "-"
 }
 func (this *OutcomeDetailParser) actionStrategyPreviouslyMatched(actionID string, previousStrategy core.ActionStrategy) bool {
-	for _, action := range this.projection.Actions {
-		if action.ID == actionID {
-			return action.Strategy == previousStrategy
+	for _, ACTION := range this.projection.Actions {
+		if ACTION.ID == actionID {
+			return ACTION.Strategy == previousStrategy
 		}
 	}
 	return false
 }
 func (this *OutcomeDetailParser) isParallelAction() bool {
-	first := this.words[0]
-	first = strings.TrimRight(first, ".")
-	number, _ := strconv.Atoi(first)
+	FIRST := this.words[0]
+	FIRST = strings.TrimRight(FIRST, ".")
+	number, _ := strconv.Atoi(FIRST)
 	return number > 0
 }
 func (this *OutcomeDetailParser) isCompletedAction() bool {
@@ -242,59 +242,59 @@ func (this *OutcomeDetailParser) isIncompleteAction() bool {
 	return this.words[1] == "[]" || (this.words[1] == "[" && this.words[2] == "]")
 }
 func (this *OutcomeDetailParser) parseActionDescription() string {
-	start := strings.Index(this.line, "]") + 1
+	START := strings.Index(this.line, "]") + 1
 	if this.actionLineHasID() {
-		start = strings.Index(this.line, "` ") + 1
+		START = strings.Index(this.line, "` ") + 1
 	}
-	return strings.TrimSpace(this.line[start:])
+	return strings.TrimSpace(this.line[START:])
 }
 func (this *OutcomeDetailParser) parseOutcomeDescriptionLine() {
 	_, _ = io.WriteString(this.description, this.line)
 	_, _ = io.WriteString(this.description, "\n")
 }
 func (this *OutcomeDetailParser) updateDescription() {
-	description := strings.TrimSpace(this.description.String())
-	if description != this.projection.Description {
+	DESCRIPTION := strings.TrimSpace(this.description.String())
+	if DESCRIPTION != this.projection.Description {
 		this.handle(&commands.UpdateOutcomeDescription{
 			OutcomeID:          this.outcomeID,
-			UpdatedDescription: description,
+			UpdatedDescription: DESCRIPTION,
 		})
 	}
 }
 
 func (this *OutcomeDetailParser) deleteRemovedActions() {
-	for id, removed := range this.actionIDs {
-		if removed {
+	for ID, REMOVED := range this.actionIDs {
+		if REMOVED {
 			this.handle(&commands.DeleteAction{
 				OutcomeID: this.outcomeID,
-				ActionID:  id,
+				ActionID:  ID,
 			})
 		}
 	}
 }
 
 func (this *OutcomeDetailParser) reorderActions() {
-	if len(this.actionOrder) == 0 {
+	if len(this.updatedActionOrder) == 0 {
 		return
 	}
 	if len(this.projection.Actions) == 0 {
 		return
 	}
-	var projectionOrder []string
+	var CURRENT []string
 	for _, action := range this.projection.Actions {
-		projectionOrder = append(projectionOrder, action.ID)
+		CURRENT = append(CURRENT, action.ID)
 	}
-	a := strings.Join(projectionOrder, "|")
-	b := strings.Join(this.actionOrder, "|")
-	if a == b {
+	A := strings.Join(CURRENT, "|")
+	B := strings.Join(this.updatedActionOrder, "|")
+	if A == B {
 		return
 	}
-	if strings.HasPrefix(b, a) { // only post-inserts happened, no need to reorder
+	if strings.HasPrefix(B, A) { // only post-inserts happened, no need to reorder
 		return
 	}
 
 	this.handle(&commands.ReorderActions{
 		OutcomeID:    this.outcomeID,
-		ReorderedIDs: this.actionOrder,
+		ReorderedIDs: this.updatedActionOrder,
 	})
 }

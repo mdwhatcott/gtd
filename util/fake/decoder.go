@@ -10,10 +10,10 @@ type Decoder struct {
 	err    error
 }
 
-func NewDecoder(_reader io.Reader, _err error) *Decoder {
+func NewDecoder(reader io.Reader, err error) *Decoder {
 	return &Decoder{
-		reader: _reader,
-		err:    _err,
+		reader: reader,
+		err:    err,
 	}
 }
 

@@ -22,25 +22,25 @@ type Application struct {
 	reader  joyride.StorageReader
 }
 
-func (this *Application) editOutcomes(_ids []string) {
+func (this *Application) editOutcomes(ids []string) {
 	WAITER := new(sync.WaitGroup)
-	WAITER.Add(len(_ids))
-	for _, ID := range _ids {
+	WAITER.Add(len(ids))
+	for _, ID := range ids {
 		go this.editOutcome(ID, WAITER)
 	}
 	WAITER.Wait()
 }
 
-func (this *Application) editOutcome(ID string, waiter *sync.WaitGroup) {
+func (this *Application) editOutcome(id string, waiter *sync.WaitGroup) {
 	defer waiter.Done()
 
-	STREAM := &storage.OutcomeEventStream{OutcomeID: ID}
+	STREAM := &storage.OutcomeEventStream{OutcomeID: id}
 	this.reader.Read(STREAM)
 	PROJECTOR := projections.NewOutcomeDetailsProjector()
 	PROJECTOR.Apply(STREAM.Result.Events)
 	PROJECTION := PROJECTOR.OutcomeDetailsProjection()
 	RESULT := this.editor.EditTempFile(ux.FormatOutcomeDetails(PROJECTION))
-	PARSER := ux.NewOutcomeDetailParser(this.handler, ID, PROJECTION, RESULT)
+	PARSER := ux.NewOutcomeDetailParser(this.handler, id, PROJECTION, RESULT)
 	ERR := PARSER.Parse()
 	if ERR != nil {
 		log.Fatal(ERR)
@@ -86,9 +86,9 @@ func hasStatus(haystack []string, needle string) bool {
 	}
 	return false
 }
-func replayOutcomesListing(_reader joyride.StorageReader) projections.OutcomesListing {
+func replayOutcomesListing(reader joyride.StorageReader) projections.OutcomesListing {
 	STREAM := &storage.EventStream{}
-	_reader.Read(STREAM)
+	reader.Read(STREAM)
 	PROJECTOR := projections.NewOutcomesListingProjector()
 	PROJECTOR.Apply(STREAM.Result.Events)
 	return PROJECTOR.OutcomesListingProjection()
@@ -106,15 +106,15 @@ func (this *Application) PresentIncompleteActions(contexts []string) {
 	}
 }
 
-func filterContexts(_projection projections.IncompleteActionsByContext, _filter []string) (filtered_ []*projections.Context) {
-	if len(_filter) == 0 {
-		return _projection.Contexts
+func filterContexts(projection projections.IncompleteActionsByContext, filter []string) (filtered_ []*projections.Context) {
+	if len(filter) == 0 {
+		return projection.Contexts
 	}
-	for _, CONTEXT := range _projection.Contexts {
+	for _, CONTEXT := range projection.Contexts {
 		if CONTEXT.Name == "" {
 			filtered_ = append(filtered_, CONTEXT)
 		} else {
-			for _, context := range _filter {
+			for _, context := range filter {
 				if strings.ToLower(CONTEXT.Name) == strings.ToLower(context) {
 					filtered_ = append(filtered_, CONTEXT)
 					break
@@ -125,9 +125,9 @@ func filterContexts(_projection projections.IncompleteActionsByContext, _filter 
 	return filtered_
 }
 
-func replayIncompleteActions(_reader joyride.StorageReader) projections.IncompleteActionsByContext {
+func replayIncompleteActions(reader joyride.StorageReader) projections.IncompleteActionsByContext {
 	STREAM := &storage.EventStream{}
-	_reader.Read(STREAM)
+	reader.Read(STREAM)
 	PROJECTOR := projections.NewIncompleteActionsByContextProjector()
 	PROJECTOR.Apply(STREAM.Result.Events)
 	return PROJECTOR.IncompleteActionsByContextProjection()
@@ -146,10 +146,10 @@ func (this *Application) PresentIncompleteAction(contexts []string) {
 	}
 }
 
-func selectNextAction(contexts_ []*projections.Context) (result_ *projections.Context) {
+func selectNextAction(contexts []*projections.Context) (result_ *projections.Context) {
 	result_ = &projections.Context{Name: "Next"}
 	var ACTIONS []*projections.ContextualAction
-	for _, CONTEXT := range contexts_ {
+	for _, CONTEXT := range contexts {
 		for _, ACTION := range CONTEXT.Actions {
 			ACTIONS = append(ACTIONS, ACTION)
 		}
@@ -164,7 +164,7 @@ func selectNextAction(contexts_ []*projections.Context) (result_ *projections.Co
 
 func (this *Application) PresentContexts() {
 	PROJECTION := replayIncompleteActions(this.reader)
-	for _, context := range PROJECTION.Contexts {
-		fmt.Printf("- %s (%d)\n", context.Name, len(context.Actions))
+	for _, CONTEXT := range PROJECTION.Contexts {
+		fmt.Printf("- %s (%d)\n", CONTEXT.Name, len(CONTEXT.Actions))
 	}
 }

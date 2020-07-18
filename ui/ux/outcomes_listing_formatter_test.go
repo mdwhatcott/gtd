@@ -19,7 +19,7 @@ type OutcomesListingFormatter struct {
 }
 
 func (this *OutcomesListingFormatter) Test() {
-	listing := projections.OutcomesListing{
+	LISTING := projections.OutcomesListing{
 		Fixed: []*projections.OutcomesListingItem{
 			{ID: "000111", Title: "1"},
 			{ID: "000222", Title: "2"},
@@ -41,8 +41,9 @@ func (this *OutcomesListingFormatter) Test() {
 		},
 	}
 
-	result := FormatOutcomesListing(listing)
-	this.So(result, should.Equal, strings.Join([]string{
+	RESULT := FormatOutcomesListing(LISTING)
+
+	this.So(RESULT, should.Equal, strings.Join([]string{
 		"## Fixed:",
 		"",
 		"- `0x0001` 1",

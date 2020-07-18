@@ -70,11 +70,11 @@ func (this *OutcomesListingParserFixture) Test() {
 		"- `0x0008` 8",
 	}, "\n")
 
-	parser := NewOutcomesListingParser(this.handler, this.listings, this.content)
+	PARSER := NewOutcomesListingParser(this.handler, this.listings, this.content)
 
-	requestedEdits := parser.Parse()
+	EDITS := PARSER.Parse()
 
-	this.So(requestedEdits, should.Resemble, []string{"000222", "0042"})
+	this.So(EDITS, should.Resemble, []string{"000222", "0042"})
 	this.So(this.handler.handled, should.Resemble, []interface{}{
 		//&commands.DeclareOutcomeFixed{OutcomeID: "000222"}, // unchanged
 		//&commands.DeclareOutcomeFixed{OutcomeID: "000333"}, // unchanged
@@ -101,10 +101,10 @@ func NewFakeOutcomesListingParserFakeHandler() *FakeOutcomesListingParserFakeHan
 
 func (this *FakeOutcomesListingParserFakeHandler) Handle(messages ...interface{}) {
 	this.handled = append(this.handled, messages...)
-	for _, message := range messages {
-		switch message := message.(type) {
+	for _, MESSAGE := range messages {
+		switch MESSAGE := MESSAGE.(type) {
 		case *commands.TrackOutcome:
-			message.Result.ID = "0042"
+			MESSAGE.Result.ID = "0042"
 		}
 	}
 }

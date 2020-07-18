@@ -6,17 +6,17 @@ import (
 	"text/template"
 )
 
-func MustExecute(_raw string, _data interface{}) string {
-	OUT, ERR := Execute(_raw, _data)
+func MustExecute(raw string, data interface{}) string {
+	OUT, ERR := Execute(raw, data)
 	if ERR != nil {
 		log.Panic(ERR)
 	}
 	return OUT
 }
 
-func Execute(_raw string, _data interface{}) (string, error) {
+func Execute(raw string, data interface{}) (string, error) {
 	BUFFER := new(strings.Builder)
-	PARSED := template.Must(template.New("").Parse(_raw))
-	ERR := PARSED.Execute(BUFFER, _data)
+	PARSED := template.Must(template.New("").Parse(raw))
+	ERR := PARSED.Execute(BUFFER, data)
 	return BUFFER.String(), ERR
 }

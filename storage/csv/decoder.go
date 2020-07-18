@@ -10,13 +10,13 @@ type Decoder struct {
 	registry map[string]func([]string) interface{}
 }
 
-func NewDecoder(reader_ io.Reader, registry_ map[string]func([]string) interface{}) *Decoder {
-	READER := csv.NewReader(reader_)
+func NewDecoder(reader io.Reader, registry map[string]func([]string) interface{}) *Decoder {
+	READER := csv.NewReader(reader)
 	READER.Comma = '\t'
 	READER.FieldsPerRecord = -1
 	return &Decoder{
 		reader:   READER,
-		registry: registry_,
+		registry: registry,
 	}
 }
 

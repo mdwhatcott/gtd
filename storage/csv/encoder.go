@@ -11,12 +11,12 @@ type Encoder struct {
 	registry map[string]func(interface{}) []string
 }
 
-func NewEncoder(writer_ io.Writer, registry_ map[string]func(interface{}) []string) *Encoder {
-	WRITER := csv.NewWriter(writer_)
+func NewEncoder(writer io.Writer, registry map[string]func(interface{}) []string) *Encoder {
+	WRITER := csv.NewWriter(writer)
 	WRITER.Comma = '\t'
 	return &Encoder{
 		writer:   WRITER,
-		registry: registry_,
+		registry: registry,
 	}
 }
 

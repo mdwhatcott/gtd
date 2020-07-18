@@ -69,43 +69,43 @@ func (this *IncompleteActionsParser) actionCompleted() bool {
 
 func (this *IncompleteActionsParser) parseEdits() {
 	this.line = strings.TrimSpace(this.line)
-	_, outcomeID := this.identifyIDs()
-	if outcomeID == "" {
+	_, OUTCOME := this.identifyIDs()
+	if OUTCOME == "" {
 		return
 	}
-	this.edits = append(this.edits, outcomeID)
+	this.edits = append(this.edits, OUTCOME)
 }
 
 func (this *IncompleteActionsParser) markActionLatent() {
-	actionID, outcomeID := this.identifyIDs()
+	ACTION, OUTCOME := this.identifyIDs()
 	this.handle(&commands.MarkActionStatusLatent{
-		OutcomeID: outcomeID,
-		ActionID:  actionID,
+		OutcomeID: OUTCOME,
+		ActionID:  ACTION,
 	})
 }
 
 func (this *IncompleteActionsParser) markActionComplete() {
-	actionID, outcomeID := this.identifyIDs()
+	ACTION, OUTCOME := this.identifyIDs()
 	this.handle(&commands.MarkActionStatusComplete{
-		OutcomeID: outcomeID,
-		ActionID:  actionID,
+		OutcomeID: OUTCOME,
+		ActionID:  ACTION,
 	})
 }
 
-func (this *IncompleteActionsParser) identifyIDs() (actionID, outcomeID string) {
-	actionID = this.findID(between(this.line, "`0x", "`"))
-	outcomeID = this.findID(between(this.line[strings.Index(this.line, "("):], "(`0x", "`"))
-	return actionID, outcomeID
+func (this *IncompleteActionsParser) identifyIDs() (actionID_, outcomeID_ string) {
+	actionID_ = this.findID(between(this.line, "`0x", "`"))
+	outcomeID_ = this.findID(between(this.line[strings.Index(this.line, "("):], "(`0x", "`"))
+	return actionID_, outcomeID_
 }
 
 func (this *IncompleteActionsParser) findID(prefix string) string {
-	for _, context := range this.contexts {
-		for _, action := range context.Actions {
-			if strings.HasPrefix(action.ID, prefix) {
-				return action.ID
+	for _, CONTEXT := range this.contexts {
+		for _, ACTION := range CONTEXT.Actions {
+			if strings.HasPrefix(ACTION.ID, prefix) {
+				return ACTION.ID
 			}
-			if strings.HasPrefix(action.OutcomeID, prefix) {
-				return action.OutcomeID
+			if strings.HasPrefix(ACTION.OutcomeID, prefix) {
+				return ACTION.OutcomeID
 			}
 		}
 	}
@@ -113,17 +113,17 @@ func (this *IncompleteActionsParser) findID(prefix string) string {
 }
 
 func between(value, left, right string) string {
-	index1 := strings.Index(value, left)
-	if index1 < 0 {
+	INDEX1 := strings.Index(value, left)
+	if INDEX1 < 0 {
 		return ""
 	}
-	start := index1 + len(left)
+	START := INDEX1 + len(left)
 
-	index2 := strings.Index(value[start:], right)
-	if index2 < 0 {
+	INDEX2 := strings.Index(value[START:], right)
+	if INDEX2 < 0 {
 		return ""
 	}
-	stop := start + index2
+	STOP := START + INDEX2
 
-	return value[start:stop]
+	return value[START:STOP]
 }

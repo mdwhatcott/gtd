@@ -8,50 +8,48 @@ import (
 )
 
 func FormatIncompleteActions(contexts ...*projections.Context) string {
-	actionIDPrefixes := shortenIDs(incompleteActionIDs(contexts...))
-	outcomeIDPrefixes := shortenIDs(incompleteActionOutcomeIDs(contexts...))
+	ACTIONS := shortenIDs(map2Slice(uniqueActionIDs(contexts...)))
+	OUTCOMES := shortenIDs(map2Slice(uniqueActionOutcomeIDs(contexts...)))
+	BUILDER := new(strings.Builder)
 
-	builder := new(strings.Builder)
+	for _, CONTEXT := range contexts {
+		_, _ = fmt.Fprintf(BUILDER, "## @%s:\n\n", strings.Title(CONTEXT.Name))
 
-	for _, context := range contexts {
-		_, _ = fmt.Fprintf(builder, "## @%s:\n\n", strings.Title(context.Name))
-
-		for _, action := range context.Actions {
-			_, _ = fmt.Fprintf(builder,
+		for _, ACTION := range CONTEXT.Actions {
+			_, _ = fmt.Fprintf(BUILDER,
 				"- [ ] `0x%s` %s (`0x%s` %s)\n",
-				actionIDPrefixes[action.ID], action.Description,
-				outcomeIDPrefixes[action.OutcomeID], action.OutcomeTitle,
+				ACTIONS[ACTION.ID], ACTION.Description,
+				OUTCOMES[ACTION.OutcomeID], ACTION.OutcomeTitle,
 			)
 		}
 
-		builder.WriteString("\n\n")
+		BUILDER.WriteString("\n\n")
 	}
 
-	return strings.TrimSpace(builder.String())
+	return strings.TrimSpace(BUILDER.String())
 }
 
-func incompleteActionOutcomeIDs(contexts ...*projections.Context) (ids_ []string) {
-	unique := make(map[string]bool)
-	for _, context := range contexts {
-		for _, action := range context.Actions {
-			unique[action.OutcomeID] = true
-		}
+func map2Slice(keys map[string]bool) (slice_ []string) {
+	for ID := range keys {
+		slice_ = append(slice_, ID)
 	}
-	for id := range unique {
-		ids_ = append(ids_, id)
-	}
-	return ids_
+	return slice_
 }
-
-func incompleteActionIDs(contexts ...*projections.Context) (ids_ []string) {
-	unique := make(map[string]bool)
-	for _, context := range contexts {
-		for _, action := range context.Actions {
-			unique[action.ID] = true
+func uniqueActionOutcomeIDs(contexts ...*projections.Context) (unique_ map[string]bool) {
+	unique_ = make(map[string]bool)
+	for _, CONTEXT := range contexts {
+		for _, ACTION := range CONTEXT.Actions {
+			unique_[ACTION.OutcomeID] = true
 		}
 	}
-	for id := range unique {
-		ids_ = append(ids_, id)
+	return unique_
+}
+func uniqueActionIDs(contexts ...*projections.Context) (unique_ map[string]bool) {
+	unique_ = make(map[string]bool)
+	for _, CONTEXT := range contexts {
+		for _, ACTION := range CONTEXT.Actions {
+			unique_[ACTION.ID] = true
+		}
 	}
-	return ids_
+	return unique_
 }

@@ -1,95 +1,95 @@
 package events
 
 type OutcomeTrackedV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
-	Title     string `json:"title,omitempty"`
+	Timestamp Time
+	OutcomeID string
+	Title     string
 }
 type OutcomeTitleUpdatedV1 struct {
-	Timestamp    Time   `json:"timestamp,omitempty"`
-	OutcomeID    string `json:"outcome_id,omitempty"`
-	UpdatedTitle string `json:"updated_title,omitempty"`
+	Timestamp    Time
+	OutcomeID    string
+	UpdatedTitle string
 }
 type OutcomeExplanationUpdatedV1 struct {
-	Timestamp          Time   `json:"timestamp,omitempty"`
-	OutcomeID          string `json:"outcome_id,omitempty"`
-	UpdatedExplanation string `json:"explanation,omitempty"`
+	Timestamp          Time
+	OutcomeID          string
+	UpdatedExplanation string
 }
 type OutcomeDescriptionUpdatedV1 struct {
-	Timestamp          Time   `json:"timestamp,omitempty"`
-	OutcomeID          string `json:"outcome_id,omitempty"`
-	UpdatedDescription string `json:"description,omitempty"`
+	Timestamp          Time
+	OutcomeID          string
+	UpdatedDescription string
 }
 type OutcomeDeletedV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
 }
 type OutcomeFixedV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
 }
 type OutcomeRealizedV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
 }
 type OutcomeAbandonedV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
 }
 type OutcomeDeferredV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
 }
 type OutcomeUncertainV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
 }
 type ActionTrackedV1 struct {
-	Timestamp   Time     `json:"timestamp,omitempty"`
-	OutcomeID   string   `json:"outcome_id,omitempty"`
-	ActionID    string   `json:"action_id,omitempty"`
-	Description string   `json:"definition,omitempty"`
-	Contexts    []string `json:"contexts,omitempty"`
+	Timestamp   Time
+	OutcomeID   string
+	ActionID    string
+	Description string
+	Contexts    []string
 }
 type ActionsReorderedV1 struct {
-	Timestamp    Time     `json:"timestamp,omitempty"`
-	OutcomeID    string   `json:"outcome_id,omitempty"`
-	ReorderedIDs []string `json:"reordered_ids,omitempty"`
+	Timestamp    Time
+	OutcomeID    string
+	ReorderedIDs []string
 }
 type ActionDescriptionUpdatedV1 struct {
-	Timestamp          Time     `json:"timestamp,omitempty"`
-	OutcomeID          string   `json:"outcome_id,omitempty"`
-	ActionID           string   `json:"action_id,omitempty"`
-	UpdatedDescription string   `json:"updated_definition,omitempty"`
-	UpdatedContexts    []string `json:"updated_contexts,omitempty"`
+	Timestamp          Time
+	OutcomeID          string
+	ActionID           string
+	UpdatedDescription string
+	UpdatedContexts    []string
 }
 type ActionStatusMarkedLatentV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
-	ActionID  string `json:"action_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
+	ActionID  string
 }
 type ActionStatusMarkedIncompleteV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
-	ActionID  string `json:"action_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
+	ActionID  string
 }
 type ActionStatusMarkedCompleteV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
-	ActionID  string `json:"action_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
+	ActionID  string
 }
 type ActionStrategyMarkedSequentialV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
-	ActionID  string `json:"action_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
+	ActionID  string
 }
 type ActionStrategyMarkedConcurrentV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
-	ActionID  string `json:"action_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
+	ActionID  string
 }
 type ActionDeletedV1 struct {
-	Timestamp Time   `json:"timestamp,omitempty"`
-	OutcomeID string `json:"outcome_id,omitempty"`
-	ActionID  string `json:"action_id,omitempty"`
+	Timestamp Time
+	OutcomeID string
+	ActionID  string
 }

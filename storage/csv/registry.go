@@ -229,146 +229,146 @@ func EncodeActionDeletedV1(v interface{}) []string {
 	}
 }
 
-func DecodeOutcomeTrackedV1(_record []string) interface{} {
+func DecodeOutcomeTrackedV1(record []string) interface{} {
 	return events.OutcomeTrackedV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
-		Title:     _record[3],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
+		Title:     record[3],
 	}
 }
-func DecodeOutcomeTitleUpdatedV1(_record []string) interface{} {
+func DecodeOutcomeTitleUpdatedV1(record []string) interface{} {
 	return events.OutcomeTitleUpdatedV1{
-		Timestamp:    date.ParseRFC3339Nano(_record[0]),
-		OutcomeID:    _record[1],
-		UpdatedTitle: _record[3],
+		Timestamp:    date.ParseRFC3339Nano(record[0]),
+		OutcomeID:    record[1],
+		UpdatedTitle: record[3],
 	}
 }
-func DecodeOutcomeExplanationUpdatedV1(_record []string) interface{} {
+func DecodeOutcomeExplanationUpdatedV1(record []string) interface{} {
 	return events.OutcomeExplanationUpdatedV1{
-		Timestamp:          date.ParseRFC3339Nano(_record[0]),
-		OutcomeID:          _record[1],
-		UpdatedExplanation: _record[3],
+		Timestamp:          date.ParseRFC3339Nano(record[0]),
+		OutcomeID:          record[1],
+		UpdatedExplanation: record[3],
 	}
 }
-func DecodeOutcomeDescriptionUpdatedV1(_record []string) interface{} {
+func DecodeOutcomeDescriptionUpdatedV1(record []string) interface{} {
 	return events.OutcomeDescriptionUpdatedV1{
-		Timestamp:          date.ParseRFC3339Nano(_record[0]),
-		OutcomeID:          _record[1],
-		UpdatedDescription: strings.ReplaceAll(_record[3], "Ω", "\n"),
+		Timestamp:          date.ParseRFC3339Nano(record[0]),
+		OutcomeID:          record[1],
+		UpdatedDescription: strings.ReplaceAll(record[3], "Ω", "\n"),
 	}
 }
-func DecodeOutcomeDeletedV1(_record []string) interface{} {
+func DecodeOutcomeDeletedV1(record []string) interface{} {
 	return events.OutcomeDeletedV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
 	}
 }
-func DecodeOutcomeFixedV1(_record []string) interface{} {
+func DecodeOutcomeFixedV1(record []string) interface{} {
 	return events.OutcomeFixedV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
 	}
 }
-func DecodeOutcomeRealizedV1(_record []string) interface{} {
+func DecodeOutcomeRealizedV1(record []string) interface{} {
 	return events.OutcomeRealizedV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
 	}
 }
-func DecodeOutcomeAbandonedV1(_record []string) interface{} {
+func DecodeOutcomeAbandonedV1(record []string) interface{} {
 	return events.OutcomeAbandonedV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
 	}
 }
-func DecodeOutcomeDeferredV1(_record []string) interface{} {
+func DecodeOutcomeDeferredV1(record []string) interface{} {
 	return events.OutcomeDeferredV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
 	}
 }
-func DecodeOutcomeUncertainV1(_record []string) interface{} {
+func DecodeOutcomeUncertainV1(record []string) interface{} {
 	return events.OutcomeUncertainV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
 	}
 }
-func DecodeActionTrackedV1(_record []string) interface{} {
-	values := strings.Split(_record[5], "|")
+func DecodeActionTrackedV1(record []string) interface{} {
+	values := strings.Split(record[5], "|")
 	if len(values) == 1 && values[0] == "" {
 		values = nil
 	}
 	return events.ActionTrackedV1{
-		Timestamp:   date.ParseRFC3339Nano(_record[0]),
-		OutcomeID:   _record[1],
-		ActionID:    _record[3],
-		Description: _record[4],
-		Contexts:    decodeSlice(_record[5]),
+		Timestamp:   date.ParseRFC3339Nano(record[0]),
+		OutcomeID:   record[1],
+		ActionID:    record[3],
+		Description: record[4],
+		Contexts:    decodeSlice(record[5]),
 	}
 }
-func DecodeActionsReorderedV1(_record []string) interface{} {
+func DecodeActionsReorderedV1(record []string) interface{} {
 	return events.ActionsReorderedV1{
-		Timestamp:    date.ParseRFC3339Nano(_record[0]),
-		OutcomeID:    _record[1],
-		ReorderedIDs: decodeSlice(_record[3]),
+		Timestamp:    date.ParseRFC3339Nano(record[0]),
+		OutcomeID:    record[1],
+		ReorderedIDs: decodeSlice(record[3]),
 	}
 }
-func DecodeActionDescriptionUpdatedV1(_record []string) interface{} {
+func DecodeActionDescriptionUpdatedV1(record []string) interface{} {
 	return events.ActionDescriptionUpdatedV1{
-		Timestamp:          date.ParseRFC3339Nano(_record[0]),
-		OutcomeID:          _record[1],
-		ActionID:           _record[3],
-		UpdatedDescription: _record[4],
-		UpdatedContexts:    decodeSlice(_record[5]),
+		Timestamp:          date.ParseRFC3339Nano(record[0]),
+		OutcomeID:          record[1],
+		ActionID:           record[3],
+		UpdatedDescription: record[4],
+		UpdatedContexts:    decodeSlice(record[5]),
 	}
 }
-func DecodeActionStatusMarkedLatentV1(_record []string) interface{} {
+func DecodeActionStatusMarkedLatentV1(record []string) interface{} {
 	return events.ActionStatusMarkedLatentV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
-		ActionID:  _record[3],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
+		ActionID:  record[3],
 	}
 }
-func DecodeActionStatusMarkedIncompleteV1(_record []string) interface{} {
+func DecodeActionStatusMarkedIncompleteV1(record []string) interface{} {
 	return events.ActionStatusMarkedIncompleteV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
-		ActionID:  _record[3],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
+		ActionID:  record[3],
 	}
 }
-func DecodeActionStatusMarkedCompleteV1(_record []string) interface{} {
+func DecodeActionStatusMarkedCompleteV1(record []string) interface{} {
 	return events.ActionStatusMarkedCompleteV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
-		ActionID:  _record[3],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
+		ActionID:  record[3],
 	}
 }
-func DecodeActionStrategyMarkedSequentialV1(_record []string) interface{} {
+func DecodeActionStrategyMarkedSequentialV1(record []string) interface{} {
 	return events.ActionStrategyMarkedSequentialV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
-		ActionID:  _record[3],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
+		ActionID:  record[3],
 	}
 }
-func DecodeActionStrategyMarkedConcurrentV1(_record []string) interface{} {
+func DecodeActionStrategyMarkedConcurrentV1(record []string) interface{} {
 	return events.ActionStrategyMarkedConcurrentV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
-		ActionID:  _record[3],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
+		ActionID:  record[3],
 	}
 }
-func DecodeActionDeletedV1(_record []string) interface{} {
+func DecodeActionDeletedV1(record []string) interface{} {
 	return events.ActionDeletedV1{
-		Timestamp: date.ParseRFC3339Nano(_record[0]),
-		OutcomeID: _record[1],
-		ActionID:  _record[3],
+		Timestamp: date.ParseRFC3339Nano(record[0]),
+		OutcomeID: record[1],
+		ActionID:  record[3],
 	}
 }
 
 func decodeSlice(field string) []string {
-	values := strings.Split(field, "|")
-	if len(values) == 1 && values[0] == "" {
-		values = nil
+	VALUES := strings.Split(field, "|")
+	if len(VALUES) == 1 && VALUES[0] == "" {
+		VALUES = nil
 	}
-	return values
+	return VALUES
 }

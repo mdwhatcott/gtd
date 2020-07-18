@@ -13,7 +13,7 @@ var (
 	Unwrap = errors.Unwrap
 )
 
-func Wrap(_outer error, _inner interface{}) error {
+func Wrap(outer error, inner interface{}) error {
 	_, FILE, LINE, _ := runtime.Caller(1)
-	return fmt.Errorf("%w: [%v] (at %s:%d)", _outer, _inner, FILE, LINE)
+	return fmt.Errorf("%w: [%v] (at %s:%d)", outer, inner, FILE, LINE)
 }

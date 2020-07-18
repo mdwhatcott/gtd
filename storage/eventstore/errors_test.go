@@ -4,8 +4,8 @@ import "errors"
 
 var errGophers = errors.New("GOPHERS")
 
-func recovered(_action func()) (result_ interface{}) {
+func recovered(action func()) (result_ interface{}) {
 	defer func() { result_ = recover() }()
-	_action()
+	action()
 	return result_
 }

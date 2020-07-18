@@ -34,37 +34,37 @@ func (this *IncompleteActionsParserFixture) TestBetween() {
 
 func (this *IncompleteActionsParserFixture) TestParse() {
 	this.content = modifiedIncompleteActionsContent
-	action1 := &projections.ActionDetails{ID: "000111", Description: "description 1"}
-	action2 := &projections.ActionDetails{ID: "000222", Description: "description 2"}
-	action3 := &projections.ActionDetails{ID: "000333", Description: "description 3"}
-	action4 := &projections.ActionDetails{ID: "000444", Description: "description 4"}
-	action5 := &projections.ActionDetails{ID: "000555", Description: "description 5"}
-	action6 := &projections.ActionDetails{ID: "000666", Description: "description 6"}
+	ACTION1 := &projections.ActionDetails{ID: "000111", Description: "description 1"}
+	ACTION2 := &projections.ActionDetails{ID: "000222", Description: "description 2"}
+	ACTION3 := &projections.ActionDetails{ID: "000333", Description: "description 3"}
+	ACTION4 := &projections.ActionDetails{ID: "000444", Description: "description 4"}
+	ACTION5 := &projections.ActionDetails{ID: "000555", Description: "description 5"}
+	ACTION6 := &projections.ActionDetails{ID: "000666", Description: "description 6"}
 
 	this.projection = projections.IncompleteActionsByContext{
 		Contexts: []*projections.Context{
 			{
 				Name: "home",
 				Actions: []*projections.ContextualAction{
-					{ActionDetails: action1, OutcomeID: "000AAA", OutcomeTitle: "Outcome A"},
-					{ActionDetails: action3, OutcomeID: "000BBB", OutcomeTitle: "Outcome B"},
-					{ActionDetails: action5, OutcomeID: "000CCC", OutcomeTitle: "Outcome C"},
-					{ActionDetails: action6, OutcomeID: "000DDD", OutcomeTitle: "Outcome D"},
+					{ActionDetails: ACTION1, OutcomeID: "000AAA", OutcomeTitle: "Outcome A"},
+					{ActionDetails: ACTION3, OutcomeID: "000BBB", OutcomeTitle: "Outcome B"},
+					{ActionDetails: ACTION5, OutcomeID: "000CCC", OutcomeTitle: "Outcome C"},
+					{ActionDetails: ACTION6, OutcomeID: "000DDD", OutcomeTitle: "Outcome D"},
 				},
 			},
 			{
 				Name: "work",
 				Actions: []*projections.ContextualAction{
-					{ActionDetails: action2, OutcomeID: "000EEE", OutcomeTitle: "Outcome E"},
-					{ActionDetails: action4, OutcomeID: "000FFF", OutcomeTitle: "Outcome F"},
+					{ActionDetails: ACTION2, OutcomeID: "000EEE", OutcomeTitle: "Outcome E"},
+					{ActionDetails: ACTION4, OutcomeID: "000FFF", OutcomeTitle: "Outcome F"},
 				},
 			},
 		},
 	}
 
-	edits := NewIncompleteActionsParser(this.handler, this.content, this.projection.Contexts...).Parse()
+	EDITS := NewIncompleteActionsParser(this.handler, this.content, this.projection.Contexts...).Parse()
 
-	this.So(edits, should.Resemble, []string{"000BBB", "000FFF"})
+	this.So(EDITS, should.Resemble, []string{"000BBB", "000FFF"})
 	this.So(this.handler.handled, should.Resemble, []interface{}{
 		&commands.MarkActionStatusComplete{OutcomeID: "000BBB", ActionID: "000333"},
 		&commands.MarkActionStatusLatent{OutcomeID: "000DDD", ActionID: "000666"},
