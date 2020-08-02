@@ -33,7 +33,11 @@ func (this *IncompleteActionsByContextProjector) Apply(_messages chan interface{
 		this.getOutcome(MESSAGE).apply(MESSAGE)
 
 		switch MESSAGE := MESSAGE.(type) {
+
 		case events.OutcomeDeletedV1:
+			delete(this.all, MESSAGE.OutcomeID)
+
+		case events.OutcomeRealizedV1:
 			delete(this.all, MESSAGE.OutcomeID)
 		}
 	}

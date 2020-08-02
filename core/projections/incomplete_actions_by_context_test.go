@@ -22,6 +22,7 @@ func (this *IncompleteActionsByContextFixture) Setup() {
 	this.ProjectorFixture = InitializeProjectorFixture(this.Fixture, NewIncompleteActionsByContextProjector())
 }
 
+
 func (this *IncompleteActionsByContextFixture) Test() {
 	this.apply(
 		events.OutcomeTrackedV1{OutcomeID: "0", Title: "0"},
@@ -44,16 +45,19 @@ func (this *IncompleteActionsByContextFixture) Test() {
 		events.ActionTrackedV1{OutcomeID: "2", ActionID: "22", Description: "action22", Contexts: []string{"c1", "c2"}},
 		events.ActionTrackedV1{OutcomeID: "3", ActionID: "33", Description: "action33", Contexts: []string{"c1", "c2"}},
 		events.ActionTrackedV1{OutcomeID: "4", ActionID: "44", Description: "action44", Contexts: []string{"c1", "c2"}},
+		events.ActionTrackedV1{OutcomeID: "5", ActionID: "55", Description: "action55", Contexts: []string{"c1", "c2"}},
 
 		events.ActionTrackedV1{OutcomeID: "9", ActionID: "99", Description: "action99", Contexts: []string{"c0", "c1"}},
 		events.ActionTrackedV1{OutcomeID: "9", ActionID: "999", Description: "action999", Contexts: []string{"c2", "c3"}},
 
 		events.ActionStatusMarkedCompleteV1{OutcomeID: "0", ActionID: "000"},
 
+		events.ActionStrategyMarkedSequentialV1{OutcomeID: "5", ActionID: "55"},
 		events.ActionStrategyMarkedSequentialV1{OutcomeID: "9", ActionID: "99"},
 		events.ActionStrategyMarkedSequentialV1{OutcomeID: "9", ActionID: "999"},
 
 		events.OutcomeFixedV1{OutcomeID: "0"},
+		events.OutcomeFixedV1{OutcomeID: "5"},
 		events.OutcomeFixedV1{OutcomeID: "9"},
 
 		events.OutcomeDeferredV1{OutcomeID: "1"},
