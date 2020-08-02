@@ -22,7 +22,6 @@ func (this *IncompleteActionsByContextFixture) Setup() {
 	this.ProjectorFixture = InitializeProjectorFixture(this.Fixture, NewIncompleteActionsByContextProjector())
 }
 
-
 func (this *IncompleteActionsByContextFixture) Test() {
 	this.apply(
 		events.OutcomeTrackedV1{OutcomeID: "0", Title: "0"},
