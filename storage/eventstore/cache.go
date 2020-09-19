@@ -2,6 +2,7 @@ package eventstore
 
 import (
 	"context"
+	"log"
 	"reflect"
 
 	"github.com/smartystreets/joyride/v3"
@@ -27,6 +28,8 @@ func warmUp(reader joyride.StorageReader) (cached_ []interface{}) {
 	for event := range query.Result.Events {
 		cached_ = append(cached_, event)
 	}
+	log.Println()
+	log.Printf("[INFO] Cached warmed (%d events)", len(cached_))
 	return cached_
 }
 

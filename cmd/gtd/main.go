@@ -73,6 +73,7 @@ func PushChanges(version string, vcsRoot string) {
 	if !strings.Contains(STATUS, "events.csv") {
 		return
 	}
+	log.Println("Total events:", exec.MustDo(vcsRoot, "", "wc", "-l", "events.csv"))
 	_ = exec.MustDo(vcsRoot, "Staging newly generated events..." /*****/, "git", "add", storage.EventsDatabaseFilename)
 	_ = exec.MustDo(vcsRoot, "Committing newly generated events..." /**/, "git", "commit", "-m", date.Today())
 	_ = exec.MustDo(vcsRoot, "Pushing newly generated events..." /*****/, "git", "push")
