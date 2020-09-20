@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"reflect"
+	"time"
 
 	"github.com/smartystreets/joyride/v3"
 	"github.com/smartystreets/logging"
@@ -23,13 +24,14 @@ func NewCache(reader joyride.StorageReader, writer joyride.StorageWriter) *Cache
 }
 
 func warmUp(reader joyride.StorageReader) (cached_ []interface{}) {
+	start := time.Now()
 	query := &storage.EventStream{}
 	reader.Read(context.Background(), query)
 	for event := range query.Result.Events {
 		cached_ = append(cached_, event)
 	}
 	log.Println()
-	log.Printf("[INFO] Cached warmed (%d events)", len(cached_))
+	log.Printf("Cached warmed (%d events in %v)", len(cached_), time.Since(start))
 	return cached_
 }
 
