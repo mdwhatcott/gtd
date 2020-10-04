@@ -6,13 +6,14 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
+	"time"
 
 	"github.com/smartystreets/joyride/v3"
 
 	"github.com/mdwhatcott/gtd/v3/core/projections"
 	"github.com/mdwhatcott/gtd/v3/storage"
 	"github.com/mdwhatcott/gtd/v3/storage/wireupstorage"
-	"github.com/mdwhatcott/gtd/v3/ui/ux"
 )
 
 func main() {
@@ -23,7 +24,8 @@ func main() {
 	PATH := filepath.Join(GTDPath, storage.EventsDatabaseFilename)
 	READER := wireupstorage.BuildCSVEventStoreReader(PATH)
 	PROJECTION := replayIncompleteActions(READER)
-	MARKDOWN := ux.FormatIncompleteActions(PROJECTION.Contexts...)
+	MARKDOWN := FormatIncompleteActions(PROJECTION.Contexts...)
+	fmt.Println("# Actions - " + time.Now().Format("2006-01-02"))
 	fmt.Println(MARKDOWN)
 }
 
@@ -35,3 +37,22 @@ func replayIncompleteActions(reader joyride.StorageReader) projections.Incomplet
 	return PROJECTOR.IncompleteActionsByContextProjection()
 }
 
+func FormatIncompleteActions(contexts ...*projections.Context) string {
+	BUILDER := new(strings.Builder)
+
+	for _, CONTEXT := range contexts {
+		_, _ = fmt.Fprintf(BUILDER, "## @%s:\n\n", strings.Title(CONTEXT.Name))
+
+		for _, ACTION := range CONTEXT.Actions {
+			_, _ = fmt.Fprintf(BUILDER,
+				"- [ ] %s (%s)\n",
+				ACTION.Description,
+				ACTION.OutcomeTitle,
+			)
+		}
+
+		BUILDER.WriteString("\n\n")
+	}
+
+	return strings.TrimSpace(BUILDER.String())
+}
