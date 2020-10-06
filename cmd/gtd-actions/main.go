@@ -19,6 +19,7 @@ import (
 var Version = "dev"
 
 func main() {
+	log.SetFlags(0)
 	log.Println("gtd-actions@" + Version)
 
 	GTDPath, OK := os.LookupEnv("GTDPATH")
