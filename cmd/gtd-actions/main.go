@@ -16,7 +16,11 @@ import (
 	"github.com/mdwhatcott/gtd/v3/storage/wireupstorage"
 )
 
+var Version = "dev"
+
 func main() {
+	log.Println("gtd-actions@" + Version)
+
 	GTDPath, OK := os.LookupEnv("GTDPATH")
 	if !OK {
 		log.Fatal("The 'GTDPATH' environment variable is required for resolution of event store file.")
