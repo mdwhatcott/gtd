@@ -29,6 +29,7 @@ func main() {
 	}
 
 	PrintBanner(Version)
+	PullLatest(Version, GTDPath)
 
 	APP := BuildApplication(GTDPath)
 
@@ -48,6 +49,7 @@ func PrintBanner(version string) {
 	fmt.Println("Version:", version)
 	fmt.Println()
 	fmt.Println("Enter 'help' for instructions.")
+	fmt.Println()
 }
 
 func BuildApplication(storageDirectory string) *Application {
@@ -65,6 +67,20 @@ func BuildApplication(storageDirectory string) *Application {
 	}
 }
 
+func PullLatest(version string, vcsRoot string) {
+	if version == "dev" {
+		return
+	}
+	STATUS := exec.MustDo(vcsRoot, "", "git", "status", "--porcelain")
+	if strings.Contains(STATUS, "events.csv") {
+		log.Fatal("Events database is in 'dirty' state. Please commit and push changes manually and restart.")
+		return
+	}
+	_ = exec.MustDo(vcsRoot, "Fetching changes...", "git", "fetch")
+	_ = exec.MustDo(vcsRoot, "Rebasing changes...", "git", "rebase", "origin/main")
+
+	log.Println("Ready.")
+}
 func PushChanges(version string, vcsRoot string) {
 	if version == "dev" {
 		return
