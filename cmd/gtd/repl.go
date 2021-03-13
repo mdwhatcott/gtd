@@ -16,6 +16,9 @@ func GTDREPL(app *Application, version string) {
 }
 
 func GTDOnce(app *Application, directive []string) bool {
+	if len(directive) == 0 {
+		return true
+	}
 	switch directive[0] {
 
 	case "projects":
