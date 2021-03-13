@@ -27,7 +27,7 @@ func main() {
 		log.Fatal("The 'GTDPATH' environment variable is required for resolution of event store file.")
 	}
 	PATH := filepath.Join(GTDPath, storage.EventsDatabaseFilename)
-	READER := wireupstorage.BuildCSVEventStoreReader(PATH)
+	READER := wireupstorage.BuildCSVEventStoreReader(nil, PATH)
 	PROJECTION := replayIncompleteActions(READER)
 	MARKDOWN := FormatIncompleteActions(PROJECTION.Contexts...)
 	fmt.Println("# Actions - " + time.Now().Format("2006-01-02"))

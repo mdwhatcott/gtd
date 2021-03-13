@@ -2,14 +2,11 @@ package eventstore
 
 import (
 	"io"
+	"log"
 
-	"github.com/smartystreets/logging"
+	"github.com/mdwhatcott/gtd/v3/core"
 )
 
-func CaptureLogging(out io.Writer) *logging.Logger {
-	log := logging.Capture()
-	log.SetFlags(0)
-	log.SetOutput(out)
-	log.SetPrefix("[CAPTURED] ")
-	return log
+func CaptureLogging(out io.Writer) core.Logger {
+	return log.New(out, "[CAPTURED] ", 0)
 }

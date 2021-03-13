@@ -5,20 +5,20 @@ import (
 	"io"
 	"reflect"
 
-	"github.com/smartystreets/logging"
-
+	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/storage"
 	"github.com/mdwhatcott/gtd/v3/util/errors"
 )
 
 type Reader struct {
+	log     core.Logger
 	reader  storage.ReaderFunc
 	decoder storage.DecoderFunc
-	log     *logging.Logger
 }
 
-func NewReader(readerFunc storage.ReaderFunc, decoderFunc storage.DecoderFunc) *Reader {
+func NewReader(logger core.Logger, readerFunc storage.ReaderFunc, decoderFunc storage.DecoderFunc) *Reader {
 	return &Reader{
+		log:     logger,
 		reader:  readerFunc,
 		decoder: decoderFunc,
 	}

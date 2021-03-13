@@ -6,22 +6,24 @@ import (
 
 	"github.com/smartystreets/joyride/v3"
 
+	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/storage"
 	"github.com/mdwhatcott/gtd/v3/storage/csv"
 	"github.com/mdwhatcott/gtd/v3/storage/eventstore"
 )
 
-func BuildCachedCSVEventStore(folder string) (joyride.StorageReader, joyride.StorageWriter) {
+func BuildCachedCSVEventStore(logger core.Logger, folder string) (joyride.StorageReader, joyride.StorageWriter) {
 	PATH := filepath.Join(folder, storage.EventsDatabaseFilename)
 	CACHE := eventstore.NewCache(
-		BuildCSVEventStoreReader(PATH),
+		logger,
+		BuildCSVEventStoreReader(logger, PATH),
 		BuildCSVEventStoreWriter(PATH),
 	)
 	return CACHE, CACHE
 }
 
-func BuildCSVEventStoreReader(path string) joyride.StorageReader {
-	return eventstore.NewReader(reading(path), csvDecoding)
+func BuildCSVEventStoreReader(logger core.Logger, path string) joyride.StorageReader {
+	return eventstore.NewReader(logger, reading(path), csvDecoding)
 }
 func BuildCSVEventStoreWriter(path string) joyride.StorageWriter {
 	return eventstore.NewWriter(csvEncoding, writing(path))

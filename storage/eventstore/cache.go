@@ -7,20 +7,24 @@ import (
 	"time"
 
 	"github.com/smartystreets/joyride/v3"
-	"github.com/smartystreets/logging"
 
+	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/storage"
 	"github.com/mdwhatcott/gtd/v3/util/errors"
 )
 
 type Cache struct {
-	log    *logging.Logger
+	log    core.Logger
 	cached []interface{}
 	writer joyride.StorageWriter
 }
 
-func NewCache(reader joyride.StorageReader, writer joyride.StorageWriter) *Cache {
-	return &Cache{cached: warmUp(reader), writer: writer}
+func NewCache(logger core.Logger, reader joyride.StorageReader, writer joyride.StorageWriter) *Cache {
+	return &Cache{
+		log:    logger,
+		cached: warmUp(reader),
+		writer: writer,
+	}
 }
 
 func warmUp(reader joyride.StorageReader) (cached_ []interface{}) {

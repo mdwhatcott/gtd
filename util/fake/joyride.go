@@ -3,18 +3,17 @@ package fake
 import (
 	"context"
 
-	"github.com/smartystreets/logging"
-
+	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/storage"
 )
 
 type Joyride struct {
-	log    *logging.Logger
+	log    core.Logger
 	Writes []interface{}
 	reads  map[string][]interface{}
 }
 
-func NewJoyride(log *logging.Logger) *Joyride {
+func NewJoyride(log core.Logger) *Joyride {
 	return &Joyride{
 		log:   log,
 		reads: make(map[string][]interface{}),

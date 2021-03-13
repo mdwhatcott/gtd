@@ -1,18 +1,16 @@
 package domain
 
 import (
+	"bytes"
 	"context"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"testing"
 	"time"
 
 	"github.com/smartystreets/assertions/should"
-	"github.com/smartystreets/clock"
 	"github.com/smartystreets/gunit"
 	"github.com/smartystreets/joyride/v3"
-	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/core/commands"
@@ -31,7 +29,8 @@ type Fixture struct {
 
 	id      int
 	now     time.Time
-	log     *logging.Logger
+	log     *bytes.Buffer
+	logger  *log.Logger
 	handler *Handler
 	task    *Task
 	runner  joyride.Runner
@@ -46,29 +45,25 @@ func (this *Fixture) AssertOutput(_expected ...interface{}) {
 
 func (this *Fixture) Setup() {
 	this.now = time.Now()
-	this.log = logging.Capture(ioutil.Discard)
-	this.log.SetFlags(log.Lshortfile)
-	this.log.SetPrefix("--> ")
-	this.task = NewTask(this.generateID)
-	this.task.clock = clock.Freeze(this.now)
-	this.task.log = this.log
-	this.Joyride = fake.NewJoyride(this.log)
+	this.log = new(bytes.Buffer)
+	this.logger = log.New(this.log, "", 0)
+	this.task = NewTask(this.logger, this.Now, this.generateID)
+	this.Joyride = fake.NewJoyride(this.logger)
 	this.runner = joyride.NewRunner(
 		joyride.WithStorageReader(this.Joyride),
 		joyride.WithStorageWriter(this.Joyride),
 	)
 }
+func (this *Fixture) Now() time.Time {
+	return this.now
+}
 func (this *Fixture) handle(command interface{}) {
-	this.handler = NewHandler(this.runner, this.generateID)
-	this.handler.clock = clock.Freeze(this.now)
+	this.handler = NewHandler(this.logger, this.Now, this.runner, this.generateID)
 	this.handler.Handle(context.Background(), command)
 }
 func (this *Fixture) generateID() string {
 	this.id++
 	return fmt.Sprint(this.id)
-}
-func (this *Fixture) enableLogging() {
-	this.log.SetOutput(this.Fixture)
 }
 
 func (this *Fixture) TestUnrecognizedMessageTypes_JoyrideHandlerPanics() {

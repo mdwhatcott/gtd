@@ -1,13 +1,14 @@
 package eventstore
 
 import (
+	"bytes"
 	"context"
 	"io"
+	"log"
 	"testing"
 
 	"github.com/smartystreets/assertions/should"
 	"github.com/smartystreets/gunit"
-	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/v3/storage"
 	"github.com/mdwhatcott/gtd/v3/util/fake"
@@ -19,6 +20,7 @@ func TestReaderFixture(t *testing.T) {
 
 type ReaderFixture struct {
 	*gunit.Fixture
+	log       *bytes.Buffer
 	reader    *Reader
 	inner     *fake.Reader
 	decodeErr error
@@ -33,9 +35,9 @@ func (this *ReaderFixture) decoderFunc(reader io.Reader) storage.Decoder {
 }
 
 func (this *ReaderFixture) Setup() {
+	this.log = new(bytes.Buffer)
 	this.inner = fake.NewReader("1\n2\n3")
-	this.reader = NewReader(this.readerFunc, this.decoderFunc)
-	this.reader.log = logging.Capture()
+	this.reader = NewReader(log.New(this.log, "", 0), this.readerFunc, this.decoderFunc)
 }
 
 func (this *ReaderFixture) read(v ...interface{}) {
@@ -70,7 +72,7 @@ func (this *ReaderFixture) TestRead_OutcomeEventStream_NonIdentifiableValueEncou
 	this.So(stream(QUERY.Result.Events), should.Resemble, []interface{}{
 		fake.NewIdentifiable(2),
 	})
-	this.So(this.reader.log.Log.String(), should.ContainSubstring, ErrUnidentifiableType.Error())
+	this.So(this.log.String(), should.ContainSubstring, ErrUnidentifiableType.Error())
 	this.So(this.inner.Closed, should.Equal, 1)
 }
 
@@ -81,7 +83,7 @@ func (this *ReaderFixture) TestRead_OutcomeEventStreamErr() {
 	this.read(QUERY)
 
 	this.So(stream(QUERY.Result.Events), should.BeEmpty)
-	this.So(this.reader.log.Log.String(), should.ContainSubstring, ErrUnexpectedReadError.Error())
+	this.So(this.log.String(), should.ContainSubstring, ErrUnexpectedReadError.Error())
 }
 
 func (this *ReaderFixture) TestCloseErr() {
@@ -95,7 +97,7 @@ func (this *ReaderFixture) TestCloseErr() {
 		fake.NewIdentifiable(2),
 		fake.NewIdentifiable(3),
 	})
-	this.So(this.reader.log.Log.String(), should.ContainSubstring, ErrUnexpectedCloseError.Error())
+	this.So(this.log.String(), should.ContainSubstring, ErrUnexpectedCloseError.Error())
 }
 
 func (this *ReaderFixture) TestRead_EventStream_AllEventsIncluded() {

@@ -1,14 +1,8 @@
 github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
 github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
-github.com/smartystreets/assertions v1.1.0/go.mod h1:tcbTF8ujkAEcZ8TElKY+i30BzYlVhC/LOxJk7iOWnoo=
 github.com/smartystreets/assertions v1.2.0 h1:42S6lae5dvLc7BrLu/0ugRtcFVjoJNMC/N3yZFZkDFs=
 github.com/smartystreets/assertions v1.2.0/go.mod h1:tcbTF8ujkAEcZ8TElKY+i30BzYlVhC/LOxJk7iOWnoo=
-github.com/smartystreets/clock v1.0.4 h1:qa/qxRueSpRCUu1fbIkhAQZ3kkuDgi813Sa3uaZGBmM=
-github.com/smartystreets/clock v1.0.4/go.mod h1:mWuDdNafvfZjQzZ+BMABEOkhdCew1MFhs2YMLMLiEc4=
-github.com/smartystreets/gunit v1.3.4/go.mod h1:ZjM1ozSIMJlAz/ay4SG8PeKF00ckUp+zMHZXV9/bvak=
 github.com/smartystreets/gunit v1.4.2 h1:tyWYZffdPhQPfK5VsMQXfauwnJkqg7Tv5DLuQVYxq3Q=
 github.com/smartystreets/gunit v1.4.2/go.mod h1:ZjM1ozSIMJlAz/ay4SG8PeKF00ckUp+zMHZXV9/bvak=
-github.com/smartystreets/joyride/v3 v3.0.5 h1:n7G7/4W9OCCv3dwA0W6e3ng0rVqo2dtFb3tKsUUSKcg=
-github.com/smartystreets/joyride/v3 v3.0.5/go.mod h1:w2b+MIF4WkjSrvMObXOMmR+63hLkmKxOr7Me4MW0mPY=
-github.com/smartystreets/logging v1.1.1 h1:4UlnyYWB7LDd216NTuP3zTVvMQZREtPrDnJbsz0zftI=
-github.com/smartystreets/logging v1.1.1/go.mod h1:NwFCEPbtiTIug+UCtTbDVjgcJNfandE3brDx0x7QEY8=
+github.com/smartystreets/joyride/v3 v3.0.6 h1:YT2t6QlKa4jvap6Yzwm7wbJggVwINGAaQi2nw3RwEyQ=
+github.com/smartystreets/joyride/v3 v3.0.6/go.mod h1:rTG0S/ZkCGJ8a9JG0wMrYYotWJUKqMFVlrXrfV44CBU=

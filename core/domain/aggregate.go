@@ -3,15 +3,13 @@ package domain
 import (
 	"time"
 
-	"github.com/smartystreets/logging"
-
 	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/core/events"
 	"github.com/mdwhatcott/gtd/v3/util/errors"
 )
 
 type Aggregate struct {
-	log *logging.Logger
+	log core.Logger
 	now time.Time
 
 	id          string
@@ -25,7 +23,7 @@ type Aggregate struct {
 	results []interface{}
 }
 
-func NewAggregate(now time.Time, log *logging.Logger) *Aggregate {
+func NewAggregate(now time.Time, log core.Logger) *Aggregate {
 	return &Aggregate{
 		now:     now,
 		log:     log,

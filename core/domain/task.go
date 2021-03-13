@@ -4,9 +4,7 @@ import (
 	"context"
 	"reflect"
 
-	"github.com/smartystreets/clock"
 	"github.com/smartystreets/joyride/v3"
-	"github.com/smartystreets/logging"
 
 	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/core/commands"
@@ -16,8 +14,8 @@ import (
 type Task struct {
 	*joyride.Base
 
-	log    *logging.Logger
-	clock  *clock.Clock
+	log    core.Logger
+	clock  core.Clock
 	nextID core.IDFunc
 
 	queries      map[string]*storage.OutcomeEventStream
@@ -25,9 +23,11 @@ type Task struct {
 	aggregates   map[string]*Aggregate
 }
 
-func NewTask(nextID core.IDFunc) *Task {
+func NewTask(log core.Logger, clock core.Clock, nextID core.IDFunc) *Task {
 	return &Task{
 		Base:       joyride.New(),
+		log:        log,
+		clock:      clock,
 		nextID:     nextID,
 		queries:    make(map[string]*storage.OutcomeEventStream),
 		aggregates: make(map[string]*Aggregate),
@@ -45,7 +45,7 @@ func (this *Task) aggregate(id commands.Identifiable) *Aggregate {
 	return this.createAggregate(id.ID())
 }
 func (this *Task) createAggregate(id string) (aggregate_ *Aggregate) {
-	aggregate_ = NewAggregate(this.clock.UTCNow(), this.log)
+	aggregate_ = NewAggregate(this.clock(), this.log)
 	this.aggregates[id] = aggregate_
 	return aggregate_
 }

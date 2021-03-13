@@ -8,6 +8,8 @@ import (
 )
 
 type Requirements struct {
+	Log    core.Logger
+	Clock  core.Clock
 	IDFunc core.IDFunc
 	Reader joyride.StorageReader
 	Writer joyride.StorageWriter
@@ -15,6 +17,8 @@ type Requirements struct {
 
 func BuildOutcomesHandler(_requirements Requirements) core.Handler {
 	return domain.NewHandler(
+		_requirements.Log,
+		_requirements.Clock,
 		joyride.NewRunner(
 			joyride.WithStorageReader(_requirements.Reader),
 			joyride.WithStorageWriter(_requirements.Writer),

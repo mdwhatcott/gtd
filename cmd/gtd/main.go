@@ -7,6 +7,7 @@ import (
 	"os"
 	"strings"
 
+	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/core/wireupcore"
 	"github.com/mdwhatcott/gtd/v3/storage"
 	"github.com/mdwhatcott/gtd/v3/storage/wireupstorage"
@@ -53,8 +54,10 @@ func PrintBanner(version string) {
 }
 
 func BuildApplication(storageDirectory string) *Application {
-	reader, writer := wireupstorage.BuildCachedCSVEventStore(storageDirectory)
+	reader, writer := wireupstorage.BuildCachedCSVEventStore(log.Default(), storageDirectory)
 	REQUIREMENTS := wireupcore.Requirements{
+		Log:    log.Default(),
+		Clock:  core.Now,
 		IDFunc: wireupstorage.GenerateID,
 		Reader: reader,
 		Writer: writer,

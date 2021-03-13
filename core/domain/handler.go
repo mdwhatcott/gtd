@@ -3,7 +3,6 @@ package domain
 import (
 	"context"
 
-	"github.com/smartystreets/clock"
 	"github.com/smartystreets/joyride/v3"
 
 	"github.com/mdwhatcott/gtd/v3/core"
@@ -12,13 +11,22 @@ import (
 
 type Handler struct {
 	*joyride.Handler
-
-	clock  *clock.Clock
+	log    core.Logger
+	clock  core.Clock
 	nextID core.IDFunc
 }
 
-func NewHandler(runner joyride.Runner, nextID core.IDFunc) *Handler {
-	THIS := &Handler{nextID: nextID}
+func NewHandler(
+	log core.Logger,
+	clock core.Clock,
+	runner joyride.Runner,
+	nextID core.IDFunc,
+) *Handler {
+	THIS := &Handler{
+		log:    log,
+		clock:  clock,
+		nextID: nextID,
+	}
 	THIS.Handler = joyride.NewHandler(THIS, runner)
 	return THIS
 }
@@ -38,8 +46,7 @@ func (this *Handler) HandleMessage(_ context.Context, message interface{}) bool 
 }
 
 func (this *Handler) buildTask() *Task {
-	TASK := NewTask(this.nextID)
-	TASK.clock = this.clock
+	TASK := NewTask(this.log, this.clock, this.nextID)
 	this.Handler.Add(TASK)
 	return TASK
 }

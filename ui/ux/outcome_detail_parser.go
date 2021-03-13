@@ -6,16 +6,12 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/smartystreets/logging"
-
 	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/core/commands"
 	"github.com/mdwhatcott/gtd/v3/core/projections"
 )
 
 type OutcomeDetailParser struct {
-	log *logging.Logger
-
 	handler    core.Handler
 	projection projections.OutcomeDetails
 	scanner    *bufio.Scanner

@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"errors"
+	"time"
 )
 
 type Handler interface {
@@ -46,3 +47,15 @@ const (
 	ActionStrategyConcurrent ActionStrategy = "CONCURRENT"
 	ActionStrategySequential ActionStrategy = "SEQUENTIAL"
 )
+
+type Logger interface {
+	Print(args ...interface{})
+	Printf(format string, args ...interface{})
+	Println(args ...interface{})
+}
+
+type Clock func() time.Time
+
+func Now() time.Time {
+	return time.Now().UTC()
+}
