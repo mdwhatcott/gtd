@@ -19,8 +19,8 @@ type Handler struct {
 func NewHandler(
 	log core.Logger,
 	clock core.Clock,
-	runner joyride.Runner,
 	nextID core.IDFunc,
+	runner joyride.Runner,
 ) *Handler {
 	THIS := &Handler{
 		log:    log,

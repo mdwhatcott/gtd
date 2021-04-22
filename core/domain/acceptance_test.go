@@ -58,7 +58,7 @@ func (this *Fixture) Now() time.Time {
 	return this.now
 }
 func (this *Fixture) handle(command interface{}) {
-	this.handler = NewHandler(this.logger, this.Now, this.runner, this.generateID)
+	this.handler = NewHandler(this.logger, this.Now, this.generateID, this.runner)
 	this.handler.Handle(context.Background(), command)
 }
 func (this *Fixture) generateID() string {

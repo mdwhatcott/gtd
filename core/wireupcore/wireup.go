@@ -19,10 +19,10 @@ func BuildOutcomesHandler(_requirements Requirements) core.Handler {
 	return domain.NewHandler(
 		_requirements.Log,
 		_requirements.Clock,
+		_requirements.IDFunc,
 		joyride.NewRunner(
 			joyride.WithStorageReader(_requirements.Reader),
 			joyride.WithStorageWriter(_requirements.Writer),
 		),
-		_requirements.IDFunc,
 	)
 }
