@@ -44,11 +44,11 @@ func (this *IncompleteActionsByContextProjector) Apply(_messages chan interface{
 }
 
 func (this *IncompleteActionsByContextProjector) getOutcome(message interface{}) *OutcomeDetailsProjector {
-	id := message.(events.Identifiable).ID()
-	OUTCOME := this.all[id]
+	ID := message.(events.Identifiable).ID()
+	OUTCOME := this.all[ID]
 	if OUTCOME == nil {
 		OUTCOME = NewOutcomeDetailsProjector()
-		this.all[id] = OUTCOME
+		this.all[ID] = OUTCOME
 	}
 	return OUTCOME
 }
