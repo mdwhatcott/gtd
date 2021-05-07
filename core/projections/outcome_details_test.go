@@ -420,3 +420,48 @@ func (this *OutcomeDetailsFixture) TestActionsReordered() {
 		},
 	)
 }
+func (this *OutcomeDetailsFixture) TestActionsReordered_BogusID() {
+	this.apply(
+		events.OutcomeTrackedV1{Title: "title"},
+		events.ActionTrackedV1{
+			ActionID:    "0",
+			Description: "action-description0",
+		},
+		events.ActionTrackedV1{
+			ActionID:    "1",
+			Description: "action-description1",
+		},
+		events.ActionTrackedV1{
+			ActionID:    "2",
+			Description: "action-description2",
+		},
+		events.ActionsReorderedV1{
+			ReorderedIDs: []string{"2", "0", "1", "bogus"},
+		},
+	)
+	this.assert(
+		OutcomeDetails{
+			Title: "title",
+			Actions: []*ActionDetails{
+				{
+					ID:          "2",
+					Description: "action-description2",
+					Status:      core.ActionStatusIncomplete,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+				{
+					ID:          "0",
+					Description: "action-description0",
+					Status:      core.ActionStatusIncomplete,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+				{
+					ID:          "1",
+					Description: "action-description1",
+					Status:      core.ActionStatusIncomplete,
+					Strategy:    core.ActionStrategyConcurrent,
+				},
+			},
+		},
+	)
+}

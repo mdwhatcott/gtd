@@ -1,6 +1,8 @@
 package projections
 
 import (
+	"log"
+
 	"github.com/mdwhatcott/gtd/v3/core"
 	"github.com/mdwhatcott/gtd/v3/core/events"
 )
@@ -62,27 +64,27 @@ func (this *OutcomeDetailsProjector) apply(MESSAGE interface{}) {
 		})
 
 	case events.ActionsReorderedV1:
-		this.Actions = this.reorderActions(EVENT.ReorderedIDs)
+		this.Actions = this.reorderActions(EVENT, EVENT.ReorderedIDs)
 
 	case events.ActionDescriptionUpdatedV1:
-		action := this.getAction(EVENT.ActionID)
+		action := this.getAction(EVENT, EVENT.ActionID)
 		action.Contexts = EVENT.UpdatedContexts
 		action.Description = EVENT.UpdatedDescription
 
 	case events.ActionStatusMarkedLatentV1:
-		this.getAction(EVENT.ActionID).Status = core.ActionStatusLatent
+		this.getAction(EVENT, EVENT.ActionID).Status = core.ActionStatusLatent
 
 	case events.ActionStatusMarkedIncompleteV1:
-		this.getAction(EVENT.ActionID).Status = core.ActionStatusIncomplete
+		this.getAction(EVENT, EVENT.ActionID).Status = core.ActionStatusIncomplete
 
 	case events.ActionStatusMarkedCompleteV1:
-		this.getAction(EVENT.ActionID).Status = core.ActionStatusComplete
+		this.getAction(EVENT, EVENT.ActionID).Status = core.ActionStatusComplete
 
 	case events.ActionStrategyMarkedSequentialV1:
-		this.getAction(EVENT.ActionID).Strategy = core.ActionStrategySequential
+		this.getAction(EVENT, EVENT.ActionID).Strategy = core.ActionStrategySequential
 
 	case events.ActionStrategyMarkedConcurrentV1:
-		this.getAction(EVENT.ActionID).Strategy = core.ActionStrategyConcurrent
+		this.getAction(EVENT, EVENT.ActionID).Strategy = core.ActionStrategyConcurrent
 
 	case events.ActionDeletedV1:
 		this.deleteAction(this.findAction(EVENT.ActionID))
@@ -90,15 +92,23 @@ func (this *OutcomeDetailsProjector) apply(MESSAGE interface{}) {
 	}
 }
 
-func (this *OutcomeDetailsProjector) reorderActions(newOrder []string) (reordered_ []*ActionDetails) {
+func (this *OutcomeDetailsProjector) reorderActions(event interface{}, newOrder []string) (reordered_ []*ActionDetails) {
 	for _, ID := range newOrder {
-		reordered_ = append(reordered_, this.getAction(ID))
+		ACTION := this.getAction(event, ID)
+		if len(ACTION.ID) > 0 {
+			reordered_ = append(reordered_, ACTION)
+		}
 	}
 	return reordered_
 }
 
-func (this *OutcomeDetailsProjector) getAction(id string) *ActionDetails {
-	return this.Actions[this.findAction(id)]
+func (this *OutcomeDetailsProjector) getAction(event interface{}, id string) *ActionDetails {
+	ID := this.findAction(id)
+	if ID < 0 {
+		log.Printf("Missing action with ID: %s\n\tEvent: %#v", id, event)
+		return new(ActionDetails)
+	}
+	return this.Actions[ID]
 }
 
 func (this *OutcomeDetails) findAction(id string) int {
@@ -107,7 +117,7 @@ func (this *OutcomeDetails) findAction(id string) int {
 			return i
 		}
 	}
-	panic("SHOULD NOT HAPPEN")
+	return -1
 }
 
 func (this *OutcomeDetailsProjector) deleteAction(i int) {
