@@ -86,6 +86,7 @@ func PullLatest(version string, vcsRoot string) {
 }
 func PushChanges(version string, vcsRoot string) {
 	if version == "dev" {
+		log.Fatal("Events database is in 'dirty' state. Please commit and push changes manually.")
 		return
 	}
 	STATUS := exec.MustDo(vcsRoot, "", "git", "status", "--porcelain")
