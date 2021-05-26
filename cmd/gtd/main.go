@@ -72,6 +72,7 @@ func BuildApplication(storageDirectory string) *Application {
 
 func PullLatest(version string, vcsRoot string) {
 	if version == "dev" {
+		log.Println("In 'dev', skipping git fetch/rebase...")
 		return
 	}
 	STATUS := exec.MustDo(vcsRoot, "", "git", "status", "--porcelain")
