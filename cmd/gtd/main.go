@@ -86,12 +86,12 @@ func PullLatest(version string, vcsRoot string) {
 	log.Println("Ready.")
 }
 func PushChanges(version string, vcsRoot string) {
-	if version == "dev" {
-		log.Fatal("Events database is in 'dirty' state. Please commit and push changes manually.")
-		return
-	}
 	STATUS := exec.MustDo(vcsRoot, "", "git", "status", "--porcelain")
 	if !strings.Contains(STATUS, "events.csv") {
+		return
+	}
+	if version == "dev" {
+		log.Fatal("Events database is in a 'dirty' state. Please commit and push changes manually.")
 		return
 	}
 	log.Println("Total events:", exec.MustDo(vcsRoot, "", "wc", "-l", "events.csv"))
