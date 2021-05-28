@@ -8,6 +8,8 @@ import (
 	"github.com/mdwhatcott/gtd/v3/util/date"
 )
 
+// TODO: tests
+
 func EncoderRegistry() map[string]func(interface{}) []string {
 	return map[string]func(interface{}) []string{
 		"events.OutcomeTrackedV1":                 EncodeOutcomeTrackedV1,
