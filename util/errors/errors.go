@@ -6,12 +6,7 @@ import (
 	"runtime"
 )
 
-var (
-	New    = errors.New
-	Is     = errors.Is
-	As     = errors.As
-	Unwrap = errors.Unwrap
-)
+var New = errors.New
 
 func Wrap(outer error, inner interface{}) error {
 	_, FILE, LINE, _ := runtime.Caller(1)
